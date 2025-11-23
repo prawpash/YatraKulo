@@ -7,6 +7,12 @@ export default defineWorkersConfig({
 		},
 	},
 	test: {
+		coverage: {
+			enabled: true,
+			provider: 'istanbul',
+			include: ['src/**/*.ts'],
+			reporter: ['html'],
+		},
 		poolOptions: {
 			workers: {
 				wrangler: { configPath: './wrangler.jsonc' },
