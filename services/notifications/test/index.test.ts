@@ -15,7 +15,7 @@ vi.mock('resend', () => ({
 }));
 
 vi.mock('@/lib/customLogger', () => ({
-	customLogger: (...args: string[]) => customLoggerMock(...args),
+	customLogger: (...args: unknown[]) => customLoggerMock(...args),
 }));
 
 import app from '../src/index';
@@ -64,10 +64,56 @@ describe('Hono app routes', () => {
 		});
 
 		const body = await response.json();
-		expect(body).toEqual({ data: { id: 'email-id' }, error: null });
-		expect(customLoggerMock).toHaveBeenCalledWith(
-			`Start: sending email to ${payload.sendTo}`,
+		expect(body).toEqual({ data: { id: 'email-id' } });
+		expect(customLoggerMock).toHaveBeenCalledWith('info', `Start: sending email to ${payload.sendTo}`);
+	});
+
+	it('returns 502 and logs when email provider returns an error field', async () => {
+		const providerError = { message: 'provider error' };
+		sendEmailMock.mockResolvedValueOnce({ data: null, error: providerError });
+		const payload = {
+			sendTo: 'receiver@example.com',
+			subject: 'Hello',
+			htmlBody: '<p>Message</p>',
+		};
+
+		const response = await app.request(
+			'http://localhost/email',
+			{
+				method: 'POST',
+				body: JSON.stringify(payload),
+				headers: { 'Content-Type': 'application/json' },
+			},
+			mockEnv,
 		);
+
+		expect(response.status).toBe(502);
+		expect(await response.json()).toEqual({ message: 'Upstream email provider error' });
+		expect(customLoggerMock).toHaveBeenCalledWith('error', 'Resend email provider error', providerError);
+	});
+
+	it('returns 500 and logs when send throws an exception', async () => {
+		const thrownError = new Error('network issue');
+		sendEmailMock.mockRejectedValueOnce(thrownError);
+		const payload = {
+			sendTo: 'receiver@example.com',
+			subject: 'Hello',
+			htmlBody: '<p>Message</p>',
+		};
+
+		const response = await app.request(
+			'http://localhost/email',
+			{
+				method: 'POST',
+				body: JSON.stringify(payload),
+				headers: { 'Content-Type': 'application/json' },
+			},
+			mockEnv,
+		);
+
+		expect(response.status).toBe(500);
+		expect(await response.json()).toEqual({ message: 'Internal server error' });
+		expect(customLoggerMock).toHaveBeenCalledWith('error', 'Failed to send email via Resend', thrownError);
 	});
 
 	it('returns 400 on POST /email with invalid payload', async () => {
