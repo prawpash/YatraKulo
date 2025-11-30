@@ -25,16 +25,26 @@ app.post('/email', sValidator('json', SendEmailSchema), async (c) => {
 
 	const EMAIL_SENDER = c.env.EMAIL_SENDER;
 
-	customLogger(`Start: sending email to ${jsonData.sendTo}`);
+	customLogger('info', `Start: sending email to ${jsonData.sendTo}`);
 
-	const { data, error } = await resend.emails.send({
-		from: EMAIL_SENDER,
-		to: jsonData.sendTo,
-		subject: jsonData.subject,
-		html: jsonData.htmlBody,
-	});
+	try {
+		const { data, error } = await resend.emails.send({
+			from: EMAIL_SENDER,
+			to: jsonData.sendTo,
+			subject: jsonData.subject,
+			html: jsonData.htmlBody,
+		});
 
-	return c.json({ data, error });
+		if (error) {
+			customLogger('error', 'Resend email provider error', error);
+			return c.json({ message: 'Upstream email provider error' }, 502);
+		}
+
+		return c.json({ data }, 200);
+	} catch (error) {
+		customLogger('error', 'Failed to send email via Resend', error);
+		return c.json({ message: 'Internal server error' }, 500);
+	}
 });
 
 export default app;
