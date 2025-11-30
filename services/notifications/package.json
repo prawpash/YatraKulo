@@ -6,7 +6,8 @@
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
-		"test": "vitest --ui",
+		"test": "vitest",
+		"test:ui": "vitest --ui",
 		"cf-typegen": "wrangler types"
 	},
 	"devDependencies": {
