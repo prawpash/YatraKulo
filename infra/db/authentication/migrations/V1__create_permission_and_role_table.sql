@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS role (
   created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
 
-  created_by UUID NOT NULL,
-  updated_by UUID NOT NULL,
+  created_by UUID,
+  updated_by UUID,
 
   deleted_at timestamptz,
   deleted_by UUID,
