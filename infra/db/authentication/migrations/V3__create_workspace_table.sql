@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS workspace (
   CONSTRAINT
     fk_workspace_owner_id_user
   FOREIGN KEY(owner_id)
-  REFERENCES user(id)
+  REFERENCES "user"(id)
   ON DELETE CASCADE,
 
   PRIMARY KEY (id)
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS workspace_members(
   CONSTRAINT
     fk_workspace_members_user_id_user
   FOREIGN KEY(user_id)
-  REFERENCES user(id)
+  REFERENCES "user"(id)
   ON DELETE CASCADE,
 
   CONSTRAINT
