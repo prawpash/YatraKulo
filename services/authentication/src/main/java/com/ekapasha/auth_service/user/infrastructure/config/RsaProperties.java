@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 public class RsaProperties {
   private String privateKey; // PEM format
   private String publicKey; // PEM format
+  private String keyId;
 }
