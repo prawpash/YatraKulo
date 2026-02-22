@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS workspace (
 
   owner_id UUID NOT NULL,
 
-  isDefault BOOLEAN DEFAULT FALSE,
+  is_default BOOLEAN DEFAULT FALSE,
 
   created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
