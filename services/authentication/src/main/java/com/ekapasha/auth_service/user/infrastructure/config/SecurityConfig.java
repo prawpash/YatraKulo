@@ -7,32 +7,32 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -45,7 +45,62 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+  @Bean
+  @Order(1)
+  public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
+      throws Exception {
 
+    http.oauth2AuthorizationServer(
+            (authorizationServer) -> {
+              http.securityMatcher(authorizationServer.getEndpointsMatcher());
+              authorizationServer.oidc(Customizer.withDefaults()); // Enable OpenID Connect 1.0
+            })
+        .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
+        // Redirect to the login page when not authenticated from the
+        // authorization endpoint
+        .exceptionHandling(
+            (exceptions) ->
+                exceptions.defaultAuthenticationEntryPointFor(
+                    new LoginUrlAuthenticationEntryPoint("/login"),
+                    new MediaTypeRequestMatcher(MediaType.TEXT_HTML)));
+
+    return http.build();
+  }
+
+  @Bean
+  @Order(2)
+  public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.securityMatcher("/api/**")
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> corsConfigurationSource())
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
+        .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+        .exceptionHandling(
+            (exceptions) ->
+                exceptions.authenticationEntryPoint(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+
+    return http.build();
+  }
+
+  @Bean
+  @Order(3)
+  public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests(
+            (authorize) ->
+                authorize
+                    .requestMatchers("/login", "/error", "/actuator/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
+        // Form login handles the redirect to the login page from the
+        // authorization server filter chain
+        .formLogin(Customizer.withDefaults());
+
+    return http.build();
+  }
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
@@ -121,7 +176,8 @@ public class SecurityConfig {
   }
 
   @Bean
-  public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UserReadRepository userReadRepository){
+  public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(
+      UserReadRepository userReadRepository) {
     return context -> {
       User user =
           userReadRepository
@@ -131,12 +187,15 @@ public class SecurityConfig {
       JwtClaimsSet.Builder claims = context.getClaims();
 
       claims.claim("sub", user.getId().toString());
-      if(context.getTokenType().getValue().equals(OidcParameterNames.ID_TOKEN)){
+
+      //      if (context.getTokenType().equals(OAuth2TokenType.ACCESS_TOKEN)) {
+      //
+      //
+      //      } else
+      if (context.getTokenType().getValue().equals(OidcParameterNames.ID_TOKEN)) {
         claims.claim("name", user.getName());
         claims.claim("username", user.getUsername());
         claims.claim("email", user.getEmail());
-//        claims.claim("picture", user.getProfilePictureURL());
-      }else if(context.getTokenType().equals(OAuth2TokenType.ACCESS_TOKEN)){
       }
     };
   }
