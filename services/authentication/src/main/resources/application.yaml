@@ -46,6 +46,13 @@ spring:
                 - "openid"
             require-authorization-consent: false
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
 scalar:
   authentication:
     preferredSecurityScheme: OAuth2
