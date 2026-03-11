@@ -45,3 +45,18 @@ spring:
               scopes:
                 - "openid"
             require-authorization-consent: false
+
+scalar:
+  authentication:
+    preferredSecurityScheme: OAuth2
+    oauth2:
+      OAuth2:
+        flows:
+          authorizationCode:
+            clientId: oidc-client
+            clientSecret: password
+            authorizationUrl: http://localhost:5000/oauth2/authorize
+            tokenUrl: http://localhost:5000/oauth2/token
+            pkce: sha256
+            selectedScopes:
+              - openid
