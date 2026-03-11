@@ -21,5 +21,39 @@ public class AuthController {
   public String loginPage() {
     return "login";
   }
+
+  @GetMapping("/register")
+  public String registerPage(Model model) {
+    model.addAttribute("registerRequest", new RegisterUserRequest(null, null, null, null, null));
+    return "register";
+  }
+
+  @PostMapping("/register")
+  public String register(
+      @Valid @ModelAttribute("registerRequest") RegisterUserRequest request,
+      BindingResult bindingResult,
+      Model model
+  ) {
+    if (bindingResult.hasErrors()) {
+      return "register";
+    }
+
+    try {
+      RegisterUserCommand command = new RegisterUserCommand(
+          request.name(),
+          request.username(),
+          request.email(),
+          request.password(),
+          request.profilePictureURL()
+      );
+
+      this.registerUserCommandHandler.handler(command);
+      return "redirect:/login?registered=true";
+    } catch (Exception e) {
+      // We can catch specific exceptions like DuplicateDataException here if needed
+      model.addAttribute("errorMessage", e.getMessage());
+      return "register";
+    }
+  }
 }
 
