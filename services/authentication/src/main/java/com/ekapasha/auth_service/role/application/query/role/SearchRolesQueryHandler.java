@@ -16,6 +16,20 @@ public class SearchRolesQueryHandler implements QueryHandler<SearchRolesQuery, D
 
   @Override
   public DomainPage<Role> handler(SearchRolesQuery query) {
-    return this.roleReadRepository.getAll(query.searchTerm(), query.pageRequest(), query.includeDeleted());
+    // If workspaceId is null, search global roles (workspaceId = null)
+    if (query.workspaceId() == null) {
+      return this.roleReadRepository.getGlobalRoles(
+          query.searchTerm(),
+          query.pageRequest(),
+          query.includeDeleted()
+      );
+    }
+    
+    return this.roleReadRepository.getAllByWorkspaceId(
+        query.workspaceId(),
+        query.searchTerm(),
+        query.pageRequest(),
+        query.includeDeleted()
+    );
   }
 }
