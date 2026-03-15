@@ -2,6 +2,7 @@ import org.flywaydb.gradle.task.FlywayMigrateTask
 import org.flywaydb.gradle.task.FlywayInfoTask
 import org.flywaydb.gradle.task.FlywayValidateTask
 import org.flywaydb.gradle.task.AbstractFlywayTask
+import org.flywaydb.gradle.task.FlywayRepairTask
 import kotlin.reflect.KClass
 
 /*
@@ -80,3 +81,4 @@ fun <T : AbstractFlywayTask> registerAuthenticationFlywayTask(
 val flywayAuthenticationInfo = registerAuthenticationFlywayTask("flywayAuthenticationInfo", FlywayInfoTask::class)
 val flywayAuthenticationValidate = registerAuthenticationFlywayTask("flywayAuthenticationValidate", FlywayValidateTask::class)
 val flywayAuthenticationMigrate = registerAuthenticationFlywayTask("flywayAuthenticationMigrate", FlywayMigrateTask::class)
+val flywayAuthenticationRepair = registerAuthenticationFlywayTask("flywayAuthenticationRepair", FlywayRepairTask::class)
