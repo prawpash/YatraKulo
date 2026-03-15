@@ -15,6 +15,8 @@ import java.util.UUID;
 public class Role {
   @EqualsAndHashCode.Include
   private final UUID id;
+  @Getter(AccessLevel.NONE)
+  private final UUID workspaceId;
   private String name;
   private String description;
 
@@ -33,6 +35,7 @@ public class Role {
   @Builder()
   private Role(
       @NonNull UUID id,
+      UUID workspaceId,
       @NonNull String name,
       String description,
       @NonNull Instant createdAt,
@@ -43,6 +46,7 @@ public class Role {
       UUID deletedBy
   ) {
     this.id = id;
+    this.workspaceId = workspaceId;
     this.name = Preconditions.requireNonBlank(name, "name");
     this.description = description;
 
@@ -99,6 +103,10 @@ public class Role {
 
   public Optional<Instant> getDeletedAt() {
     return Optional.ofNullable(deletedAt);
+  }
+
+  public Optional<UUID> getWorkspaceId() {
+    return Optional.ofNullable(workspaceId);
   }
 
   public Optional<UUID> getCreatedBy() {

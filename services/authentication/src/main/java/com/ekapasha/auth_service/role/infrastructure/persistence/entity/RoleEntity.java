@@ -24,6 +24,9 @@ public class RoleEntity {
   @Column(nullable = false)
   private UUID id;
 
+  @Column(name = "workspace_id")
+  private UUID workspaceId;
+
   @Column(nullable = false)
   private String name;
 
@@ -49,6 +52,7 @@ public class RoleEntity {
 
   public RoleEntity(
       UUID id,
+      UUID workspaceId,
       String name,
       String description,
       Instant createdAt,
@@ -58,6 +62,7 @@ public class RoleEntity {
       UUID updatedBy,
       UUID deletedBy) {
     this.id = id;
+    this.workspaceId = workspaceId;
     this.name = name;
     this.description = description;
     this.createdAt = createdAt;
