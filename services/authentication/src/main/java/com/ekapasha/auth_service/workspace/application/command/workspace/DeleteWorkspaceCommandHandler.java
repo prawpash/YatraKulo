@@ -18,13 +18,15 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
   public void handler(DeleteWorkspaceCommand command) {
     // Only the owner can delete the workspace - use findByIdAndOwnerId for authorization
     // Returns NotFoundException if workspace doesn't exist OR user is not the owner
-    Workspace workspace = this.workspaceReadRepository
-        .findByIdAndOwnerId(command.id(), command.invokedBy())
-        .orElseThrow(() -> new NotFoundException("Workspace not found."));
+    Workspace workspace =
+        this.workspaceReadRepository
+            .findByIdAndOwnerId(command.id(), command.invokedBy())
+            .orElseThrow(() -> new NotFoundException("Workspace not found."));
 
     // Cannot delete the default workspace
     if (workspace.isDefault()) {
-      throw new DomainRuleViolationException("Cannot delete the default workspace. Set another workspace as default first.");
+      throw new DomainRuleViolationException(
+          "Cannot delete the default workspace. Set another workspace as default first.");
     }
 
     // Delete the workspace

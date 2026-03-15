@@ -7,7 +7,8 @@ import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadReposi
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class GetDefaultWorkspaceByOwnerQueryHandler implements QueryHandler<GetDefaultWorkspaceByOwnerQuery, Workspace> {
+public class GetDefaultWorkspaceByOwnerQueryHandler
+    implements QueryHandler<GetDefaultWorkspaceByOwnerQuery, Workspace> {
 
   private final WorkspaceReadRepository workspaceReadRepository;
 
@@ -15,6 +16,7 @@ public class GetDefaultWorkspaceByOwnerQueryHandler implements QueryHandler<GetD
   public Workspace handler(GetDefaultWorkspaceByOwnerQuery query) {
     return this.workspaceReadRepository
         .findDefaultByOwnerId(query.ownerId())
-        .orElseThrow(() -> new NotFoundException("Default workspace not found for the given owner"));
+        .orElseThrow(
+            () -> new NotFoundException("Default workspace not found for the given owner"));
   }
 }
