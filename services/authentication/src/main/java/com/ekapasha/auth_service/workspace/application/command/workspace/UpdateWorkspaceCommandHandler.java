@@ -19,22 +19,20 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
   public void handler(UpdateWorkspaceCommand command) {
     // Only the owner can update the workspace - use findByIdAndOwnerId for authorization
     // Returns NotFoundException if workspace doesn't exist OR user is not the owner
-    Workspace workspace = this.workspaceReadRepository
-        .findByIdAndOwnerId(command.id(), command.invokedBy())
-        .orElseThrow(() -> new NotFoundException("Workspace not found."));
+    Workspace workspace =
+        this.workspaceReadRepository
+            .findByIdAndOwnerId(command.id(), command.invokedBy())
+            .orElseThrow(() -> new NotFoundException("Workspace not found."));
 
     Instant now = Instant.now();
 
-    // Update name if provided and different
-    if (command.name() != null
-        && !command.name().isBlank()
-        && !command.name().equals(workspace.getName())) {
+    // Update name if provided
+    if (command.name() != null && !command.name().isBlank()) {
       workspace.rename(command.name(), now);
     }
 
     // Update description if provided and different
-    if (command.description() != null
-        && !command.description().equals(workspace.getDescription().orElse(null))) {
+    if (command.description() != null) {
       workspace.updateDescription(command.description(), now);
     }
 
