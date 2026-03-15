@@ -8,13 +8,34 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RoleReadRepository {
-  public Optional<Role> findById(UUID id);
+  // Existing methods
+  Optional<Role> findById(UUID id);
 
-  public DomainPage<Role> getAll(DomainPageRequest pageRequest, Boolean includeDeleted);
+  DomainPage<Role> getAll(DomainPageRequest pageRequest, Boolean includeDeleted);
 
-  public DomainPage<Role> getAll(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
+  DomainPage<Role> getAll(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
 
-  public long count();
+  long count();
 
-  public long count(String searchTerm);
+  long count(String searchTerm);
+
+  // Workspace-scoped methods
+  Optional<Role> findByIdAndWorkspaceId(UUID id, UUID workspaceId);
+
+  DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, DomainPageRequest pageRequest, Boolean includeDeleted);
+
+  DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
+
+  long countByWorkspaceId(UUID workspaceId);
+
+  long countByWorkspaceId(UUID workspaceId, String searchTerm);
+
+  // Global roles methods (workspaceId = null)
+  DomainPage<Role> getGlobalRoles(DomainPageRequest pageRequest, Boolean includeDeleted);
+
+  DomainPage<Role> getGlobalRoles(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
+
+  long countGlobalRoles();
+
+  long countGlobalRoles(String searchTerm);
 }

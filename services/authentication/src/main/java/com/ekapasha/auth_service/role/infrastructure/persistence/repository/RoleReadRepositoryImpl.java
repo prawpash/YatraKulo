@@ -84,4 +84,117 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
         searchTerm
     );
   }
+
+  // Workspace-scoped methods
+  @Override
+  public Optional<Role> findByIdAndWorkspaceId(UUID id, UUID workspaceId) {
+    return this.roleRepository.findByIdAndWorkspaceId(id, workspaceId)
+        .map(RoleMapper::toDomain);
+  }
+
+  @Override
+  public DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, DomainPageRequest pageRequest, Boolean includeDeleted) {
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+
+    Page<RoleEntity> roleEntityPage = this.roleRepository.findByWorkspaceId(workspaceId, pageable);
+
+    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
+
+    return new DomainPage<>(
+        roles,
+        roleEntityPage.getTotalElements(),
+        roleEntityPage.getTotalPages(),
+        roleEntityPage.getNumber(),
+        roleEntityPage.getSize()
+    );
+  }
+
+  @Override
+  public DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted) {
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+
+    Page<RoleEntity> roleEntityPage = this
+        .roleRepository
+        .searchByWorkspaceIdAndSearchTerm(
+            workspaceId,
+            searchTerm,
+            pageable
+        );
+
+    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
+
+    return new DomainPage<>(
+        roles,
+        roleEntityPage.getTotalElements(),
+        roleEntityPage.getTotalPages(),
+        roleEntityPage.getNumber(),
+        roleEntityPage.getSize()
+    );
+  }
+
+  @Override
+  public long countByWorkspaceId(UUID workspaceId) {
+    return this.roleRepository.countByWorkspaceId(workspaceId);
+  }
+
+  @Override
+  public long countByWorkspaceId(UUID workspaceId, String searchTerm) {
+    if (searchTerm == null || searchTerm.trim().isBlank()) {
+      return 0;
+    }
+
+    return this.roleRepository.countByWorkspaceIdAndSearchTerm(
+        workspaceId,
+        searchTerm
+    );
+  }
+
+  // Global roles methods (workspaceId = null)
+  @Override
+  public DomainPage<Role> getGlobalRoles(DomainPageRequest pageRequest, Boolean includeDeleted) {
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+
+    Page<RoleEntity> roleEntityPage = this.roleRepository.findByWorkspaceIdIsNull(pageable);
+
+    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
+
+    return new DomainPage<>(
+        roles,
+        roleEntityPage.getTotalElements(),
+        roleEntityPage.getTotalPages(),
+        roleEntityPage.getNumber(),
+        roleEntityPage.getSize()
+    );
+  }
+
+  @Override
+  public DomainPage<Role> getGlobalRoles(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted) {
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+
+    Page<RoleEntity> roleEntityPage = this.roleRepository.searchGlobalRolesBySearchTerm(searchTerm, pageable);
+
+    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
+
+    return new DomainPage<>(
+        roles,
+        roleEntityPage.getTotalElements(),
+        roleEntityPage.getTotalPages(),
+        roleEntityPage.getNumber(),
+        roleEntityPage.getSize()
+    );
+  }
+
+  @Override
+  public long countGlobalRoles() {
+    return this.roleRepository.countByWorkspaceIdIsNull();
+  }
+
+  @Override
+  public long countGlobalRoles(String searchTerm) {
+    if (searchTerm == null || searchTerm.trim().isBlank()) {
+      return 0;
+    }
+
+    return this.roleRepository.countGlobalRolesBySearchTerm(searchTerm);
+  }
 }
