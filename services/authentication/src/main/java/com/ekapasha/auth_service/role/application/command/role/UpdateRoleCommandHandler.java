@@ -20,13 +20,23 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
 
   @Override
   public void handler(UpdateRoleCommand command) {
-    // TODO: Check permission
-
     // Check if the role exists
     Role role =
         this.roleReadRepository
             .findById(command.id())
             .orElseThrow(() -> new NotFoundException("Role not found."));
+
+    // Check if it global role
+    if(role.getWorkspaceId().isEmpty()) {
+      throw new NotFoundException("Role not found.");
+    }
+
+    // Check if the user is the creator
+    role.getCreatedBy().ifPresent(createdBy -> {
+      if(!createdBy.equals(command.invokedBy())) {
+        throw new NotFoundException("Role not found.");
+      }
+    });
 
     Instant now = Instant.now();
 
