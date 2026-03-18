@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     implementation(project(":libs:java-shared"))
 
@@ -40,6 +41,12 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security-oauth2-resource-server
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test")
+
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security-oauth2-authorization-server
+    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server")
+
+    // Source: https://mvnrepository.com/artifact/org.springframework/spring-jcl
+    implementation("org.springframework:spring-jcl:6.2.15")
 
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
