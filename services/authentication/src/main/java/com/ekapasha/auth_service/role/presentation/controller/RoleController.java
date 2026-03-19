@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -56,9 +58,11 @@ public class RoleController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ResponseEntity<Role> createRole(
-      @Valid @RequestBody CreateRoleRequestDto createRoleRequestDto) {
+      @Valid @RequestBody CreateRoleRequestDto createRoleRequestDto,
+      @AuthenticationPrincipal Jwt jwt) {
+    UUID userId = UUID.fromString(jwt.getSubject());
     Role role =
-        this.createRoleCommandHandler.handler(createRoleRequestDto.toCreateRoleCommand(null));
+        this.createRoleCommandHandler.handler(createRoleRequestDto.toCreateRoleCommand(userId));
 
     return ResponseEntity.created(URI.create("/roles" + role.getId())).body(role);
   }
@@ -75,8 +79,16 @@ public class RoleController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PatchMapping("/{id}")
   public ResponseEntity<Void> updateRole(
-      @PathVariable UUID id, @Valid @RequestBody UpdateRoleRequestDto updateRoleRequestDto) {
-    this.updateRoleCommandHandler.handler(updateRoleRequestDto.toUpdateRoleCommand(id, null));
+      @PathVariable UUID id,
+      @Valid @RequestBody UpdateRoleRequestDto updateRoleRequestDto,
+      @AuthenticationPrincipal Jwt jwt
+  ) {
+    UUID userId = UUID.fromString(jwt.getSubject());
+
+    this.updateRoleCommandHandler.handler(updateRoleRequestDto.toUpdateRoleCommand(id, userId));
+
+    return ResponseEntity.noContent().build();
+  }
 
     return ResponseEntity.noContent().build();
   }
