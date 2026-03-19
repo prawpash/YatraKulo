@@ -2,6 +2,7 @@ package com.ekapasha.auth_service.role.infrastructure.config;
 
 import com.ekapasha.auth_service.role.application.command.role.CreateRoleCommandHandler;
 import com.ekapasha.auth_service.role.application.command.role.UpdateRoleCommandHandler;
+import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermissionsCommandHandler;
 import com.ekapasha.auth_service.role.application.query.permission.GetPermissionByCodeQueryHandler;
 import com.ekapasha.auth_service.role.application.query.permission.ListPermissionsQueryHandler;
 import com.ekapasha.auth_service.role.application.query.permission.SearchPermissionsQueryHandler;
@@ -9,8 +10,11 @@ import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQueryHan
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.SearchRolesQueryHandler;
 import com.ekapasha.auth_service.role.domain.repository.PermissionReadRepository;
+import com.ekapasha.auth_service.role.domain.repository.RolePermissionReadRepository;
+import com.ekapasha.auth_service.role.domain.repository.RolePermissionWriteRepository;
 import com.ekapasha.auth_service.role.domain.repository.RoleReadRepository;
 import com.ekapasha.auth_service.role.domain.repository.RoleWriteRepository;
+import com.ekapasha.auth_service.role.domain.service.RolePermissionService;
 import com.ekapasha.auth_service.role.infrastructure.persistence.repository.*;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +40,25 @@ public class RoleConfig {
     return new PermissionReadRepositoryImpl(jpaPermissionRepository);
   }
 
+  @Bean
+  public RolePermissionWriteRepository rolePermissionWriteRepository(
+      JPARolePermissionRepository jpaRolePermissionRepository) {
+    return new RolePermissionWriteRepositoryImpl(jpaRolePermissionRepository);
+  }
+
+  @Bean
+  public RolePermissionReadRepository rolePermissionReadRepository(
+      JPARolePermissionRepository jpaRolePermissionRepository) {
+    return new RolePermissionReadRepositoryImpl(jpaRolePermissionRepository);
+  }
+
+  @Bean
+  public RolePermissionService rolePermissionService(
+      RolePermissionReadRepository rolePermissionReadRepository,
+      RolePermissionWriteRepository rolePermissionWriteRepository) {
+    return new RolePermissionService(rolePermissionReadRepository, rolePermissionWriteRepository);
+  }
+
   //  Command Handler Beans
   @Bean
   public CreateRoleCommandHandler createRoleCommandHandler(
@@ -48,6 +71,15 @@ public class RoleConfig {
   public UpdateRoleCommandHandler updateRoleCommandHandler(
       RoleWriteRepository roleWriteRepository, RoleReadRepository roleReadRepository) {
     return new UpdateRoleCommandHandler(roleWriteRepository, roleReadRepository);
+  }
+
+  @Bean
+  public UpdateRolePermissionsCommandHandler updateRolePermissionsCommandHandler(
+      RoleReadRepository roleReadRepository,
+      WorkspaceReadRepository workspaceReadRepository,
+      RolePermissionService rolePermissionService) {
+    return new UpdateRolePermissionsCommandHandler(
+        roleReadRepository, workspaceReadRepository, rolePermissionService);
   }
 
   //  Query Handler Beans
