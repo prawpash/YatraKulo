@@ -2,6 +2,7 @@ package com.ekapasha.auth_service.role.presentation.controller;
 
 import com.ekapasha.auth_service.role.application.command.role.CreateRoleCommandHandler;
 import com.ekapasha.auth_service.role.application.command.role.UpdateRoleCommandHandler;
+import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermissionsCommandHandler;
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQuery;
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQueryHandler;
@@ -10,6 +11,7 @@ import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.presentation.dto.role.CreateRoleRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.ListRolesFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRoleRequestDto;
+import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRolePermissionsRequestDto;
 import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +40,7 @@ public class RoleController {
   //  Command
   private final CreateRoleCommandHandler createRoleCommandHandler;
   private final UpdateRoleCommandHandler updateRoleCommandHandler;
+  private final UpdateRolePermissionsCommandHandler updateRolePermissionsCommandHandler;
 
   @Operation(summary = "List roles", description = "Endpoint to get all roles by workspace")
   @GetMapping
@@ -89,6 +92,21 @@ public class RoleController {
 
     return ResponseEntity.noContent().build();
   }
+
+  @Operation(
+      summary = "Update role permissions",
+      description = "Bulk assign or revoke permissions for a role")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PatchMapping("/{id}/permissions")
+  public ResponseEntity<Void> updateRolePermissions(
+      @PathVariable UUID id,
+      @Valid @RequestBody UpdateRolePermissionsRequestDto updateRolePermissionsRequestDto,
+      @AuthenticationPrincipal Jwt jwt
+  ) {
+    UUID userId = UUID.fromString(jwt.getSubject());
+
+    this.updateRolePermissionsCommandHandler.handler(
+        updateRolePermissionsRequestDto.toCommand(id, userId));
 
     return ResponseEntity.noContent().build();
   }
