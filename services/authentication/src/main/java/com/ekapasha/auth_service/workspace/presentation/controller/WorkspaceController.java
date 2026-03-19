@@ -1,9 +1,13 @@
 package com.ekapasha.auth_service.workspace.presentation.controller;
 
 import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
+import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
 import com.ekapasha.auth_service.workspace.application.command.workspace.*;
+import com.ekapasha.auth_service.workspace.application.command.workspacemember.*;
 import com.ekapasha.auth_service.workspace.application.query.workspace.*;
+import com.ekapasha.auth_service.workspace.application.query.workspacemember.*;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
+import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.presentation.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +39,15 @@ public class WorkspaceController {
   private final UpdateWorkspaceCommandHandler updateWorkspaceCommandHandler;
   private final DeleteWorkspaceCommandHandler deleteWorkspaceCommandHandler;
   private final SetWorkspaceDefaultCommandHandler setWorkspaceDefaultCommandHandler;
+
+  // Workspace Member System
+  private final AddWorkspaceMemberCommandHandler addWorkspaceMemberCommandHandler;
+  private final RemoveWorkspaceMemberCommandHandler removeWorkspaceMemberCommandHandler;
+  private final UpdateWorkspaceMemberRoleCommandHandler updateWorkspaceMemberRoleCommandHandler;
+  private final ListWorkspaceMembersByWorkspaceQueryHandler
+      listWorkspaceMembersByWorkspaceQueryHandler;
+  private final GetWorkspaceMemberByWorkspaceAndUserQueryHandler
+      getWorkspaceMemberByWorkspaceAndUserQueryHandler;
 
   @Operation(summary = "Create workspace", description = "Create a new workspace")
   @ResponseStatus(HttpStatus.CREATED)
@@ -123,5 +136,78 @@ public class WorkspaceController {
             new GetDefaultWorkspaceByOwnerQuery(ownerId));
 
     return ResponseEntity.ok(workspace);
+  }
+
+  // ==========================================
+  // Workspace Member Endpoints
+  // ==========================================
+
+  @Operation(summary = "Add member", description = "Add a new member to the workspace")
+  @ResponseStatus(HttpStatus.CREATED)
+  @PostMapping("/{id}/members")
+  public ResponseEntity<Void> addMember(
+      @PathVariable UUID id,
+      @Valid @RequestBody AddWorkspaceMemberRequestDto request,
+      @AuthenticationPrincipal Jwt jwt) {
+    UUID invokedBy = UUID.fromString(jwt.getSubject());
+
+    addWorkspaceMemberCommandHandler.handler(request.toCommand(id, invokedBy));
+
+    return ResponseEntity.created(URI.create("/workspaces/" + id + "/members/" + request.userId()))
+        .build();
+  }
+
+  @Operation(
+      summary = "List members",
+      description = "Get all members of a workspace with pagination")
+  @GetMapping("/{id}/members")
+  public ResponseEntity<DomainPage<WorkspaceMember>> listMembers(
+      @PathVariable UUID id, @ParameterObject @Valid DomainPageRequest pageRequest) {
+
+    DomainPage<WorkspaceMember> members =
+        listWorkspaceMembersByWorkspaceQueryHandler.handler(
+            new ListWorkspaceMembersByWorkspaceQuery(id, pageRequest));
+
+    return ResponseEntity.ok(members);
+  }
+
+  @Operation(summary = "Get member", description = "Get a specific workspace member by user ID")
+  @GetMapping("/{id}/members/{userId}")
+  public ResponseEntity<WorkspaceMember> getMember(
+      @PathVariable UUID id, @PathVariable UUID userId) {
+
+    WorkspaceMember member =
+        getWorkspaceMemberByWorkspaceAndUserQueryHandler.handler(
+            new GetWorkspaceMemberByWorkspaceAndUserQuery(id, userId));
+
+    return ResponseEntity.ok(member);
+  }
+
+  @Operation(summary = "Update member role", description = "Update the role of a workspace member")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PatchMapping("/{id}/members/{userId}/role")
+  public ResponseEntity<Void> updateMemberRole(
+      @PathVariable UUID id,
+      @PathVariable UUID userId,
+      @Valid @RequestBody UpdateWorkspaceMemberRoleRequestDto request,
+      @AuthenticationPrincipal Jwt jwt) {
+    UUID invokedBy = UUID.fromString(jwt.getSubject());
+
+    updateWorkspaceMemberRoleCommandHandler.handler(request.toCommand(id, userId, invokedBy));
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "Remove member", description = "Remove a member from the workspace")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @DeleteMapping("/{id}/members/{userId}")
+  public ResponseEntity<Void> removeMember(
+      @PathVariable UUID id, @PathVariable UUID userId, @AuthenticationPrincipal Jwt jwt) {
+    UUID invokedBy = UUID.fromString(jwt.getSubject());
+
+    removeWorkspaceMemberCommandHandler.handler(
+        new RemoveWorkspaceMemberCommand(id, userId, invokedBy));
+
+    return ResponseEntity.noContent().build();
   }
 }
