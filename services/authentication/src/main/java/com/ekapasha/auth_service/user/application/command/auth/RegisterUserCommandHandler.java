@@ -8,6 +8,7 @@ import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;
 import com.ekapasha.auth_service.user.domain.service.PasswordService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -19,6 +20,7 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
   private final UserReadRepository userReadRepository;
 
   @Override
+  @Transactional
   public User handler(RegisterUserCommand command) {
     // validate data
     if (command.name() == null || command.name().isBlank()) {

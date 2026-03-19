@@ -7,6 +7,7 @@ import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -16,6 +17,7 @@ public class UpdateUserProfileCommandHandler implements CommandHandler<UpdateUse
   private final UserWriteRepository userWriteRepository;
 
   @Override
+  @Transactional
   public User handler(UpdateUserProfileCommand command) {
     // Prevent other user to change the data that their not own
     if (command.invokedBy() == null) {

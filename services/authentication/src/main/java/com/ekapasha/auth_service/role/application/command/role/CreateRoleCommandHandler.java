@@ -8,6 +8,7 @@ import com.ekapasha.auth_service.shared.domain.exception.UnauthorizedAccessExcep
 import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
   }
 
   @Override
+  @Transactional
   public Role handler(CreateRoleCommand command) {
     // Validate workspace exists and user is the owner
     Workspace workspace = workspaceReadRepository

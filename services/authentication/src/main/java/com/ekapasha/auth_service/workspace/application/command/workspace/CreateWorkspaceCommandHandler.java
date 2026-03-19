@@ -5,6 +5,7 @@ import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,6 +17,7 @@ public class CreateWorkspaceCommandHandler
   private final WorkspaceWriteRepository workspaceWriteRepository;
 
   @Override
+  @Transactional
   public Workspace handler(CreateWorkspaceCommand command) {
     // Validate data
     if (command.name() == null || command.name().isBlank()) {

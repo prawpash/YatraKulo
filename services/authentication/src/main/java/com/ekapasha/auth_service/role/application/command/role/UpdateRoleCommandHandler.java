@@ -5,6 +5,7 @@ import com.ekapasha.auth_service.role.domain.repository.RoleReadRepository;
 import com.ekapasha.auth_service.role.domain.repository.RoleWriteRepository;
 import com.ekapasha.auth_service.shared.application.command.VoidCommandHandler;
 import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -19,6 +20,7 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
   }
 
   @Override
+  @Transactional
   public void handler(UpdateRoleCommand command) {
     // Check if the role exists
     Role role =
@@ -27,16 +29,18 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
             .orElseThrow(() -> new NotFoundException("Role not found."));
 
     // Check if it global role
-    if(role.getWorkspaceId().isEmpty()) {
+    if (role.getWorkspaceId().isEmpty()) {
       throw new NotFoundException("Role not found.");
     }
 
     // Check if the user is the creator
-    role.getCreatedBy().ifPresent(createdBy -> {
-      if(!createdBy.equals(command.invokedBy())) {
-        throw new NotFoundException("Role not found.");
-      }
-    });
+    role.getCreatedBy()
+        .ifPresent(
+            createdBy -> {
+              if (!createdBy.equals(command.invokedBy())) {
+                throw new NotFoundException("Role not found.");
+              }
+            });
 
     Instant now = Instant.now();
 

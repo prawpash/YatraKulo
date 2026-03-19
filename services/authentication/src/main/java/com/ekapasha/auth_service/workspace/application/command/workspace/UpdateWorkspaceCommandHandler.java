@@ -6,6 +6,7 @@ import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -16,6 +17,7 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
   private final WorkspaceReadRepository workspaceReadRepository;
 
   @Override
+  @Transactional
   public void handler(UpdateWorkspaceCommand command) {
     // Only the owner can update the workspace - use findByIdAndOwnerId for authorization
     // Returns NotFoundException if workspace doesn't exist OR user is not the owner

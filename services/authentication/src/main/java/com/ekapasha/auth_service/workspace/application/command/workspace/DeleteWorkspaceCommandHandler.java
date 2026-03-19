@@ -7,6 +7,7 @@ import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteWorkspaceCommand> {
@@ -15,6 +16,7 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
   private final WorkspaceReadRepository workspaceReadRepository;
 
   @Override
+  @Transactional
   public void handler(DeleteWorkspaceCommand command) {
     // Only the owner can delete the workspace - use findByIdAndOwnerId for authorization
     // Returns NotFoundException if workspace doesn't exist OR user is not the owner
