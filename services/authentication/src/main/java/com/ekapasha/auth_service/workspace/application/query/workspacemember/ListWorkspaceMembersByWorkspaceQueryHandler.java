@@ -1,0 +1,18 @@
+package com.ekapasha.auth_service.workspace.application.query.workspacemember;
+
+import com.ekapasha.auth_service.shared.application.query.QueryHandler;
+import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
+import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
+import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class ListWorkspaceMembersByWorkspaceQueryHandler implements QueryHandler<ListWorkspaceMembersByWorkspaceQuery, DomainPage<WorkspaceMember>> {
+
+  private final WorkspaceMemberReadRepository workspaceMemberReadRepository;
+
+  @Override
+  public DomainPage<WorkspaceMember> handler(ListWorkspaceMembersByWorkspaceQuery query) {
+    return this.workspaceMemberReadRepository.findByWorkspaceId(query.workspaceId(), query.pageRequest());
+  }
+}
