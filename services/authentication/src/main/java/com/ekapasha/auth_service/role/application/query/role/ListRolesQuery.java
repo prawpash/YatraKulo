@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record ListRolesQuery(
     UUID workspaceId,
+    Boolean includeGlobal,
+    String searchTerm,
     DomainPageRequest pageRequest,
-    Boolean includeDeleted
-) {
-}
+    Boolean includeDeleted) {}

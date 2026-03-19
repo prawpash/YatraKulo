@@ -16,18 +16,12 @@ public class ListRolesQueryHandler implements QueryHandler<ListRolesQuery, Domai
 
   @Override
   public DomainPage<Role> handler(ListRolesQuery query) {
-    // If workspaceId is null, return global roles (workspaceId = null)
-    if (query.workspaceId() == null) {
-      return this.roleReadRepository.getGlobalRoles(
-          query.pageRequest(),
-          query.includeDeleted()
-      );
-    }
-    
-    return this.roleReadRepository.getAllByWorkspaceId(
+    return this.roleReadRepository.getRoles(
         query.workspaceId(),
+        query.includeGlobal() != null && query.includeGlobal(),
+        query.searchTerm(),
         query.pageRequest(),
-        query.includeDeleted()
+        query.includeDeleted() != null && query.includeDeleted()
     );
   }
 }

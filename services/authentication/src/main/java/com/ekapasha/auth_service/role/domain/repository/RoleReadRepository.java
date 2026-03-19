@@ -11,10 +11,6 @@ public interface RoleReadRepository {
   // Existing methods
   Optional<Role> findById(UUID id);
 
-  DomainPage<Role> getAll(DomainPageRequest pageRequest, Boolean includeDeleted);
-
-  DomainPage<Role> getAll(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
-
   long count();
 
   long count(String searchTerm);
@@ -22,20 +18,14 @@ public interface RoleReadRepository {
   // Workspace-scoped methods
   Optional<Role> findByIdAndWorkspaceId(UUID id, UUID workspaceId);
 
-  DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, DomainPageRequest pageRequest, Boolean includeDeleted);
-
-  DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
-
   long countByWorkspaceId(UUID workspaceId);
 
   long countByWorkspaceId(UUID workspaceId, String searchTerm);
 
   // Global roles methods (workspaceId = null)
-  DomainPage<Role> getGlobalRoles(DomainPageRequest pageRequest, Boolean includeDeleted);
-
-  DomainPage<Role> getGlobalRoles(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted);
-
   long countGlobalRoles();
 
   long countGlobalRoles(String searchTerm);
+
+  DomainPage<Role> getRoles(UUID workspaceId, boolean includeGlobal, String searchTerm, DomainPageRequest pageRequest, boolean includeDeleted);
 }

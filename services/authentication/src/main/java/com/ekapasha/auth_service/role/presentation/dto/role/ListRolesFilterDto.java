@@ -1,8 +1,6 @@
 package com.ekapasha.auth_service.role.presentation.dto.role;
 
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQuery;
-import com.ekapasha.auth_service.role.application.query.role.SearchRolesQuery;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
 import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +23,12 @@ public record ListRolesFilterDto(
         @Parameter(description = "Page size", required = true)
         @Schema(description = "Page size", defaultValue = "10")
         Integer size,
-    @Schema(description = "Include deleted records", defaultValue = "false") Boolean includeDeleted,
+    @Parameter(description = "Include deleted records", required = false)
+        @Schema(description = "Include deleted records", defaultValue = "false")
+        Boolean includeDeleted,
+    @Parameter(description = "Include global roles when workspaceId is provided", required = false)
+        @Schema(description = "Include global roles", defaultValue = "false")
+        Boolean includeGlobal,
     @Parameter(description = "Search term", required = false)
         @Schema(description = "Search term", defaultValue = "")
         String search) {
@@ -33,16 +36,14 @@ public record ListRolesFilterDto(
     return includeDeleted != null && includeDeleted;
   }
 
+  public boolean includeGlobalOrNot() {
+    return includeGlobal != null && includeGlobal;
+  }
+
   public ListRolesQuery toListRolesQuery() {
     return new ListRolesQuery(
         this.workspaceId,
-        new DomainPageRequest(this.page, this.size),
-        this.includeDeletedOrNot());
-  }
-
-  public SearchRolesQuery toSearchRolesQuery() {
-    return new SearchRolesQuery(
-        this.workspaceId,
+        this.includeGlobalOrNot(),
         this.search,
         new DomainPageRequest(this.page, this.size),
         this.includeDeletedOrNot());

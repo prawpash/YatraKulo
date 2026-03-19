@@ -31,12 +31,15 @@ public interface JPARoleRepository extends JpaRepository<RoleEntity, UUID> {
 
   Page<RoleEntity> findByWorkspaceId(UUID workspaceId, Pageable pageable);
 
-  @Query("SELECT r FROM RoleEntity r WHERE r.workspaceId = :workspaceId " +
+  @Query("SELECT r FROM RoleEntity r WHERE (r.workspaceId = :workspaceId OR (:includeGlobal = true AND r.workspaceId IS NULL)) " +
+         "AND (:includeDeleted = true OR r.deletedAt IS NULL) " +
          "AND (LOWER(r.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
          "OR LOWER(r.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
-  Page<RoleEntity> searchByWorkspaceIdAndSearchTerm(
+  Page<RoleEntity> searchWorkspaceRolesWithGlobal(
       @Param("workspaceId") UUID workspaceId,
+      @Param("includeGlobal") boolean includeGlobal,
       @Param("searchTerm") String searchTerm,
+      @Param("includeDeleted") boolean includeDeleted,
       Pageable pageable
   );
 
@@ -54,10 +57,12 @@ public interface JPARoleRepository extends JpaRepository<RoleEntity, UUID> {
   Page<RoleEntity> findByWorkspaceIdIsNull(Pageable pageable);
 
   @Query("SELECT r FROM RoleEntity r WHERE r.workspaceId IS NULL " +
+         "AND (:includeDeleted = true OR r.deletedAt IS NULL) " +
          "AND (LOWER(r.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
          "OR LOWER(r.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
   Page<RoleEntity> searchGlobalRolesBySearchTerm(
       @Param("searchTerm") String searchTerm,
+      @Param("includeDeleted") boolean includeDeleted,
       Pageable pageable
   );
 

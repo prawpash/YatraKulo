@@ -8,7 +8,6 @@ import com.ekapasha.auth_service.role.application.query.permission.ListPermissio
 import com.ekapasha.auth_service.role.application.query.permission.SearchPermissionsQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQueryHandler;
-import com.ekapasha.auth_service.role.application.query.role.SearchRolesQueryHandler;
 import com.ekapasha.auth_service.role.domain.repository.PermissionReadRepository;
 import com.ekapasha.auth_service.role.domain.repository.RolePermissionReadRepository;
 import com.ekapasha.auth_service.role.domain.repository.RolePermissionWriteRepository;
@@ -92,11 +91,6 @@ public class RoleConfig {
   @Bean
   public ListRolesQueryHandler getRolesByNameQueryHandler(RoleReadRepository roleReadRepository) {
     return new ListRolesQueryHandler(roleReadRepository);
-  }
-
-  @Bean
-  public SearchRolesQueryHandler searchRolesQueryHandler(RoleReadRepository roleReadRepository) {
-    return new SearchRolesQueryHandler(roleReadRepository);
   }
 
   //  Permission

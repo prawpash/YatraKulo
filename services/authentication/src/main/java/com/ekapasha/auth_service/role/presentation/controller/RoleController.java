@@ -6,7 +6,6 @@ import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermiss
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQuery;
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQueryHandler;
-import com.ekapasha.auth_service.role.application.query.role.SearchRolesQueryHandler;
 import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.presentation.dto.role.CreateRoleRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.ListRolesFilterDto;
@@ -35,7 +34,6 @@ public class RoleController {
   //  Query
   private final ListRolesQueryHandler listRolesQueryHandler;
   private final GetRoleByIdQueryHandler getRoleByIdQueryHandler;
-  private final SearchRolesQueryHandler searchRolesQueryHandler;
 
   //  Command
   private final CreateRoleCommandHandler createRoleCommandHandler;
@@ -46,11 +44,6 @@ public class RoleController {
   @GetMapping
   public ResponseEntity<DomainPage<Role>> listRoles(
       @ParameterObject @Valid ListRolesFilterDto listRolesFilterDto) {
-    if (listRolesFilterDto.search() != null && !listRolesFilterDto.search().isBlank()) {
-      return ResponseEntity.ok(
-          this.searchRolesQueryHandler.handler(listRolesFilterDto.toSearchRolesQuery()));
-    }
-
     DomainPage<Role> roles =
         this.listRolesQueryHandler.handler(listRolesFilterDto.toListRolesQuery());
 

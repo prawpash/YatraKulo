@@ -29,46 +29,6 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
   }
 
   @Override
-  public DomainPage<Role> getAll(DomainPageRequest pageRequest, Boolean includeDeleted) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<RoleEntity> roleEntityPage = this.roleRepository.findAll(pageable);
-
-    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        roles,
-        roleEntityPage.getTotalElements(),
-        roleEntityPage.getTotalPages(),
-        roleEntityPage.getNumber(),
-        roleEntityPage.getSize()
-    );
-  }
-
-  @Override
-  public DomainPage<Role> getAll(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<RoleEntity> roleEntityPage = this
-        .roleRepository
-        .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-            searchTerm,
-            searchTerm,
-            pageable
-        );
-
-    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        roles,
-        roleEntityPage.getTotalElements(),
-        roleEntityPage.getTotalPages(),
-        roleEntityPage.getNumber(),
-        roleEntityPage.getSize()
-    );
-  }
-
-  @Override
   public long count() {
     return this.roleRepository.count();
   }
@@ -93,46 +53,6 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
   }
 
   @Override
-  public DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, DomainPageRequest pageRequest, Boolean includeDeleted) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<RoleEntity> roleEntityPage = this.roleRepository.findByWorkspaceId(workspaceId, pageable);
-
-    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        roles,
-        roleEntityPage.getTotalElements(),
-        roleEntityPage.getTotalPages(),
-        roleEntityPage.getNumber(),
-        roleEntityPage.getSize()
-    );
-  }
-
-  @Override
-  public DomainPage<Role> getAllByWorkspaceId(UUID workspaceId, String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<RoleEntity> roleEntityPage = this
-        .roleRepository
-        .searchByWorkspaceIdAndSearchTerm(
-            workspaceId,
-            searchTerm,
-            pageable
-        );
-
-    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        roles,
-        roleEntityPage.getTotalElements(),
-        roleEntityPage.getTotalPages(),
-        roleEntityPage.getNumber(),
-        roleEntityPage.getSize()
-    );
-  }
-
-  @Override
   public long countByWorkspaceId(UUID workspaceId) {
     return this.roleRepository.countByWorkspaceId(workspaceId);
   }
@@ -149,41 +69,6 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
     );
   }
 
-  // Global roles methods (workspaceId = null)
-  @Override
-  public DomainPage<Role> getGlobalRoles(DomainPageRequest pageRequest, Boolean includeDeleted) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<RoleEntity> roleEntityPage = this.roleRepository.findByWorkspaceIdIsNull(pageable);
-
-    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        roles,
-        roleEntityPage.getTotalElements(),
-        roleEntityPage.getTotalPages(),
-        roleEntityPage.getNumber(),
-        roleEntityPage.getSize()
-    );
-  }
-
-  @Override
-  public DomainPage<Role> getGlobalRoles(String searchTerm, DomainPageRequest pageRequest, Boolean includeDeleted) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<RoleEntity> roleEntityPage = this.roleRepository.searchGlobalRolesBySearchTerm(searchTerm, pageable);
-
-    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        roles,
-        roleEntityPage.getTotalElements(),
-        roleEntityPage.getTotalPages(),
-        roleEntityPage.getNumber(),
-        roleEntityPage.getSize()
-    );
-  }
-
   @Override
   public long countGlobalRoles() {
     return this.roleRepository.countByWorkspaceIdIsNull();
@@ -196,5 +81,28 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
     }
 
     return this.roleRepository.countGlobalRolesBySearchTerm(searchTerm);
+  }
+
+  @Override
+  public DomainPage<Role> getRoles(UUID workspaceId, boolean includeGlobal, String searchTerm, DomainPageRequest pageRequest, boolean includeDeleted) {
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+    String q = (searchTerm == null || searchTerm.trim().isEmpty()) ? "" : searchTerm.trim();
+
+    Page<RoleEntity> roleEntityPage;
+    if (workspaceId == null) {
+        roleEntityPage = this.roleRepository.searchGlobalRolesBySearchTerm(q, includeDeleted, pageable);
+    } else {
+        roleEntityPage = this.roleRepository.searchWorkspaceRolesWithGlobal(workspaceId, includeGlobal, q, includeDeleted, pageable);
+    }
+    
+    List<Role> roles = roleEntityPage.stream().map(RoleMapper::toDomain).toList();
+
+    return new DomainPage<>(
+        roles,
+        roleEntityPage.getTotalElements(),
+        roleEntityPage.getTotalPages(),
+        roleEntityPage.getNumber(),
+        roleEntityPage.getSize()
+    );
   }
 }
