@@ -71,10 +71,9 @@ public class WorkspaceConfig {
   @Bean
   public WorkspaceMemberService workspaceMemberService(
       WorkspaceMemberReadRepository workspaceMemberReadRepository,
-      WorkspaceMemberWriteRepository workspaceMemberWriteRepository,
-      WorkspaceReadRepository workspaceReadRepository) {
+      WorkspaceMemberWriteRepository workspaceMemberWriteRepository) {
     return new WorkspaceMemberService(
-        workspaceMemberReadRepository, workspaceMemberWriteRepository, workspaceReadRepository);
+        workspaceMemberReadRepository, workspaceMemberWriteRepository);
   }
 
   // ===========================================
@@ -114,8 +113,9 @@ public class WorkspaceConfig {
 
   @Bean
   public AddWorkspaceMemberCommandHandler addWorkspaceMemberCommandHandler(
-      WorkspaceMemberService workspaceMemberService) {
-    return new AddWorkspaceMemberCommandHandler(workspaceMemberService);
+      WorkspaceMemberService workspaceMemberService,
+      WorkspaceReadRepository workspaceReadRepository) {
+    return new AddWorkspaceMemberCommandHandler(workspaceMemberService, workspaceReadRepository);
   }
 
   @Bean

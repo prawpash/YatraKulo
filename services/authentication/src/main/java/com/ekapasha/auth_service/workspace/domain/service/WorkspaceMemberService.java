@@ -17,18 +17,8 @@ import java.util.UUID;
 public class WorkspaceMemberService {
   private final WorkspaceMemberReadRepository workspaceMemberReadRepository;
   private final WorkspaceMemberWriteRepository workspaceMemberWriteRepository;
-  private final WorkspaceReadRepository workspaceReadRepository;
 
   public void addMember(UUID workspaceId, UUID userId, UUID roleId, Instant addedAt, UUID addedBy) {
-    // check if the workspace exists
-    Workspace workspace = this.workspaceReadRepository.findById(workspaceId)
-        .orElseThrow(() -> new NotFoundException("Workspace not found."));
-
-    // only the owner can add new members
-    if (!workspace.getOwnerId().equals(addedBy)) {
-      throw new UnauthorizedAccessException("Only the workspace owner can add new members.");
-    }
-
     // check if the member already exists
     if (this.workspaceMemberReadRepository.existsByWorkspaceIdAndUserId(workspaceId, userId)) {
       return;
@@ -62,15 +52,6 @@ public class WorkspaceMemberService {
   }
 
   public void updateMemberRole(UUID workspaceId, UUID userId, UUID roleId, Instant updatedAt, UUID updatedBy) {
-    // check if the workspace exists
-    Workspace workspace = this.workspaceReadRepository.findById(workspaceId)
-        .orElseThrow(() -> new NotFoundException("Workspace not found."));
-
-    // only the owner can update member roles
-    if (!workspace.getOwnerId().equals(updatedBy)) {
-      throw new UnauthorizedAccessException("Only the workspace owner can update member roles.");
-    }
-
     // check if the member exists
     WorkspaceMember member = this.workspaceMemberReadRepository.findByWorkspaceIdAndUserId(workspaceId, userId)
         .orElseThrow(() -> new NotFoundException("User is not a member of this workspace."));
