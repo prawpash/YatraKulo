@@ -13,12 +13,15 @@ import java.util.UUID;
 @Repository
 public interface JPAWorkspaceRepository extends JpaRepository<WorkspaceEntity, UUID> {
   Optional<WorkspaceEntity> findByIdAndOwnerId(UUID id, UUID ownerId);
-  
+
   List<WorkspaceEntity> findByOwnerId(UUID ownerId);
-  
+
   Page<WorkspaceEntity> findByOwnerId(UUID ownerId, Pageable pageable);
-  
+
+  Page<WorkspaceEntity> findByOwnerIdAndNameContainingIgnoreCase(
+      UUID ownerId, String name, Pageable pageable);
+
   Optional<WorkspaceEntity> findByOwnerIdAndIsDefaultTrue(UUID ownerId);
-  
+
   boolean existsByIdAndOwnerId(UUID id, UUID ownerId);
 }

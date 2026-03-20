@@ -7,12 +7,14 @@ import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadReposi
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ListWorkspacesByOwnerQueryHandler implements QueryHandler<ListWorkspacesByOwnerQuery, DomainPage<Workspace>> {
+public class ListWorkspacesByOwnerQueryHandler
+    implements QueryHandler<ListWorkspacesByOwnerQuery, DomainPage<Workspace>> {
 
   private final WorkspaceReadRepository workspaceReadRepository;
 
   @Override
   public DomainPage<Workspace> handler(ListWorkspacesByOwnerQuery query) {
-    return this.workspaceReadRepository.findByOwnerId(query.ownerId(), query.pageRequest());
+    return this.workspaceReadRepository.findByOwnerIdAndSearch(
+        query.ownerId(), query.search(), query.pageRequest());
   }
 }

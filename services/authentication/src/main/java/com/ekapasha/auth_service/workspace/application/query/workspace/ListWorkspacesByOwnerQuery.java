@@ -5,6 +5,4 @@ import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
 import java.util.UUID;
 
 public record ListWorkspacesByOwnerQuery(
-    UUID ownerId,
-    DomainPageRequest pageRequest
-) {}
+    UUID ownerId, DomainPageRequest pageRequest, String search) {}

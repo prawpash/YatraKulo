@@ -14,6 +14,9 @@ public interface WorkspaceMemberReadRepository {
 
   DomainPage<WorkspaceMember> findByWorkspaceId(UUID workspaceId, DomainPageRequest pageRequest);
 
+  DomainPage<WorkspaceMember> findByWorkspaceIdAndSearch(
+      UUID workspaceId, String search, DomainPageRequest pageRequest);
+
   DomainPage<WorkspaceMember> findByUserId(UUID userId, DomainPageRequest pageRequest);
 
   boolean existsByWorkspaceIdAndUserId(UUID workspaceId, UUID userId);

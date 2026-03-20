@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public record ListWorkspacesFilterDto(
+public record ListWorkspaceMembersFilterDto(
     @NotNull
         @Min(value = 0, message = "Page must be greater than or equal to 0")
         @Parameter(description = "Page number (0-based)", required = true)
@@ -17,8 +17,8 @@ public record ListWorkspacesFilterDto(
         @Parameter(description = "Page size", required = true)
         @Schema(description = "Page size", defaultValue = "10")
         Integer size,
-    @Parameter(description = "Search by workspace name")
-        @Schema(description = "Search by workspace name")
+    @Parameter(description = "Search by user name or email")
+        @Schema(description = "Search by user name or email")
         String search) {
   public DomainPageRequest toPageRequest() {
     return new DomainPageRequest(this.page, this.size);

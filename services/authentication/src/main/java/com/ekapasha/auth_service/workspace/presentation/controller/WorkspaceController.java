@@ -73,7 +73,7 @@ public class WorkspaceController {
 
     DomainPage<Workspace> workspaces =
         listWorkspacesByOwnerQueryHandler.handler(
-            new ListWorkspacesByOwnerQuery(ownerId, filter.toPageRequest()));
+            new ListWorkspacesByOwnerQuery(ownerId, filter.toPageRequest(), filter.search()));
 
     return ResponseEntity.ok(workspaces);
   }
@@ -162,11 +162,11 @@ public class WorkspaceController {
       description = "Get all members of a workspace with pagination")
   @GetMapping("/{id}/members")
   public ResponseEntity<DomainPage<WorkspaceMember>> listMembers(
-      @PathVariable UUID id, @ParameterObject @Valid DomainPageRequest pageRequest) {
+      @PathVariable UUID id, @ParameterObject @Valid ListWorkspaceMembersFilterDto filter) {
 
     DomainPage<WorkspaceMember> members =
         listWorkspaceMembersByWorkspaceQueryHandler.handler(
-            new ListWorkspaceMembersByWorkspaceQuery(id, pageRequest));
+            new ListWorkspaceMembersByWorkspaceQuery(id, filter.toPageRequest(), filter.search()));
 
     return ResponseEntity.ok(members);
   }

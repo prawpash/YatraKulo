@@ -6,5 +6,6 @@ import java.util.UUID;
 
 public record ListWorkspaceMembersByWorkspaceQuery(
     UUID workspaceId,
-    DomainPageRequest pageRequest
+    DomainPageRequest pageRequest,
+    String search
 ) {}

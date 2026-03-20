@@ -28,44 +28,55 @@ public class WorkspaceMemberReadRepositoryImpl implements WorkspaceMemberReadRep
 
   @Override
   public Optional<WorkspaceMember> findByWorkspaceIdAndUserId(UUID workspaceId, UUID userId) {
-    return this.workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, userId)
+    return this.workspaceMemberRepository
+        .findByWorkspaceIdAndUserId(workspaceId, userId)
         .map(WorkspaceMemberMapper::toDomain);
   }
 
   @Override
-  public DomainPage<WorkspaceMember> findByWorkspaceId(UUID workspaceId, DomainPageRequest pageRequest) {
+  public DomainPage<WorkspaceMember> findByWorkspaceId(
+      UUID workspaceId, DomainPageRequest pageRequest) {
     Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-    Page<WorkspaceMemberEntity> page = this.workspaceMemberRepository.findByWorkspaceId(workspaceId, pageable);
+    Page<WorkspaceMemberEntity> page =
+        this.workspaceMemberRepository.findByWorkspaceId(workspaceId, pageable);
 
-    List<WorkspaceMember> content = page.getContent().stream()
-        .map(WorkspaceMemberMapper::toDomain)
-        .toList();
+    List<WorkspaceMember> content =
+        page.getContent().stream().map(WorkspaceMemberMapper::toDomain).toList();
 
     return new DomainPage<>(
-        content,
-        page.getTotalElements(),
-        page.getTotalPages(),
-        page.getNumber(),
-        page.getSize()
-    );
+        content, page.getTotalElements(), page.getTotalPages(), page.getNumber(), page.getSize());
+  }
+
+  @Override
+  public DomainPage<WorkspaceMember> findByWorkspaceIdAndSearch(
+      UUID workspaceId, String search, DomainPageRequest pageRequest) {
+    if (search == null || search.isBlank()) {
+      return this.findByWorkspaceId(workspaceId, pageRequest);
+    }
+
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+    Page<WorkspaceMemberEntity> page =
+        this.workspaceMemberRepository.findByWorkspaceIdAndUserSearch(
+            workspaceId, search, pageable);
+
+    List<WorkspaceMember> content =
+        page.getContent().stream().map(WorkspaceMemberMapper::toDomain).toList();
+
+    return new DomainPage<>(
+        content, page.getTotalElements(), page.getTotalPages(), page.getNumber(), page.getSize());
   }
 
   @Override
   public DomainPage<WorkspaceMember> findByUserId(UUID userId, DomainPageRequest pageRequest) {
     Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-    Page<WorkspaceMemberEntity> page = this.workspaceMemberRepository.findByUserId(userId, pageable);
+    Page<WorkspaceMemberEntity> page =
+        this.workspaceMemberRepository.findByUserId(userId, pageable);
 
-    List<WorkspaceMember> content = page.getContent().stream()
-        .map(WorkspaceMemberMapper::toDomain)
-        .toList();
+    List<WorkspaceMember> content =
+        page.getContent().stream().map(WorkspaceMemberMapper::toDomain).toList();
 
     return new DomainPage<>(
-        content,
-        page.getTotalElements(),
-        page.getTotalPages(),
-        page.getNumber(),
-        page.getSize()
-    );
+        content, page.getTotalElements(), page.getTotalPages(), page.getNumber(), page.getSize());
   }
 
   @Override

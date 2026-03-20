@@ -57,6 +57,28 @@ public class WorkspaceReadRepositoryImpl implements WorkspaceReadRepository {
   }
 
   @Override
+  public DomainPage<Workspace> findByOwnerIdAndSearch(UUID ownerId, String search, DomainPageRequest pageRequest) {
+    if (search == null || search.isBlank()) {
+      return this.findByOwnerId(ownerId, pageRequest);
+    }
+    
+    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
+    Page<WorkspaceEntity> page = this.workspaceRepository.findByOwnerIdAndNameContainingIgnoreCase(ownerId, search, pageable);
+    
+    List<Workspace> content = page.getContent().stream()
+        .map(WorkspaceMapper::toDomain)
+        .toList();
+    
+    return new DomainPage<>(
+        content,
+        page.getTotalElements(),
+        page.getTotalPages(),
+        page.getNumber(),
+        page.getSize()
+    );
+  }
+
+  @Override
   public Optional<Workspace> findDefaultByOwnerId(UUID ownerId) {
     return this.workspaceRepository.findByOwnerIdAndIsDefaultTrue(ownerId).map(WorkspaceMapper::toDomain);
   }
