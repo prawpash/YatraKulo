@@ -5,14 +5,11 @@ import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.domain.repository.RolePermissionWriteRepository;
 import com.ekapasha.auth_service.role.infrastructure.persistence.mapper.RolePermissionMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-@Repository
 @RequiredArgsConstructor
 public class RolePermissionWriteRepositoryImpl implements RolePermissionWriteRepository {
   private final JPARolePermissionRepository jpaRepository;
@@ -29,16 +26,12 @@ public class RolePermissionWriteRepositoryImpl implements RolePermissionWriteRep
 
   @Override
   public void saveAll(List<RolePermission> rolePermissions) {
-    jpaRepository.saveAll(
-        rolePermissions.stream().map(RolePermissionMapper::toEntity).toList()
-    );
+    jpaRepository.saveAll(rolePermissions.stream().map(RolePermissionMapper::toEntity).toList());
   }
 
   @Override
   public void deleteByRoleIdAndPermissions(UUID roleId, Set<Permission> permissions) {
     jpaRepository.deleteByRoleIdAndPermissionCodeIn(
-        roleId,
-        permissions.stream().map(Permission::getCode).toList()
-    );
+        roleId, permissions.stream().map(Permission::getCode).toList());
   }
 }

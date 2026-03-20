@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Repository
 @RequiredArgsConstructor
 public class RolePermissionReadRepositoryImpl implements RolePermissionReadRepository {
   private final JPARolePermissionRepository jpaRepository;
