@@ -2,8 +2,6 @@ package com.ekapasha.auth_service.role.domain.enums;
 
 public enum Permission {
 //  Workspace
-  WORKSPACE_READ("workspace.read", "Read workspace"),
-  WORKSPACE_CREATE("workspace.create", "Create workspace"),
   WORKSPACE_UPDATE("workspace.update", "Update workspace"),
   WORKSPACE_DELETE("workspace.delete", "Delete workspace"),
   WORKSPACE_INVITE("workspace.invite", "Invite user to workspace");
