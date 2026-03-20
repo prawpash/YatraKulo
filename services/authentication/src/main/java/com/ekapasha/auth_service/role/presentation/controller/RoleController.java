@@ -28,7 +28,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("/api/v1/roles")
 @Tag(name = "Roles", description = "Roles related operations")
 public class RoleController {
   //  Query

@@ -1,7 +1,6 @@
 package com.ekapasha.auth_service.workspace.presentation.controller;
 
 import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
 import com.ekapasha.auth_service.workspace.application.command.workspace.*;
 import com.ekapasha.auth_service.workspace.application.command.workspacemember.*;
 import com.ekapasha.auth_service.workspace.application.query.workspace.*;
@@ -24,7 +23,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/workspaces")
+@RequestMapping("/api/v1/workspaces")
 @RequiredArgsConstructor
 @Tag(name = "Workspaces", description = "Workspace related operations")
 public class WorkspaceController {
