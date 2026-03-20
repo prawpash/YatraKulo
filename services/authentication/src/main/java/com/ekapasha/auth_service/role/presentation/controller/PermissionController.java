@@ -6,6 +6,7 @@ import com.ekapasha.auth_service.role.application.query.permission.ListPermissio
 import com.ekapasha.auth_service.role.application.query.permission.SearchPermissionsQueryHandler;
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.presentation.dto.permission.ListPermissionsFilterDto;
+import com.ekapasha.auth_service.role.presentation.dto.permission.PermissionResponseDto;
 import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,16 +39,19 @@ public class PermissionController {
 
   @Operation(summary = "List permissions", description = "Endpoint to get all permissions")
   @GetMapping
-  public ResponseEntity<DomainPage<Permission>> listPermissions(
+  public ResponseEntity<DomainPage<PermissionResponseDto>> listPermissions(
       @ParameterObject @Valid ListPermissionsFilterDto listPermissionsFilterDto) {
     if (listPermissionsFilterDto.search() != null && !listPermissionsFilterDto.search().isBlank()) {
       return ResponseEntity.ok(
-          this.searchPermissionsQueryHandler.handler(
-              listPermissionsFilterDto.toSearchPermissionsQuery()));
+          this.searchPermissionsQueryHandler
+              .handler(listPermissionsFilterDto.toSearchPermissionsQuery())
+              .map(PermissionResponseDto::from));
     }
 
-    DomainPage<Permission> permissions =
-        this.listPermissionsQueryHandler.handler(listPermissionsFilterDto.toListPermissionsQuery());
+    DomainPage<PermissionResponseDto> permissions =
+        this.listPermissionsQueryHandler
+            .handler(listPermissionsFilterDto.toListPermissionsQuery())
+            .map(PermissionResponseDto::from);
 
     return ResponseEntity.ok(permissions);
   }
@@ -56,9 +60,10 @@ public class PermissionController {
       summary = "Get permission by code",
       description = "Endpoint to get a permission by code")
   @GetMapping("/{code}")
-  public ResponseEntity<Permission> getPermissionByCode(@PathVariable String code) {
+  public ResponseEntity<PermissionResponseDto> getPermissionByCode(@PathVariable String code) {
     Permission permission =
         this.getPermissionByCodeQueryHandler.handler(new GetPermissionByCodeQuery(code));
-    return ResponseEntity.ok(permission);
+
+    return ResponseEntity.ok(PermissionResponseDto.from(permission));
   }
 }
