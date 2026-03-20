@@ -53,17 +53,22 @@ spring:
     encoding: UTF-8
     cache: false
 
+
 scalar:
+  hideDarkModeToggle: true
+  hideClientButton: true
   authentication:
-    preferredSecurityScheme: OAuth2
+    http:
+      BearerAuth:
+        token: hubla
     oauth2:
-      OAuth2:
+      Oauth2:
         flows:
           authorizationCode:
             clientId: oidc-client
             clientSecret: password
-            authorizationUrl: http://localhost:5000/oauth2/authorize
-            tokenUrl: http://localhost:5000/oauth2/token
-            pkce: sha256
+            pkce: SHA-256
+            credentialsLocation: body
+            redirectUri: http://localhost:8080/callback
             selectedScopes:
               - openid
