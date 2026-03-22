@@ -17,50 +17,32 @@ public class PermissionReadRepositoryImpl implements PermissionReadRepository {
 
   private final JPAPermissionRepository permissionRepository;
 
-  public PermissionReadRepositoryImpl(
-      JPAPermissionRepository permissionRepository
-  ) {
+  public PermissionReadRepositoryImpl(JPAPermissionRepository permissionRepository) {
     this.permissionRepository = permissionRepository;
   }
 
   @Override
-  public DomainPage<Permission> getAll(DomainPageRequest pageRequest) {
+  public DomainPage<Permission> getAll(String search, DomainPageRequest pageRequest) {
     Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
 
-    Page<PermissionEntity> permissionEntityPage = this.permissionRepository.findAll(pageable);
+    Page<PermissionEntity> permissionEntityPage;
+    if (search == null || search.isBlank()) {
+      permissionEntityPage = this.permissionRepository.findAll(pageable);
+    } else {
+      permissionEntityPage =
+          this.permissionRepository.findByCodeContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+              search, search, pageable);
+    }
 
-    List<Permission> permissions = permissionEntityPage.stream().map(PermissionMapper::toDomain).toList();
+    List<Permission> permissions =
+        permissionEntityPage.stream().map(PermissionMapper::toDomain).toList();
 
     return new DomainPage<>(
         permissions,
         permissionEntityPage.getTotalElements(),
         permissionEntityPage.getTotalPages(),
         permissionEntityPage.getNumber(),
-        permissionEntityPage.getSize()
-    );
-  }
-
-  @Override
-  public DomainPage<Permission> getAll(String searchTerm, DomainPageRequest pageRequest) {
-    Pageable pageable = PageRequest.of(pageRequest.page(), pageRequest.size());
-
-    Page<PermissionEntity> permissionEntityPage = this
-        .permissionRepository
-        .findByCodeContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-            searchTerm,
-            searchTerm,
-            pageable
-        );
-
-    List<Permission> permissions = permissionEntityPage.stream().map(PermissionMapper::toDomain).toList();
-
-    return new DomainPage<>(
-        permissions,
-        permissionEntityPage.getTotalElements(),
-        permissionEntityPage.getTotalPages(),
-        permissionEntityPage.getNumber(),
-        permissionEntityPage.getSize()
-    );
+        permissionEntityPage.getSize());
   }
 
   @Override

@@ -1,7 +1,6 @@
 package com.ekapasha.auth_service.role.presentation.dto.permission;
 
 import com.ekapasha.auth_service.role.application.query.permission.ListPermissionsQuery;
-import com.ekapasha.auth_service.role.application.query.permission.SearchPermissionsQuery;
 import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,10 +22,6 @@ public record ListPermissionsFilterDto(
         @Schema(description = "Search term", defaultValue = "")
         String search) {
   public ListPermissionsQuery toListPermissionsQuery() {
-    return new ListPermissionsQuery(new DomainPageRequest(this.page, this.size));
-  }
-
-  public SearchPermissionsQuery toSearchPermissionsQuery() {
-    return new SearchPermissionsQuery(this.search, new DomainPageRequest(this.page, this.size));
+    return new ListPermissionsQuery(this.search, new DomainPageRequest(this.page, this.size));
   }
 }

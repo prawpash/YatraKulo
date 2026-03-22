@@ -5,7 +5,6 @@ import com.ekapasha.auth_service.role.application.command.role.UpdateRoleCommand
 import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermissionsCommandHandler;
 import com.ekapasha.auth_service.role.application.query.permission.GetPermissionByCodeQueryHandler;
 import com.ekapasha.auth_service.role.application.query.permission.ListPermissionsQueryHandler;
-import com.ekapasha.auth_service.role.application.query.permission.SearchPermissionsQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQueryHandler;
 import com.ekapasha.auth_service.role.domain.repository.PermissionReadRepository;
@@ -61,8 +60,7 @@ public class RoleConfig {
   //  Command Handler Beans
   @Bean
   public CreateRoleCommandHandler createRoleCommandHandler(
-      RoleWriteRepository roleWriteRepository,
-      WorkspaceReadRepository workspaceReadRepository) {
+      RoleWriteRepository roleWriteRepository, WorkspaceReadRepository workspaceReadRepository) {
     return new CreateRoleCommandHandler(roleWriteRepository, workspaceReadRepository);
   }
 
@@ -104,11 +102,5 @@ public class RoleConfig {
   public ListPermissionsQueryHandler listPermissionsQueryHandler(
       PermissionReadRepository permissionReadRepository) {
     return new ListPermissionsQueryHandler(permissionReadRepository);
-  }
-
-  @Bean
-  public SearchPermissionsQueryHandler searchPermissionsQueryHandler(
-      PermissionReadRepository permissionReadRepository) {
-    return new SearchPermissionsQueryHandler(permissionReadRepository);
   }
 }

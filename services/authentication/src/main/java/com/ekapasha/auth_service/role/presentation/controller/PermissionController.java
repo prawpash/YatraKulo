@@ -3,7 +3,6 @@ package com.ekapasha.auth_service.role.presentation.controller;
 import com.ekapasha.auth_service.role.application.query.permission.GetPermissionByCodeQuery;
 import com.ekapasha.auth_service.role.application.query.permission.GetPermissionByCodeQueryHandler;
 import com.ekapasha.auth_service.role.application.query.permission.ListPermissionsQueryHandler;
-import com.ekapasha.auth_service.role.application.query.permission.SearchPermissionsQueryHandler;
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.presentation.dto.permission.ListPermissionsFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.permission.PermissionResponseDto;
@@ -26,28 +25,17 @@ public class PermissionController {
   //  Query
   private final ListPermissionsQueryHandler listPermissionsQueryHandler;
   private final GetPermissionByCodeQueryHandler getPermissionByCodeQueryHandler;
-  private final SearchPermissionsQueryHandler searchPermissionsQueryHandler;
-
   public PermissionController(
       ListPermissionsQueryHandler listPermissionsQueryHandler,
-      GetPermissionByCodeQueryHandler getPermissionByCodeQueryHandler,
-      SearchPermissionsQueryHandler searchPermissionsQueryHandler) {
+      GetPermissionByCodeQueryHandler getPermissionByCodeQueryHandler) {
     this.listPermissionsQueryHandler = listPermissionsQueryHandler;
     this.getPermissionByCodeQueryHandler = getPermissionByCodeQueryHandler;
-    this.searchPermissionsQueryHandler = searchPermissionsQueryHandler;
   }
 
   @Operation(summary = "List permissions", description = "Endpoint to get all permissions")
   @GetMapping
   public ResponseEntity<DomainPage<PermissionResponseDto>> listPermissions(
       @ParameterObject @Valid ListPermissionsFilterDto listPermissionsFilterDto) {
-    if (listPermissionsFilterDto.search() != null && !listPermissionsFilterDto.search().isBlank()) {
-      return ResponseEntity.ok(
-          this.searchPermissionsQueryHandler
-              .handler(listPermissionsFilterDto.toSearchPermissionsQuery())
-              .map(PermissionResponseDto::from));
-    }
-
     DomainPage<PermissionResponseDto> permissions =
         this.listPermissionsQueryHandler
             .handler(listPermissionsFilterDto.toListPermissionsQuery())
