@@ -1,0 +1,79 @@
+package com.ekapasha.auth_service.user.application.command.user;
+
+import com.ekapasha.auth_service.shared.application.command.CommandHandler;
+import com.ekapasha.auth_service.shared.domain.exception.DuplicateDataException;
+import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.auth_service.user.domain.entity.User;
+import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
+import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+
+@RequiredArgsConstructor
+public class UpdateUserProfileCommandHandler implements CommandHandler<UpdateUserProfileCommand, User> {
+  private final UserReadRepository userReadRepository;
+  private final UserWriteRepository userWriteRepository;
+
+  @Override
+  @Transactional
+  public User handler(UpdateUserProfileCommand command) {
+    // Prevent other user to change the data that their not own
+    if (command.invokedBy() == null) {
+      throw new NotFoundException("User not found.");
+    }
+
+    if (!command.invokedBy().equals(command.id())) {
+      throw new NotFoundException("User not found.");
+    }
+
+    // Check the existence of the data
+    User user =
+        this.userReadRepository
+            .findById(command.id())
+            .orElseThrow(() -> new NotFoundException("User not found."));
+
+    // Check if user change the name
+    if (command.name() != null && !command.name().isBlank()) {
+      user.rename(command.name(), Instant.now(), command.invokedBy());
+    }
+
+    // Check if user change the username
+    if (command.username() != null && !command.username().isBlank()) {
+      // Check if username is already taken
+      this.userReadRepository
+          .findByUsername(command.username())
+          .filter(item -> item.getId() != command.id())
+          .ifPresent(
+              item -> {
+                throw new DuplicateDataException("Username already taken.");
+              });
+
+      user.changeUsername(command.username(), Instant.now(), command.invokedBy());
+    }
+
+    // Check if user change the email
+    if (command.email() != null && !command.email().isBlank()) {
+      // Check if email is already taken
+      this.userReadRepository
+          .findByEmail(command.email())
+          .filter(item -> item.getId() != command.id())
+          .ifPresent(
+              item -> {
+                throw new DuplicateDataException("Email already taken.");
+              });
+
+      user.changeEmail(command.email(), Instant.now(), command.invokedBy());
+    }
+
+    // Check if user change the profile picture URL
+    if (command.profilePictureURL() != null && !command.profilePictureURL().isBlank()) {
+      user.changeProfilePictureURL(command.profilePictureURL(), Instant.now(), command.invokedBy());
+    }
+
+    this.userWriteRepository.save(user);
+
+    return user;
+  }
+}
