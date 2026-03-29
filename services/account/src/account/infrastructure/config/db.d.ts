@@ -12,7 +12,7 @@ export type Generated<T> =
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export interface Account {
+export interface AccountPersistence {
   created_at: Generated<Timestamp | null>;
   created_by: string | null;
   deleted_at: Timestamp | null;
@@ -41,6 +41,6 @@ export interface FlywaySchemaHistory {
 }
 
 export interface DB {
-  account: Account;
+  account: AccountPersistence;
   flyway_schema_history: FlywaySchemaHistory;
 }
