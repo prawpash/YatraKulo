@@ -5,7 +5,7 @@ export class Account {
   private readonly _id: string;
   private _name: string;
   private _description: string | null;
-  private readonly _type: AccountType;
+  private _type: AccountType;
   private readonly _workspaceId: string | null;
   private _parentId: string | null;
 
@@ -56,13 +56,13 @@ export class Account {
 
   rename(name: string, updatedAt: Date, updatedBy: string | null): void {
     if (this._deletedAt !== null) {
-      throw new Error('Account is already deleted');
+      throw new DomainRuleViolationException('Account is already deleted');
     }
     if (!name || name.trim().length === 0) {
-      throw new Error('name must not be blank');
+      throw new DomainRuleViolationException('name must not be blank');
     }
     if (name.length > 100) {
-      throw new Error('name must not exceed 100 characters');
+      throw new DomainRuleViolationException('name must not exceed 100 characters');
     }
     this._name = name;
     this._updatedAt = updatedAt;
@@ -77,7 +77,7 @@ export class Account {
     updatedBy: string | null,
   ): void {
     if (this._deletedAt !== null) {
-      throw new Error('Account is already deleted');
+      throw new DomainRuleViolationException('Account is already deleted');
     }
     this._description = description;
     this._updatedAt = updatedAt;
@@ -86,12 +86,45 @@ export class Account {
     }
   }
 
+  changeParent(
+    parentId: string | null,
+    updatedAt: Date,
+    updatedBy: string | null,
+  ): void {
+    if (this._deletedAt !== null) {
+      throw new DomainRuleViolationException('Account is already deleted');
+    }
+    this._parentId = parentId;
+    this._updatedAt = updatedAt;
+    if (updatedBy) {
+      this._updatedBy = updatedBy;
+    }
+  }
+
+  changeType(
+    type: AccountType,
+    updatedAt: Date,
+    updatedBy: string | null,
+  ): void {
+    if (this._deletedAt !== null) {
+      throw new DomainRuleViolationException('Account is already deleted');
+    }
+    if (!type) {
+      throw new DomainRuleViolationException('type is required');
+    }
+    this._type = type;
+    this._updatedAt = updatedAt;
+    if (updatedBy) {
+      this._updatedBy = updatedBy;
+    }
+  }
+
   delete(deletedAt: Date, deletedBy: string): void {
     if (this._deletedAt !== null) {
-      throw new Error('Account is already deleted');
+      throw new DomainRuleViolationException('Account is already deleted');
     }
     if (!deletedBy) {
-      throw new Error('deletedBy must not be null');
+      throw new DomainRuleViolationException('deletedBy must not be null');
     }
     this._updatedAt = deletedAt;
     this._deletedAt = deletedAt;
