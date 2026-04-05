@@ -18,7 +18,7 @@ export class AccountMapper {
       .withParentId(row.parent_id)
       .withCreatedAt(row.created_at as Date)
       .withUpdatedAt(row.updated_at as Date)
-      .withDeletedAt(row.deleted_at as Date | null)
+      .withDeletedAt(row.deleted_at as Date)
       .withCreatedBy(row.created_by)
       .withUpdatedBy(row.updated_by)
       .withDeletedBy(row.deleted_by)

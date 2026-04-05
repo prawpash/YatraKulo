@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Kysely } from 'kysely';
 import { Account } from '@app/account/domain/entity/Account';
-import { AccountReadRepository } from '@app/account/domain/repository/AccountReadRepository';
+import { AccountReadRepository, GetAccountsParams } from '@app/account/domain/repository/AccountReadRepository';
 import { DomainPage, DomainPageRequest, createDomainPage } from '@yk/shared';
 import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
 import { DB } from '@app/account/infrastructure/config/db';
@@ -24,39 +24,41 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
     return result ? AccountMapper.toDomain(result) : null;
   }
 
-  async findByWorkspaceId(
-    workspaceId: string,
-    pageRequest: DomainPageRequest,
-    search?: string,
-  ): Promise<DomainPage<Account>> {
-    let query = this.db
-      .selectFrom('account')
-      .where('workspace_id', '=', workspaceId);
-
-    if (search) {
-      query = query.where('name', 'ilike', `%${search}%`);
-    }
-
-    return this.getPaginatedResult(query, pageRequest);
-  }
-
-  async findByParentId(
-    parentId: string | null,
-    pageRequest: DomainPageRequest,
-  ): Promise<DomainPage<Account>> {
+  async getAccounts({
+    workspaceId,
+    includeGlobal,
+    searchTerm,
+    parentId,
+    pageRequest,
+  }: GetAccountsParams): Promise<DomainPage<Account>> {
     let query = this.db.selectFrom('account');
 
-    if (parentId === null) {
-      query = query.where('parent_id', 'is', null);
+    if (workspaceId) {
+      if (includeGlobal) {
+        query = query.where((eb) =>
+          eb.or([
+            eb('workspace_id', '=', workspaceId),
+            eb('workspace_id', 'is', null),
+          ]),
+        );
+      } else {
+        query = query.where('workspace_id', '=', workspaceId);
+      }
     } else {
-      query = query.where('parent_id', '=', parentId);
+      query = query.where('workspace_id', 'is', null);
     }
 
-    return this.getPaginatedResult(query, pageRequest);
-  }
+    if (searchTerm) {
+      query = query.where('name', 'ilike', `%${searchTerm}%`);
+    }
 
-  async findAll(pageRequest: DomainPageRequest): Promise<DomainPage<Account>> {
-    const query = this.db.selectFrom('account');
+    if (parentId !== undefined) {
+      if (parentId === null) {
+        query = query.where('parent_id', 'is', null);
+      } else {
+        query = query.where('parent_id', '=', parentId);
+      }
+    }
 
     return this.getPaginatedResult(query, pageRequest);
   }
