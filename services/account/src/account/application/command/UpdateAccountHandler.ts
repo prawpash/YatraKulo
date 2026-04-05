@@ -1,13 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
 import { UpdateAccountCommand } from './UpdateAccountCommand';
 import type { AccountWriteRepository } from '@app/account/domain/repository/AccountWriteRepository';
 import type { AccountReadRepository } from '@app/account/domain/repository/AccountReadRepository';
+import { ACCOUNT_WRITE_REPOSITORY, ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
 import { NotFoundException } from '@yk/shared';
 
 @CommandHandler(UpdateAccountCommand)
 export class UpdateAccountHandler implements ICommandHandler<UpdateAccountCommand> {
   constructor(
+    @Inject(ACCOUNT_WRITE_REPOSITORY)
     private readonly accountWriteRepository: AccountWriteRepository,
+    @Inject(ACCOUNT_READ_REPOSITORY)
     private readonly accountReadRepository: AccountReadRepository,
   ) { }
 

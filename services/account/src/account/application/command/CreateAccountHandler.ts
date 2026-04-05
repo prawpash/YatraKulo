@@ -1,7 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
 import { CreateAccountCommand } from './CreateAccountCommand';
 import type { AccountWriteRepository } from '@app/account/domain/repository/AccountWriteRepository';
 import type { AccountReadRepository } from '@app/account/domain/repository/AccountReadRepository';
+import { ACCOUNT_WRITE_REPOSITORY, ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
 import { AccountBuilder } from '@app/account/domain/entity/Account';
 import { v4 as uuidv4 } from 'uuid';
 import { NotFoundException } from '@yk/shared';
@@ -12,7 +14,9 @@ import { Account } from '@app/account/domain/entity/Account';
 export class CreateAccountHandler implements ICommandHandler<CreateAccountCommand> {
 
   constructor(
+    @Inject(ACCOUNT_WRITE_REPOSITORY)
     private readonly accountWriteRepository: AccountWriteRepository,
+    @Inject(ACCOUNT_READ_REPOSITORY)
     private readonly accountReadRepository: AccountReadRepository,
   ) { }
 

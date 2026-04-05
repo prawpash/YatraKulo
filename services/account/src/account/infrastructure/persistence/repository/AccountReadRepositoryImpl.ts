@@ -3,7 +3,7 @@ import { Kysely } from 'kysely';
 import { Account } from '@app/account/domain/entity/Account';
 import { AccountReadRepository, GetAccountsParams } from '@app/account/domain/repository/AccountReadRepository';
 import { DomainPage, DomainPageRequest, createDomainPage } from '@yk/shared';
-import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
+import { DATABASE_CONNECTION, ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
 import { DB } from '@app/account/infrastructure/config/db';
 import { AccountMapper } from '@app/account/infrastructure/persistence/mapper/AccountMapper';
 
