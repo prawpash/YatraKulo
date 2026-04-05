@@ -24,5 +24,5 @@ export const DatabaseConnection: Provider = {
 
     return new Kysely<DB>({ dialect });
   },
-  inject: [],
+  inject: [ConfigService],
 };
