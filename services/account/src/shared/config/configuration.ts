@@ -15,6 +15,10 @@ export interface DatabaseConfig {
 export default () => ({
   appEnv: process.env.NODE_ENV ?? 'development',
   port: parseInt(process.env.PORT ?? '3000', 10),
+  auth: {
+    service_url: process.env.AUTH_SERVICE_URL ?? 'http://localhost:5000',
+    jwks_uri: process.env.AUTH_JWKS_URI ?? 'http://localhost:5000/oauth2/jwks',
+  },
   database: {
     host: process.env.DB_HOST ?? 'localhost',
     port: parseInt(process.env.DB_PORT ?? '5432', 10),
