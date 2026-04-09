@@ -62,7 +62,9 @@ export class Account {
       throw new DomainRuleViolationException('name must not be blank');
     }
     if (name.length > 100) {
-      throw new DomainRuleViolationException('name must not exceed 100 characters');
+      throw new DomainRuleViolationException(
+        'name must not exceed 100 characters',
+      );
     }
     this._name = name;
     this._updatedAt = updatedAt;
