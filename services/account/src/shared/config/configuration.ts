@@ -1,4 +1,5 @@
 export interface APPConfig {
+  appUrl: string;
   appEnv: string;
   port: number;
 }
@@ -14,6 +15,7 @@ export interface DatabaseConfig {
 
 export default () => ({
   appEnv: process.env.NODE_ENV ?? 'development',
+  appUrl: process.env.APP_URL ?? 'http://localhost:3000',
   port: parseInt(process.env.PORT ?? '3000', 10),
   auth: {
     service_url: process.env.AUTH_SERVICE_URL ?? 'http://localhost:5000',
