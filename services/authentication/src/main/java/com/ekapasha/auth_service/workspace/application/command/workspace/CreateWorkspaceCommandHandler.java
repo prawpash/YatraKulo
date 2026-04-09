@@ -3,6 +3,7 @@ package com.ekapasha.auth_service.workspace.application.command.workspace;
 import com.ekapasha.auth_service.shared.application.command.CommandHandler;
 import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
+import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ public class CreateWorkspaceCommandHandler
     implements CommandHandler<CreateWorkspaceCommand, Workspace> {
 
   private final WorkspaceWriteRepository workspaceWriteRepository;
+  private final WorkspaceReadRepository workspaceReadRepository;
 
   @Override
   @Transactional
@@ -40,6 +42,16 @@ public class CreateWorkspaceCommandHandler
             .createdAt(now)
             .updatedAt(now)
             .build();
+
+    if (command.isDefault()) {
+      this.workspaceReadRepository
+          .findDefaultByOwnerId(command.ownerId())
+          .ifPresent(
+              currentDefault -> {
+                currentDefault.unsetDefault(now);
+                this.workspaceWriteRepository.save(currentDefault);
+              });
+    }
 
     return this.workspaceWriteRepository.save(newWorkspace);
   }
