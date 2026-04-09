@@ -8,6 +8,7 @@ import { firstValueFrom, timer } from 'rxjs';
 import { timeout, retry } from 'rxjs/operators';
 import { Request } from 'express';
 import { AxiosError } from 'axios';
+import { PermissionsCache } from './PermissionsCache';
 
 export interface JwtPayload {
   sub: string;
@@ -27,6 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly permissionsCache: PermissionsCache,
   ) {
     const jwksUri = configService.get<string>('auth.jwks_uri')!;
     const jwksLogger = new Logger('JWKS');
@@ -103,6 +105,23 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const authHeader = req.headers.authorization;
 
+    const cacheKey = `${userId}:${workspaceId}`;
+
+    const cachedPermissions = this.permissionsCache.get(cacheKey);
+
+    if (cachedPermissions) {
+      this.logger.debug(
+        `Using cached permissions for user ${userId} in workspace ${workspaceId}`,
+      );
+
+      this.logger.debug(cachedPermissions);
+
+      return {
+        ...payload,
+        permissions: cachedPermissions,
+      };
+    }
+
     // TODO: Implement circuit breaker for this network call in the future
     try {
       this.logger.debug(
@@ -152,6 +171,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         payload,
         permissions: response.data,
       });
+
+      this.permissionsCache.set(cacheKey, response.data);
 
       return {
         ...payload,
