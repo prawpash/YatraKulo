@@ -2,7 +2,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConsoleLogger, Logger } from '@nestjs/common';
+import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APPConfig } from './shared/config/configuration';
 
@@ -11,18 +11,17 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: new ConsoleLogger({
-      json: true,
-      colors: true,
+      json: process.env.NODE_ENV == 'production',
+      colors: process.env.NODE_ENV !== 'production',
     }),
   });
 
   const configService = app.get(ConfigService<APPConfig>);
 
   const openAPIconfig = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .addServer(configService.get<string>('appUrl', 'http://localhost:3000'))
+    .setTitle('Account Service')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
 
   const document = SwaggerModule.createDocument(app, openAPIconfig);
@@ -33,6 +32,8 @@ async function bootstrap() {
       content: document,
     }),
   );
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   await app.listen(configService.get<number>('port', 3000));
 
