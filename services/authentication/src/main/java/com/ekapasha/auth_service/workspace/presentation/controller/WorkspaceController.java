@@ -5,6 +5,8 @@ import com.ekapasha.auth_service.workspace.application.command.workspace.*;
 import com.ekapasha.auth_service.workspace.application.command.workspacemember.*;
 import com.ekapasha.auth_service.workspace.application.query.workspace.*;
 import com.ekapasha.auth_service.workspace.application.query.workspacemember.*;
+import com.ekapasha.auth_service.workspace.application.query.workspacepermission.ListWorkspacePermissionsQuery;
+import com.ekapasha.auth_service.workspace.application.query.workspacepermission.ListWorkspacePermissionsQueryHandler;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.presentation.dto.*;
@@ -20,6 +22,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -47,6 +50,7 @@ public class WorkspaceController {
       listWorkspaceMembersByWorkspaceQueryHandler;
   private final GetWorkspaceMemberByWorkspaceAndUserQueryHandler
       getWorkspaceMemberByWorkspaceAndUserQueryHandler;
+  private final ListWorkspacePermissionsQueryHandler listWorkspacePermissionsQueryHandler;
 
   @Operation(summary = "Create workspace", description = "Create a new workspace")
   @ResponseStatus(HttpStatus.CREATED)
@@ -180,6 +184,17 @@ public class WorkspaceController {
             new GetWorkspaceMemberByWorkspaceAndUserQuery(id, userId));
 
     return ResponseEntity.ok(member);
+  }
+
+  @Operation(summary = "List permissions", description = "Get all permissions for a user in a workspace")
+  @GetMapping("/{id}/members/{userId}/permissions")
+  public ResponseEntity<List<String>> listPermissions(
+      @PathVariable UUID id, @PathVariable UUID userId) {
+
+    List<String> permissions = listWorkspacePermissionsQueryHandler.handler(
+        new ListWorkspacePermissionsQuery(id, userId));
+
+    return ResponseEntity.ok(permissions);
   }
 
   @Operation(summary = "Update member role", description = "Update the role of a workspace member")
