@@ -96,7 +96,10 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
         .limit(size)
         .offset(page * size)
         .execute(),
-      query.select((eb) => eb.fn.count('id').as('count')).executeTakeFirst(),
+      query
+        .where('deleted_at', 'is', null)
+        .select((eb) => eb.fn.count('id').as('count'))
+        .executeTakeFirst(),
     ]);
 
     const content = contentRaw.map((row) => AccountMapper.toDomain(row));
