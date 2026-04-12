@@ -34,7 +34,10 @@ import { DomainPage, createDomainPageRequest } from '@yk/shared';
 import type { JwtPayload } from '@app/account/infrastructure/auth/JwtStrategy';
 import { JwtAuthGuard } from '@app/account/infrastructure/auth/JwtAuthGuard';
 import { PermissionsGuard } from '@app/account/infrastructure/auth/PermissionsGuard';
-import { RequirePermissions } from '@app/account/infrastructure/auth/RequirePermissions';
+import {
+  PERMISSIONS_CODE,
+  RequirePermissions,
+} from '@app/account/infrastructure/auth/RequirePermissions';
 
 @ApiTags('accounts')
 @ApiBearerAuth()
@@ -73,7 +76,7 @@ export class AccountController {
     description:
       'Forbidden - user not member of workspace or insufficient permissions',
   })
-  @RequirePermissions('account.read')
+  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_READ)
   async getAccounts(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Query() query: GetAccountsDto,
@@ -112,7 +115,7 @@ export class AccountController {
     description: 'Unauthorized - missing or invalid JWT',
   })
   @ApiResponse({ status: 404, description: 'Account not found' })
-  @RequirePermissions('account.read')
+  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_READ)
   async getAccountById(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -148,7 +151,7 @@ export class AccountController {
     description:
       'Forbidden - user not member of workspace or insufficient permissions',
   })
-  @RequirePermissions('account.write')
+  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_WRITE)
   async createAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @CurrentUser() user: JwtPayload,
@@ -190,7 +193,7 @@ export class AccountController {
       'Forbidden - user not member of workspace or insufficient permissions',
   })
   @ApiResponse({ status: 404, description: 'Account not found' })
-  @RequirePermissions('account.write')
+  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_UPDATE)
   async updateAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Param('id', ParseUUIDPipe) id: string,
