@@ -33,11 +33,13 @@ import { Account } from '@app/account/domain/entity/Account';
 import { DomainPage, createDomainPageRequest } from '@yk/shared';
 import type { JwtPayload } from '@app/account/infrastructure/auth/JwtStrategy';
 import { JwtAuthGuard } from '@app/account/infrastructure/auth/JwtAuthGuard';
+import { PermissionsGuard } from '@app/account/infrastructure/auth/PermissionsGuard';
+import { RequirePermissions } from '@app/account/infrastructure/auth/RequirePermissions';
 
 @ApiTags('accounts')
 @ApiBearerAuth()
 @Controller('accounts')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class AccountController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -68,8 +70,10 @@ export class AccountController {
   })
   @ApiResponse({
     status: 403,
-    description: 'Forbidden - user not member of workspace',
+    description:
+      'Forbidden - user not member of workspace or insufficient permissions',
   })
+  @RequirePermissions('account.read')
   async getAccounts(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Query() query: GetAccountsDto,
@@ -92,6 +96,12 @@ export class AccountController {
     description:
       'Returns a single account by its UUID. Note: This endpoint is not workspace-scoped - it queries by account ID directly.',
   })
+  @ApiHeader({
+    name: 'X-Workspace-Id',
+    required: true,
+    description: 'Workspace UUID',
+    schema: { format: 'uuid' },
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns the account',
@@ -102,11 +112,13 @@ export class AccountController {
     description: 'Unauthorized - missing or invalid JWT',
   })
   @ApiResponse({ status: 404, description: 'Account not found' })
+  @RequirePermissions('account.read')
   async getAccountById(
+    @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<Account> {
     return this.queryBus.execute<GetAccountByIdQuery, Account>(
-      new GetAccountByIdQuery(id),
+      new GetAccountByIdQuery(workspaceId, id),
     );
   }
 
@@ -133,8 +145,10 @@ export class AccountController {
   })
   @ApiResponse({
     status: 403,
-    description: 'Forbidden - user not member of workspace',
+    description:
+      'Forbidden - user not member of workspace or insufficient permissions',
   })
+  @RequirePermissions('account.write')
   async createAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @CurrentUser() user: JwtPayload,
@@ -158,6 +172,12 @@ export class AccountController {
     description:
       'Updates account properties (name, description, type, parentId)',
   })
+  @ApiHeader({
+    name: 'X-Workspace-Id',
+    required: true,
+    description: 'Workspace UUID',
+    schema: { format: 'uuid' },
+  })
   @ApiResponse({ status: 200, description: 'Account updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request - validation error' })
   @ApiResponse({
@@ -166,16 +186,20 @@ export class AccountController {
   })
   @ApiResponse({
     status: 403,
-    description: 'Forbidden - user not member of workspace',
+    description:
+      'Forbidden - user not member of workspace or insufficient permissions',
   })
   @ApiResponse({ status: 404, description: 'Account not found' })
+  @RequirePermissions('account.write')
   async updateAccount(
+    @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: JwtPayload,
     @Body() dto: UpdateAccountDto,
   ): Promise<void> {
     return this.commandBus.execute<UpdateAccountCommand, void>(
       new UpdateAccountCommand(
+        workspaceId,
         id,
         user.sub,
         dto.name,
