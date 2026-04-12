@@ -14,7 +14,8 @@ export class GetAccountsHandler implements IQueryHandler<GetAccountsQuery> {
   ) {}
 
   async execute(query: GetAccountsQuery): Promise<DomainPage<Account>> {
-    const { workspaceId, includeGlobal, searchTerm, parentId, pageRequest } = query;
+    const { workspaceId, includeGlobal, searchTerm, parentId, pageRequest } =
+      query;
 
     return this.accountReadRepository.getAccounts({
       workspaceId,

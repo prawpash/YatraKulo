@@ -50,10 +50,13 @@ export class UpdateAccountHandler implements ICommandHandler<UpdateAccountComman
     if (parentId !== undefined) {
       if (parentId !== null) {
         const parentAccount =
-          await this.accountReadRepository.findById(parentId);
+          await this.accountReadRepository.findByIdAndWorkspaceId(
+            parentId,
+            workspaceId,
+          );
         if (!parentAccount) {
           throw new NotFoundException(
-            `Parent account with ID ${parentId} not found`,
+            `Parent account with ID ${parentId} not found in workspace ${workspaceId}`,
           );
         }
       }
