@@ -4,12 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
+import { Request } from 'express';
 
 export const XWorkspaceId = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request: Request = ctx.switchToHttp().getRequest();
 
-    const workspaceId = request.headers['x-workspace-id'] as string;
+    const workspaceId = request.headers['x-workspace-id'];
 
     if (!isUUID(workspaceId)) {
       throw new UnauthorizedException(
