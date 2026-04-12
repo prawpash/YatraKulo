@@ -7,7 +7,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class GetAccountsDto {
   @ApiPropertyOptional({
@@ -17,6 +17,7 @@ export class GetAccountsDto {
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
+  @Transform(({ value }) => value === 'true' || value === true)
   includeGlobal?: boolean;
 
   @ApiPropertyOptional({
