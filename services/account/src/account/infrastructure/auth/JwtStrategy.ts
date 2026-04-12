@@ -72,7 +72,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           `JWKS: UNREACHABLE at startup — ${jwksUri}. Error: ${err.message}`,
         );
       } else {
-        console.log(err);
+        this.logger.error(err);
       }
     }
   }
@@ -85,15 +85,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     const workspaceId = req.headers['x-workspace-id'];
 
     if (!workspaceId) {
-      throw new UnauthorizedException(
-        `No workspace ID found in request headers, skipping permissions check for user ${userId}`,
-      );
+      throw new UnauthorizedException(`Missing required X-Workspace-Id header`);
     }
 
     // malformed workspace ID
     if (!isUUID(workspaceId)) {
       throw new UnauthorizedException(
-        `Malformed workspace ID found in request headers, skipping permissions check for user ${userId}`,
+        `Invalid X-Workspace-Id header: must be a valid UUID`,
       );
     }
 
