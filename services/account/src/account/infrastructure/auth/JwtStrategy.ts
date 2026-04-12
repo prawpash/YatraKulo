@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -9,6 +9,7 @@ import { timeout, retry } from 'rxjs/operators';
 import { Request } from 'express';
 import { AxiosError } from 'axios';
 import { PermissionsCache } from './PermissionsCache';
+import { isUUID } from 'class-validator';
 
 export interface JwtPayload {
   sub: string;
@@ -83,35 +84,27 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     const workspaceId = req.headers['x-workspace-id'];
 
     if (!workspaceId) {
-      this.logger.warn(
+      throw new UnauthorizedException(
         `No workspace ID found in request headers, skipping permissions check for user ${userId}`,
       );
-      return {
-        ...payload,
-        permissions: [],
-      };
     }
 
     // malformed workspace ID
-    if (Array.isArray(workspaceId)) {
-      this.logger.warn(
+    if (!isUUID(workspaceId)) {
+      throw new UnauthorizedException(
         `Malformed workspace ID found in request headers, skipping permissions check for user ${userId}`,
       );
-      return {
-        ...payload,
-        permissions: [],
-      };
     }
 
     const authHeader = req.headers.authorization;
 
-    const cacheKey = `${userId}:${workspaceId}`;
+    const cacheKey = `${userId}:${workspaceId.toString()}`;
 
     const cachedPermissions = this.permissionsCache.get(cacheKey);
 
     if (cachedPermissions) {
       this.logger.debug(
-        `Using cached permissions for user ${userId} in workspace ${workspaceId}`,
+        `Using cached permissions for user ${userId} in workspace ${workspaceId.toString()}`,
       );
 
       this.logger.debug(cachedPermissions);
@@ -125,13 +118,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // TODO: Implement circuit breaker for this network call in the future
     try {
       this.logger.debug(
-        `Fetching permissions for user ${userId} in workspace ${workspaceId} from ${authServiceUrl}`,
+        `Fetching permissions for user ${userId} in workspace ${workspaceId.toString()} from ${authServiceUrl}`,
       );
 
       const response = await firstValueFrom(
         this.httpService
           .get<string[]>(
-            `${authServiceUrl}/api/v1/workspaces/${workspaceId}/members/${userId}/permissions`,
+            `${authServiceUrl}/api/v1/workspaces/${workspaceId.toString()}/members/${userId}/permissions`,
             {
               headers: {
                 Authorization: authHeader,
