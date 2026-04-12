@@ -35,6 +35,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
+  app.enableShutdownHooks();
+
   await app.listen(configService.get<number>('port', 3000));
 
   logger.log(`Application is running on: ${await app.getUrl()}`);

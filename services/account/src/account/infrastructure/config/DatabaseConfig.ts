@@ -27,12 +27,12 @@ export const DatabaseConnection: Provider = {
 
     const dialect = new PostgresDialect({
       pool: new Pool({
-        database: dbConfig?.name ?? 'postgres',
-        host: dbConfig?.host ?? 'localhost',
-        port: dbConfig?.port ?? 5432,
+        database: dbConfig.name,
+        host: dbConfig.host,
+        port: dbConfig.port,
         max: dbConfig?.maxConnections ?? 10,
-        user: dbConfig?.username ?? 'postgres',
-        password: dbConfig?.password ?? 'postgres',
+        user: dbConfig.username,
+        password: dbConfig.password,
       }),
     });
 
