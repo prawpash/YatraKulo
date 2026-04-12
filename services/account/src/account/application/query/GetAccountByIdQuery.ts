@@ -1,3 +1,6 @@
 export class GetAccountByIdQuery {
-  constructor(public readonly id: string) {}
+  constructor(
+    public readonly workspaceId: string,
+    public readonly id: string,
+  ) {}
 }

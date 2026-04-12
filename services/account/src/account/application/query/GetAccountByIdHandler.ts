@@ -14,11 +14,17 @@ export class GetAccountByIdHandler implements IQueryHandler<GetAccountByIdQuery>
   ) {}
 
   async execute(query: GetAccountByIdQuery): Promise<Account> {
-    const { id } = query;
-    const account = await this.accountReadRepository.findById(id);
+    const { workspaceId, id } = query;
+
+    const account = await this.accountReadRepository.findByIdAndWorkspaceId(
+      id,
+      workspaceId,
+    );
 
     if (!account) {
-      throw new NotFoundException(`Account with ID ${id} not found`);
+      throw new NotFoundException(
+        `Account with ID ${id} not found in workspace ${workspaceId}`,
+      );
     }
 
     return account;

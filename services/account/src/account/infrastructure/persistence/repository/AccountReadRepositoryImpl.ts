@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Kysely } from 'kysely';
+import { Kysely, SelectQueryBuilder } from 'kysely';
 import { Account } from '@app/account/domain/entity/Account';
-import { AccountReadRepository, GetAccountsParams } from '@app/account/domain/repository/AccountReadRepository';
+import {
+  AccountReadRepository,
+  GetAccountsParams,
+} from '@app/account/domain/repository/AccountReadRepository';
 import { DomainPage, DomainPageRequest, createDomainPage } from '@yk/shared';
-import { DATABASE_CONNECTION, ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
+import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
 import { DB } from '@app/account/infrastructure/config/db';
 import { AccountMapper } from '@app/account/infrastructure/persistence/mapper/AccountMapper';
 
@@ -12,7 +15,21 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: Kysely<DB>,
-  ) { }
+  ) {}
+
+  async findByIdAndWorkspaceId(
+    id: string,
+    workspaceId: string,
+  ): Promise<Account | null> {
+    const result = await this.db
+      .selectFrom('account')
+      .selectAll()
+      .where('id', '=', id)
+      .where('workspace_id', '=', workspaceId)
+      .executeTakeFirst();
+
+    return result ? AccountMapper.toDomain(result) : null;
+  }
 
   async findById(id: string): Promise<Account | null> {
     const result = await this.db
@@ -64,7 +81,7 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
   }
 
   private async getPaginatedResult(
-    query: any,
+    query: SelectQueryBuilder<DB, 'account', object>,
     pageRequest: DomainPageRequest,
   ): Promise<DomainPage<Account>> {
     const { page, size } = pageRequest;
@@ -75,21 +92,13 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
         .limit(size)
         .offset(page * size)
         .execute(),
-      query
-        .select((eb: any) => eb.fn.count('id').as('count'))
-        .executeTakeFirst(),
+      query.select((eb) => eb.fn.count('id').as('count')).executeTakeFirst(),
     ]);
 
-    const content = contentRaw.map(AccountMapper.toDomain);
+    const content = contentRaw.map((row) => AccountMapper.toDomain(row));
     const totalElements = Number(countResult?.count ?? 0);
     const totalPages = Math.ceil(totalElements / size);
 
-    return createDomainPage(
-      content,
-      totalElements,
-      totalPages,
-      page,
-      size,
-    );
+    return createDomainPage(content, totalElements, totalPages, page, size);
   }
 }
