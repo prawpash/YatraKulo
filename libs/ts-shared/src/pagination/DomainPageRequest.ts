@@ -12,6 +12,17 @@ export interface DomainPageRequest {
  * @param size - Number of items per page
  * @returns A DomainPageRequest instance
  */
-export function createDomainPageRequest(page: number, size: number): DomainPageRequest {
+export function createDomainPageRequest(
+  page: number,
+  size: number,
+): DomainPageRequest {
+  if (!Number.isInteger(page) || page < 0) {
+    throw new Error("page must be a non-negative integer");
+  }
+
+  if (!Number.isInteger(size) || size <= 0) {
+    throw new Error("size must be a positive integer");
+  }
+
   return Object.freeze({ page, size });
 }

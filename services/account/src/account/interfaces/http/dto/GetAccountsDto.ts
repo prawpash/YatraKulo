@@ -20,15 +20,15 @@ export class GetAccountsDto {
   includeGlobal?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Page number (default: 1)',
-    minimum: 1,
-    default: 1,
+    description: 'Page number (default: 0)',
+    minimum: 0,
+    default: 0,
   })
   @IsOptional()
   @IsInt()
-  @Min(1)
+  @Min(0)
   @Type(() => Number)
-  page: number = 1;
+  page: number = 0;
 
   @ApiPropertyOptional({
     description: 'Page size (default: 10)',
