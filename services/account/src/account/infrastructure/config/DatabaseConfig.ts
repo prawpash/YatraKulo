@@ -11,6 +11,20 @@ export const DatabaseConnection: Provider = {
   useFactory: (configService: ConfigService) => {
     const dbConfig = configService.get<DatabaseConfig>('database');
 
+    if (!dbConfig) {
+      throw new Error('Database config is not defined');
+    }
+
+    if (
+      !dbConfig.host ||
+      !dbConfig.port ||
+      !dbConfig.username ||
+      !dbConfig.password ||
+      !dbConfig.name
+    ) {
+      throw new Error('Incomplete database config');
+    }
+
     const dialect = new PostgresDialect({
       pool: new Pool({
         database: dbConfig?.name ?? 'postgres',
