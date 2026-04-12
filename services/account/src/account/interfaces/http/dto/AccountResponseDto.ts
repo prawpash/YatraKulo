@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AccountType } from '@app/account/domain/enums/AccountType';
+import { Account } from '@app/account/domain/entity/Account';
 
 export class AccountResponseDto {
   @ApiProperty({ description: 'Account UUID', format: 'uuid' })
@@ -65,4 +66,21 @@ export class AccountResponseDto {
     nullable: true,
   })
   deletedBy!: string | null;
+
+  static fromDomain(account: Account): AccountResponseDto {
+    const dto = new AccountResponseDto();
+    dto.id = account.id;
+    dto.name = account.name;
+    dto.description = account.description;
+    dto.type = account.type;
+    dto.workspaceId = account.workspaceId;
+    dto.parentId = account.parentId;
+    dto.createdAt = account.createdAt;
+    dto.updatedAt = account.updatedAt;
+    dto.deletedAt = account.deletedAt;
+    dto.createdBy = account.createdBy;
+    dto.updatedBy = account.updatedBy;
+    dto.deletedBy = account.deletedBy;
+    return dto;
+  }
 }

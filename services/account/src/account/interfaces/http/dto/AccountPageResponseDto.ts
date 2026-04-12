@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AccountResponseDto } from './AccountResponseDto';
+import { Account } from '@app/account/domain/entity/Account';
+import { DomainPage } from '@yk/shared';
 
 export class AccountPageResponseDto {
   @ApiProperty({ description: 'List of accounts', type: [AccountResponseDto] })
@@ -16,4 +18,14 @@ export class AccountPageResponseDto {
 
   @ApiProperty({ description: 'Number of items per page', example: 10 })
   pageSize!: number;
+
+  static fromDomainPage(page: DomainPage<Account>): AccountPageResponseDto {
+    const dto = new AccountPageResponseDto();
+    dto.content = page.content.map((a) => AccountResponseDto.fromDomain(a));
+    dto.totalElements = page.totalElements;
+    dto.totalPages = page.totalPages;
+    dto.currentPage = page.currentPage;
+    dto.pageSize = page.pageSize;
+    return dto;
+  }
 }

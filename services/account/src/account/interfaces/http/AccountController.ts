@@ -80,9 +80,12 @@ export class AccountController {
   async getAccounts(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Query() query: GetAccountsDto,
-  ): Promise<DomainPage<Account>> {
+  ): Promise<AccountPageResponseDto> {
     const pageRequest = createDomainPageRequest(query.page, query.size);
-    return this.queryBus.execute<GetAccountsQuery, DomainPage<Account>>(
+    const result = await this.queryBus.execute<
+      GetAccountsQuery,
+      DomainPage<Account>
+    >(
       new GetAccountsQuery(
         query.includeGlobal ?? false,
         pageRequest,
@@ -91,6 +94,7 @@ export class AccountController {
         query.parentId,
       ),
     );
+    return AccountPageResponseDto.fromDomainPage(result);
   }
 
   @Get('/:id')
@@ -119,10 +123,11 @@ export class AccountController {
   async getAccountById(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<Account> {
-    return this.queryBus.execute<GetAccountByIdQuery, Account>(
+  ): Promise<AccountResponseDto> {
+    const result = await this.queryBus.execute<GetAccountByIdQuery, Account>(
       new GetAccountByIdQuery(workspaceId, id),
     );
+    return AccountResponseDto.fromDomain(result);
   }
 
   @Post('/')
@@ -156,8 +161,8 @@ export class AccountController {
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @CurrentUser() user: JwtPayload,
     @Body() dto: CreateAccountDto,
-  ): Promise<Account> {
-    return this.commandBus.execute<CreateAccountCommand, Account>(
+  ): Promise<AccountResponseDto> {
+    const result = await this.commandBus.execute<CreateAccountCommand, Account>(
       new CreateAccountCommand(
         dto.name,
         dto.type,
@@ -167,6 +172,7 @@ export class AccountController {
         user.sub,
       ),
     );
+    return AccountResponseDto.fromDomain(result);
   }
 
   @Patch('/:id')
