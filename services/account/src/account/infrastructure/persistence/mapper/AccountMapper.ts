@@ -24,7 +24,7 @@ export class AccountMapper {
       .withDeletedBy(row.deleted_by)
       .build();
   }
-  static toPersistence(account: Account): any {
+  static toPersistence(account: Account) {
     return {
       id: account.id,
       name: account.name,

@@ -26,6 +26,7 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
       .selectAll()
       .where('id', '=', id)
       .where('workspace_id', '=', workspaceId)
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
 
     return result ? AccountMapper.toDomain(result) : null;
@@ -36,6 +37,7 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
       .selectFrom('account')
       .selectAll()
       .where('id', '=', id)
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
 
     return result ? AccountMapper.toDomain(result) : null;
@@ -89,6 +91,7 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
     const [contentRaw, countResult] = await Promise.all([
       query
         .selectAll()
+        .where('deleted_at', 'is', null)
         .limit(size)
         .offset(page * size)
         .execute(),
