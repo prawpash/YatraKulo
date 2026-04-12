@@ -3,7 +3,6 @@ package com.ekapasha.auth_service.workspace.application.command.workspace;
 import com.ekapasha.auth_service.shared.application.command.CommandHandler;
 import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
-import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +15,6 @@ public class CreateWorkspaceCommandHandler
     implements CommandHandler<CreateWorkspaceCommand, Workspace> {
 
   private final WorkspaceWriteRepository workspaceWriteRepository;
-  private final WorkspaceReadRepository workspaceReadRepository;
 
   @Override
   @Transactional
@@ -32,25 +30,18 @@ public class CreateWorkspaceCommandHandler
 
     Instant now = Instant.now();
 
-    Workspace newWorkspace =
-        Workspace.builder()
-            .id(UUID.randomUUID())
-            .name(command.name())
-            .description(command.description())
-            .ownerId(command.ownerId())
-            .isDefault(command.isDefault())
-            .createdAt(now)
-            .updatedAt(now)
-            .build();
+    Workspace newWorkspace = Workspace.builder()
+        .id(UUID.randomUUID())
+        .name(command.name())
+        .description(command.description())
+        .ownerId(command.ownerId())
+        .isDefault(false) // Handle the set default true in the next code to prevent race condition
+        .createdAt(now)
+        .updatedAt(now)
+        .build();
 
     if (command.isDefault()) {
-      this.workspaceReadRepository
-          .findDefaultByOwnerId(command.ownerId())
-          .ifPresent(
-              currentDefault -> {
-                currentDefault.unsetDefault(now);
-                this.workspaceWriteRepository.save(currentDefault);
-              });
+      this.workspaceWriteRepository.setDefault(newWorkspace.getId(), command.ownerId());
     }
 
     return this.workspaceWriteRepository.save(newWorkspace);
