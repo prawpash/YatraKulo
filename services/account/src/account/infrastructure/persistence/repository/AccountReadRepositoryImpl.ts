@@ -92,6 +92,7 @@ export class AccountReadRepositoryImpl implements AccountReadRepository {
       query
         .selectAll()
         .where('deleted_at', 'is', null)
+        .orderBy('created_at', 'desc')
         .limit(size)
         .offset(page * size)
         .execute(),
