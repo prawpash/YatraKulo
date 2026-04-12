@@ -22,6 +22,10 @@ export class Account {
       throw new DomainRuleViolationException('id is required');
     }
 
+    if (builder.parentId && builder.parentId == builder.id) {
+      throw new DomainRuleViolationException('parentId cannot be same as id');
+    }
+
     if (!builder.name || builder.name.trim().length === 0) {
       throw new DomainRuleViolationException('name must not be blank');
     }
@@ -93,6 +97,10 @@ export class Account {
     updatedAt: Date,
     updatedBy: string | null,
   ): void {
+    if (parentId && parentId == this._id) {
+      throw new DomainRuleViolationException('parentId cannot be same as id');
+    }
+
     if (this._deletedAt !== null) {
       throw new DomainRuleViolationException('Account is already deleted');
     }
