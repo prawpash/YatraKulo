@@ -189,10 +189,12 @@ public class WorkspaceController {
   @Operation(summary = "List permissions", description = "Get all permissions for a user in a workspace")
   @GetMapping("/{id}/members/{userId}/permissions")
   public ResponseEntity<List<String>> listPermissions(
-      @PathVariable UUID id, @PathVariable UUID userId) {
+      @PathVariable UUID id, @PathVariable UUID userId,
+      @AuthenticationPrincipal Jwt jwt) {
+    UUID invokedBy = UUID.fromString(jwt.getSubject());
 
     List<String> permissions = listWorkspacePermissionsQueryHandler.handler(
-        new ListWorkspacePermissionsQuery(id, userId));
+        new ListWorkspacePermissionsQuery(id, userId, invokedBy));
 
     return ResponseEntity.ok(permissions);
   }

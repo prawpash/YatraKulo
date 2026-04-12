@@ -4,5 +4,6 @@ import java.util.UUID;
 
 public record ListWorkspacePermissionsQuery(
     UUID workspaceId,
-    UUID userId
+    UUID userId,
+    UUID invokedBy
 ) {}
