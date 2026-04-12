@@ -15,7 +15,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiHeader,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetAccountsDto } from './dto/GetAccountsDto';
@@ -61,7 +60,6 @@ export class AccountController {
     description: 'Workspace UUID',
     schema: { format: 'uuid' },
   })
-  @ApiQuery(() => GetAccountsDto)
   @ApiResponse({
     status: 200,
     description: 'Returns paginated accounts',

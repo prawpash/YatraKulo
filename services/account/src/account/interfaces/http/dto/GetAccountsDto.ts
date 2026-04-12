@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsInt,
@@ -13,6 +13,7 @@ export class GetAccountsDto {
   @ApiPropertyOptional({
     description: 'Include global accounts (workspaceId = null)',
     type: Boolean,
+    default: false,
   })
   @IsOptional()
   @IsBoolean()
@@ -20,23 +21,21 @@ export class GetAccountsDto {
   @Transform(({ value }) => value === 'true' || value === true)
   includeGlobal?: boolean;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Page number (default: 0)',
     minimum: 0,
     default: 0,
   })
-  @IsOptional()
   @IsInt()
   @Min(0)
   @Type(() => Number)
   page: number = 0;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Page size (default: 10)',
     minimum: 1,
     default: 10,
   })
-  @IsOptional()
   @IsInt()
   @Min(1)
   @Type(() => Number)
