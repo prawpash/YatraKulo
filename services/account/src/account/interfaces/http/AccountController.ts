@@ -98,8 +98,7 @@ export class AccountController {
   @Get('/:id')
   @ApiOperation({
     summary: 'Get account by ID',
-    description:
-      'Returns a single account by its UUID. Note: This endpoint is not workspace-scoped - it queries by account ID directly.',
+    description: 'Returns a single account by its UUID.',
   })
   @ApiHeader({
     name: 'X-Workspace-Id',
