@@ -32,6 +32,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly permissionsCache: PermissionsCache,
   ) {
     const jwksUri = configService.get<string>('auth.jwks_uri')!;
+    const issuer = configService.get<string>('auth.issuer')!;
+
     const jwksLogger = new Logger('JWKS');
 
     super({
@@ -47,7 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           cb(err);
         },
       }),
-      issuer: 'http://localhost:5000',
+      issuer: issuer,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       algorithms: ['RS256'],
       ignoreExpiration: false,
@@ -56,11 +58,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async onModuleInit() {
-    // this.logger.debug('Creating JWT Strategy');
     const jwksUri = this.configService.get<string>('auth.jwks_uri')!;
 
     try {
-      const res = await fetch(jwksUri);
+      const res = await fetch(jwksUri, { signal: AbortSignal.timeout(2000) });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const jwks = (await res.json()) ?? {};
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
