@@ -52,8 +52,19 @@ export class UpdateAccountHandler implements ICommandHandler<UpdateAccountComman
         // parent data can be either in the same workspace or the global data that doesnt belong to any workspace
         const parentAccount =
           await this.accountReadRepository.findById(parentId);
+
         if (!parentAccount) {
           throw new NotFoundException(`Parent account with ID ${parentId}`);
+        }
+
+        // parent must be either in the same workspace or the global data that doesnt belong to any workspace
+        if (
+          parentAccount.workspaceId !== null &&
+          parentAccount.workspaceId !== workspaceId
+        ) {
+          throw new NotFoundException(
+            `Parent account with ID ${parentId} not found in workspace ${workspaceId}`,
+          );
         }
       }
       account.changeParent(parentId, updatedAt, updatedBy);
