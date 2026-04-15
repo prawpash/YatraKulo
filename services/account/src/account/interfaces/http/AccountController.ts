@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -28,6 +29,7 @@ import { GetAccountsQuery } from '@app/account/application/query/GetAccountsQuer
 import { GetAccountByIdQuery } from '@app/account/application/query/GetAccountByIdQuery';
 import { CreateAccountCommand } from '@app/account/application/command/CreateAccountCommand';
 import { UpdateAccountCommand } from '@app/account/application/command/UpdateAccountCommand';
+import { DeleteAccountCommand } from '@app/account/application/command/DeleteAccountCommand';
 import { Account } from '@app/account/domain/entity/Account';
 import { DomainPage, createDomainPageRequest } from '@yk/shared';
 import type { JwtPayload } from '@app/account/infrastructure/auth/JwtStrategy';
@@ -213,6 +215,39 @@ export class AccountController {
         dto.parentId,
         dto.type,
       ),
+    );
+  }
+
+  @Delete('/:id')
+  @ApiOperation({
+    summary: 'Delete an existing account',
+    description: 'Soft-deletes an account by its UUID',
+  })
+  @ApiHeader({
+    name: 'X-Workspace-Id',
+    required: true,
+    description: 'Workspace UUID',
+    schema: { format: 'uuid' },
+  })
+  @ApiResponse({ status: 200, description: 'Account deleted successfully' })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - missing or invalid JWT',
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Forbidden - user not member of workspace or insufficient permissions',
+  })
+  @ApiResponse({ status: 404, description: 'Account not found' })
+  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_DELETE)
+  async deleteAccount(
+    @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<void> {
+    return this.commandBus.execute<DeleteAccountCommand, void>(
+      new DeleteAccountCommand(workspaceId, id, user.sub),
     );
   }
 }
