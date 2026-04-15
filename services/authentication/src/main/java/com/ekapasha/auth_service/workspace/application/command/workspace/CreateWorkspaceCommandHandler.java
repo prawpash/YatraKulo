@@ -30,16 +30,19 @@ public class CreateWorkspaceCommandHandler
 
     Instant now = Instant.now();
 
-    Workspace newWorkspace =
-        Workspace.builder()
-            .id(UUID.randomUUID())
-            .name(command.name())
-            .description(command.description())
-            .ownerId(command.ownerId())
-            .isDefault(command.isDefault())
-            .createdAt(now)
-            .updatedAt(now)
-            .build();
+    Workspace newWorkspace = Workspace.builder()
+        .id(UUID.randomUUID())
+        .name(command.name())
+        .description(command.description())
+        .ownerId(command.ownerId())
+        .isDefault(false) // Handle the set default true in the next code to prevent race condition
+        .createdAt(now)
+        .updatedAt(now)
+        .build();
+
+    if (command.isDefault()) {
+      this.workspaceWriteRepository.setDefault(newWorkspace.getId(), command.ownerId());
+    }
 
     return this.workspaceWriteRepository.save(newWorkspace);
   }

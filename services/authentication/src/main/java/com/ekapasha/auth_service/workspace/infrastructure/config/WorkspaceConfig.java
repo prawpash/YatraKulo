@@ -1,5 +1,6 @@
 package com.ekapasha.auth_service.workspace.infrastructure.config;
 
+import com.ekapasha.auth_service.role.domain.repository.RolePermissionReadRepository;
 import com.ekapasha.auth_service.workspace.application.command.workspace.CreateWorkspaceCommandHandler;
 import com.ekapasha.auth_service.workspace.application.command.workspace.DeleteWorkspaceCommandHandler;
 import com.ekapasha.auth_service.workspace.application.command.workspace.SetWorkspaceDefaultCommandHandler;
@@ -19,6 +20,7 @@ import com.ekapasha.auth_service.workspace.application.query.workspacemember.Get
 import com.ekapasha.auth_service.workspace.application.query.workspacemember.GetWorkspaceMemberByWorkspaceAndUserQueryHandler;
 import com.ekapasha.auth_service.workspace.application.query.workspacemember.ListUserWorkspaceMembershipsQueryHandler;
 import com.ekapasha.auth_service.workspace.application.query.workspacemember.ListWorkspaceMembersByWorkspaceQueryHandler;
+import com.ekapasha.auth_service.workspace.application.query.workspacepermission.ListWorkspacePermissionsQueryHandler;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberWriteRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
@@ -212,5 +214,16 @@ public class WorkspaceConfig {
   public CountWorkspaceMembersQueryHandler countWorkspaceMembersQueryHandler(
       WorkspaceMemberReadRepository workspaceMemberReadRepository) {
     return new CountWorkspaceMembersQueryHandler(workspaceMemberReadRepository);
+  }
+
+  // ===========================================
+  // Workspace Permission Query Handler Beans
+  // ===========================================
+  @Bean
+  public ListWorkspacePermissionsQueryHandler listWorkspacePermissionsQueryHandler(
+      WorkspaceMemberReadRepository workspaceMemberReadRepository,
+      RolePermissionReadRepository rolePermissionReadRepository) {
+    return new ListWorkspacePermissionsQueryHandler(
+        workspaceMemberReadRepository, rolePermissionReadRepository);
   }
 }

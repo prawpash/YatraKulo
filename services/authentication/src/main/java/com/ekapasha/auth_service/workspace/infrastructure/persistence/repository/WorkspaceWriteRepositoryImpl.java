@@ -25,4 +25,9 @@ public class WorkspaceWriteRepositoryImpl implements WorkspaceWriteRepository {
   public void deleteById(UUID id) {
     this.workspaceRepository.deleteById(id);
   }
+
+  @Override
+  public void setDefault(UUID workspaceId, UUID ownerId) {
+    this.workspaceRepository.setDefault(workspaceId, ownerId);
+  }
 }

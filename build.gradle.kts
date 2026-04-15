@@ -82,3 +82,24 @@ val flywayAuthenticationInfo = registerAuthenticationFlywayTask("flywayAuthentic
 val flywayAuthenticationValidate = registerAuthenticationFlywayTask("flywayAuthenticationValidate", FlywayValidateTask::class)
 val flywayAuthenticationMigrate = registerAuthenticationFlywayTask("flywayAuthenticationMigrate", FlywayMigrateTask::class)
 val flywayAuthenticationRepair = registerAuthenticationFlywayTask("flywayAuthenticationRepair", FlywayRepairTask::class)
+
+
+// Account: Flyway custom tasks
+fun <T : AbstractFlywayTask> registerAccountFlywayTask(
+    name: String,
+    type: KClass<T>
+): TaskProvider<T> = tasks.register(name, type) {
+    val dbUrl = getProperty("flyway.url", "FLYWAY_ACCOUNT_DB_URL", "jdbc:postgresql://localhost:5432/yatrakulo_account")
+    val dbUser = getProperty("flyway.user", "FLYWAY_ACCOUNT_DB_USER", "postgres")
+    val dbPassword = getProperty("flyway.password", "FLYWAY_ACCOUNT_DB_PASSWORD", "toor")
+
+    url = dbUrl
+    user = dbUser
+    password = dbPassword
+    locations = arrayOf("filesystem:infra/db/account/migrations")
+}
+
+val flywayAccountInfo = registerAccountFlywayTask("flywayAccountInfo", FlywayInfoTask::class)
+val flywayAccountValidate = registerAccountFlywayTask("flywayAccountValidate", FlywayValidateTask::class)
+val flywayAccountMigrate = registerAccountFlywayTask("flywayAccountMigrate", FlywayMigrateTask::class)
+val flywayAccountRepair = registerAccountFlywayTask("flywayAccountRepair", FlywayRepairTask::class)
