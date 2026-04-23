@@ -1,3 +1,5 @@
+import { ValidationException } from '@yk/shared';
+
 export const parseNumber = (
   value: string | undefined,
   fallback: number,
@@ -6,7 +8,7 @@ export const parseNumber = (
   const parsed = Number.parseInt(value ?? fallback.toString(), 10);
 
   if (Number.isNaN(parsed)) {
-    throw new Error(`Invalid numeric value for ${key}`);
+    throw new ValidationException(`Invalid numeric value for ${key}`, key);
   }
 
   return parsed;

@@ -2,11 +2,14 @@ import { Account, AccountBuilder } from '@app/account/domain/entity/Account';
 import { AccountType } from '@app/account/domain/enums/AccountType';
 import { Selectable } from 'kysely';
 import { AccountPersistence } from '@app/account/infrastructure/config/db';
+import { DomainRuleViolationException } from '@yk/shared';
 
 export class AccountMapper {
   static toDomain(row: Selectable<AccountPersistence>): Account {
     if (!Object.values(AccountType).includes(row.type as AccountType)) {
-      throw new Error(`Invalid account type: ${row.type}`);
+      throw new DomainRuleViolationException(
+        `Invalid account type: ${row.type}`,
+      );
     }
 
     return new AccountBuilder()
