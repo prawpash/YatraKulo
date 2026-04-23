@@ -19,13 +19,16 @@
     "test": "jest"
   },
   "devDependencies": {
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.3",
-    "eslint": "^9.18.0",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
-    "@typescript-eslint/parser": "^8.20.0"
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.3"
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
 }
