@@ -1,4 +1,4 @@
-package com.ekapasha.response;
+package com.ekapasha.shared.response;
 
 import java.time.Instant;
 import java.util.List;
