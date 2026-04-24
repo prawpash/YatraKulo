@@ -1,31 +1,86 @@
 package com.ekapasha.auth_service;
 
+import com.ekapasha.auth_service.shared.domain.exception.DomainRuleViolationException;
 import com.ekapasha.auth_service.shared.domain.exception.DuplicateDataException;
 import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.auth_service.shared.domain.exception.UnauthorizedAccessException;
 import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
+import com.ekapasha.response.ErrorDetail;
+import com.ekapasha.response.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  private final HttpServletRequest request;
+
+  public GlobalExceptionHandler(HttpServletRequest request) {
+    this.request = request;
+  }
+
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
-  public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponse(404, ex.getMessage(), request.getRequestURI()));
   }
 
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(DuplicateDataException.class)
-  public ResponseEntity<String> duplicateDataException(DuplicateDataException ex) {
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+  public ResponseEntity<ErrorResponse> handleDuplicateDataException(DuplicateDataException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(new ErrorResponse(409, ex.getMessage(), request.getRequestURI()));
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ValidationException.class)
-  public ResponseEntity<String> badRequestException(Exception ex) {
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+  public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+    var detail = new ErrorDetail(ex.getProperty(), ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse(
+            400,
+            "Validation failed",
+            request.getRequestURI(),
+            List.of(detail)
+        ));
+  }
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler(UnauthorizedAccessException.class)
+  public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedAccessException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ErrorResponse(401, ex.getMessage(), request.getRequestURI()));
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(DomainRuleViolationException.class)
+  public ResponseEntity<ErrorResponse> handleDomainRuleViolationException(DomainRuleViolationException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse(400, ex.getMessage(), request.getRequestURI()));
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleValidationPipeException(
+      MethodArgumentNotValidException ex) {
+    var details = ex.getBindingResult().getFieldErrors().stream()
+        .map(fe -> new ErrorDetail(fe.getField(), fe.getDefaultMessage()))
+        .toList();
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), details));
+  }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ErrorResponse(500, "Internal server error", request.getRequestURI()));
   }
 }
