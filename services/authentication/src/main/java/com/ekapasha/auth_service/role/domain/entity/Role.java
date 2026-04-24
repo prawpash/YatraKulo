@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.role.domain.entity;
 
-import com.ekapasha.shared.Preconditions;
+import com.ekapasha.shared.validation.Preconditions;
 import com.ekapasha.shared.exception.DomainRuleViolationException;
 import lombok.*;
 

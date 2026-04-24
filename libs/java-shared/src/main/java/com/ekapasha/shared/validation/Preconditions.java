@@ -1,4 +1,4 @@
-package com.ekapasha;
+package com.ekapasha.shared.validation;
 
 public final class Preconditions {
   private Preconditions() {}
