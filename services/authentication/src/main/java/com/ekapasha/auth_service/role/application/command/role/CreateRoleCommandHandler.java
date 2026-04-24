@@ -2,10 +2,10 @@ package com.ekapasha.auth_service.role.application.command.role;
 
 import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.domain.repository.RoleWriteRepository;
-import com.ekapasha.auth_service.shared.application.command.CommandHandler;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
-import com.ekapasha.auth_service.shared.domain.exception.UnauthorizedAccessException;
-import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
+import com.ekapasha.shared.cqrs.CommandHandler;
+import com.ekapasha.shared.exception.NotFoundException;
+import com.ekapasha.shared.exception.UnauthorizedAccessException;
+import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import org.springframework.transaction.annotation.Transactional;

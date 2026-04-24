@@ -6,7 +6,7 @@ import com.ekapasha.auth_service.role.application.query.permission.ListPermissio
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.presentation.dto.permission.ListPermissionsFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.permission.PermissionResponseDto;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
+import com.ekapasha.shared.pagination.DomainPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

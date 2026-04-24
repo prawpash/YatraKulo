@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.workspace.domain.repository;
 
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
+import com.ekapasha.shared.pagination.DomainPage;
+import com.ekapasha.shared.pagination.DomainPageRequest;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 
 import java.util.Optional;

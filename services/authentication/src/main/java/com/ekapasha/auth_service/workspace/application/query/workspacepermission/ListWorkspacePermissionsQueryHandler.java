@@ -2,9 +2,9 @@ package com.ekapasha.auth_service.workspace.application.query.workspacepermissio
 
 import com.ekapasha.auth_service.role.domain.entity.RolePermission;
 import com.ekapasha.auth_service.role.domain.repository.RolePermissionReadRepository;
-import com.ekapasha.auth_service.shared.application.query.QueryHandler;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
-import com.ekapasha.auth_service.shared.domain.exception.UnauthorizedAccessException;
+import com.ekapasha.shared.cqrs.QueryHandler;
+import com.ekapasha.shared.exception.NotFoundException;
+import com.ekapasha.shared.exception.UnauthorizedAccessException;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;
 import lombok.RequiredArgsConstructor;

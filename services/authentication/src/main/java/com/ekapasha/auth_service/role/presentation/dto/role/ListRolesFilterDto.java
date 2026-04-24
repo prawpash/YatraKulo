@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.role.presentation.dto.role;
 
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQuery;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
+import com.ekapasha.shared.pagination.DomainPageRequest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;

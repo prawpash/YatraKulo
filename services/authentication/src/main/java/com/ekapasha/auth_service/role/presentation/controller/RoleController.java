@@ -11,7 +11,7 @@ import com.ekapasha.auth_service.role.presentation.dto.role.CreateRoleRequestDto
 import com.ekapasha.auth_service.role.presentation.dto.role.ListRolesFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRoleRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRolePermissionsRequestDto;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
+import com.ekapasha.shared.pagination.DomainPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

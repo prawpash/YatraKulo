@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.workspace.infrastructure.persistence.repository;
 
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
+import com.ekapasha.shared.pagination.DomainPage;
+import com.ekapasha.shared.pagination.DomainPageRequest;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;
 import com.ekapasha.auth_service.workspace.infrastructure.persistence.entity.WorkspaceMemberEntity;

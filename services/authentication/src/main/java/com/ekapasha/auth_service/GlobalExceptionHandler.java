@@ -1,12 +1,12 @@
 package com.ekapasha.auth_service;
 
-import com.ekapasha.auth_service.shared.domain.exception.DomainRuleViolationException;
-import com.ekapasha.auth_service.shared.domain.exception.DuplicateDataException;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
-import com.ekapasha.auth_service.shared.domain.exception.UnauthorizedAccessException;
-import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
-import com.ekapasha.response.ErrorDetail;
-import com.ekapasha.response.ErrorResponse;
+import com.ekapasha.shared.exception.DomainRuleViolationException;
+import com.ekapasha.shared.exception.DuplicateDataException;
+import com.ekapasha.shared.exception.NotFoundException;
+import com.ekapasha.shared.exception.UnauthorizedAccessException;
+import com.ekapasha.shared.exception.ValidationException;
+import com.ekapasha.shared.response.ErrorDetail;
+import com.ekapasha.shared.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.http.HttpStatus;

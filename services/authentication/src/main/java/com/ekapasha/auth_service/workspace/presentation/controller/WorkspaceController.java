@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.workspace.presentation.controller;
 
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
+import com.ekapasha.shared.pagination.DomainPage;
 import com.ekapasha.auth_service.workspace.application.command.workspace.*;
 import com.ekapasha.auth_service.workspace.application.command.workspacemember.*;
 import com.ekapasha.auth_service.workspace.application.query.workspace.*;

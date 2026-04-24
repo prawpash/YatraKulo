@@ -4,7 +4,7 @@ import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.domain.entity.RolePermission;
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.domain.repository.*;
-import com.ekapasha.auth_service.shared.domain.exception.DomainRuleViolationException;
+import com.ekapasha.shared.exception.DomainRuleViolationException;
 
 import java.time.Instant;
 import java.util.List;

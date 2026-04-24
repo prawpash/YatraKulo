@@ -3,8 +3,8 @@ package com.ekapasha.auth_service.role.application.command.role;
 import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.domain.repository.RoleReadRepository;
 import com.ekapasha.auth_service.role.domain.repository.RoleWriteRepository;
-import com.ekapasha.auth_service.shared.application.command.VoidCommandHandler;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.shared.cqrs.VoidCommandHandler;
+import com.ekapasha.shared.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;

@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.workspace.application.command.workspace;
 
-import com.ekapasha.auth_service.shared.application.command.CommandHandler;
-import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
+import com.ekapasha.shared.cqrs.CommandHandler;
+import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
 import lombok.RequiredArgsConstructor;
