@@ -44,12 +44,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
     var detail = new ErrorDetail(ex.getProperty(), ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse(
-            400,
-            "Validation failed",
-            request.getRequestURI(),
-            List.of(detail)
-        ));
+        .body(
+            new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
   }
 
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -61,7 +57,8 @@ public class GlobalExceptionHandler {
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(DomainRuleViolationException.class)
-  public ResponseEntity<ErrorResponse> handleDomainRuleViolationException(DomainRuleViolationException ex) {
+  public ResponseEntity<ErrorResponse> handleDomainRuleViolationException(
+      DomainRuleViolationException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse(400, ex.getMessage(), request.getRequestURI()));
   }
@@ -70,9 +67,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationPipeException(
       MethodArgumentNotValidException ex) {
-    var details = ex.getBindingResult().getFieldErrors().stream()
-        .map(fe -> new ErrorDetail(fe.getField(), fe.getDefaultMessage()))
-        .toList();
+    var details =
+        ex.getBindingResult().getFieldErrors().stream()
+            .map(
+                fe ->
+                    new ErrorDetail(
+                        fe.getField(),
+                        fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "Invalid value"))
+            .toList();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), details));
   }
