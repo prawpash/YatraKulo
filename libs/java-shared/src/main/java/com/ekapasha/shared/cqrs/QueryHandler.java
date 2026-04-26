@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.shared.application.query;
+package com.ekapasha.shared.cqrs;
 
 public interface QueryHandler<Q, R>{
   R handler(Q query);

@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.user.domain.entity;
 
-import com.ekapasha.Preconditions;
+import com.ekapasha.shared.validation.Preconditions;
 
 import java.time.Instant;
 

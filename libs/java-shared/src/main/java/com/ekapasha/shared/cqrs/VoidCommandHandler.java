@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.shared.application.command;
+package com.ekapasha.shared.cqrs;
 
 public interface VoidCommandHandler<C> {
   void handler(C command);

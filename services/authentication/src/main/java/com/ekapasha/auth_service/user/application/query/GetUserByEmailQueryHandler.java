@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.user.application.query;
 
-import com.ekapasha.auth_service.shared.application.query.QueryHandler;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.shared.cqrs.QueryHandler;
+import com.ekapasha.shared.exception.NotFoundException;
 import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import lombok.RequiredArgsConstructor;

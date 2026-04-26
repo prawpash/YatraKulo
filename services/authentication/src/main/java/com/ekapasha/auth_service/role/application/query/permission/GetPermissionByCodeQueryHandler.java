@@ -2,8 +2,8 @@ package com.ekapasha.auth_service.role.application.query.permission;
 
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.domain.repository.PermissionReadRepository;
-import com.ekapasha.auth_service.shared.application.query.QueryHandler;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.shared.cqrs.QueryHandler;
+import com.ekapasha.shared.exception.NotFoundException;
 
 public class GetPermissionByCodeQueryHandler implements QueryHandler<GetPermissionByCodeQuery, Permission> {
   private final PermissionReadRepository permissionRepository;

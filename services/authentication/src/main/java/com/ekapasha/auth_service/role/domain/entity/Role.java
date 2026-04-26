@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.role.domain.entity;
 
-import com.ekapasha.Preconditions;
-import com.ekapasha.auth_service.shared.domain.exception.DomainRuleViolationException;
+import com.ekapasha.shared.validation.Preconditions;
+import com.ekapasha.shared.exception.DomainRuleViolationException;
 import lombok.*;
 
 import java.time.Instant;

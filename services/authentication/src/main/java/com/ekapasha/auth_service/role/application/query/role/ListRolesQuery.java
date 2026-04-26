@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.role.application.query.role;
 
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
+import com.ekapasha.shared.pagination.DomainPageRequest;
 
 import java.util.UUID;
 

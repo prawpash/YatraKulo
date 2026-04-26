@@ -1,8 +1,8 @@
 package com.ekapasha.auth_service.workspace.domain.service;
 
-import com.ekapasha.auth_service.shared.domain.exception.DomainRuleViolationException;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
-import com.ekapasha.auth_service.shared.domain.exception.UnauthorizedAccessException;
+import com.ekapasha.shared.exception.DomainRuleViolationException;
+import com.ekapasha.shared.exception.NotFoundException;
+import com.ekapasha.shared.exception.UnauthorizedAccessException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;

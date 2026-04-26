@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.shared.domain.pagination;
+package com.ekapasha.shared.pagination;
 
 import java.util.List;
 import java.util.function.Function;

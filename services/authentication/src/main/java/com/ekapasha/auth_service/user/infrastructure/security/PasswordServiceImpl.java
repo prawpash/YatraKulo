@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.user.infrastructure.security;
 
-import com.ekapasha.Preconditions;
+import com.ekapasha.shared.validation.Preconditions;
 import com.ekapasha.auth_service.user.domain.service.PasswordService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

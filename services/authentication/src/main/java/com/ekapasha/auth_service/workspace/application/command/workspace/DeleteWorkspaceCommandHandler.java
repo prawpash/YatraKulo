@@ -1,8 +1,8 @@
 package com.ekapasha.auth_service.workspace.application.command.workspace;
 
-import com.ekapasha.auth_service.shared.application.command.VoidCommandHandler;
-import com.ekapasha.auth_service.shared.domain.exception.DomainRuleViolationException;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.shared.cqrs.VoidCommandHandler;
+import com.ekapasha.shared.exception.DomainRuleViolationException;
+import com.ekapasha.shared.exception.NotFoundException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;

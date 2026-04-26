@@ -1,8 +1,8 @@
 package com.ekapasha.auth_service.role.domain.repository;
 
 import com.ekapasha.auth_service.role.domain.enums.Permission;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPage;
-import com.ekapasha.auth_service.shared.domain.pagination.DomainPageRequest;
+import com.ekapasha.shared.pagination.DomainPage;
+import com.ekapasha.shared.pagination.DomainPageRequest;
 
 import java.util.Optional;
 

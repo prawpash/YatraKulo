@@ -11,7 +11,10 @@ export class UpdateAccountDto extends PartialType(
     nullable: true,
   })
   @IsOptional()
-  @ValidateIf((o) => o.parentId !== null)
+  @ValidateIf(
+    (o: { parentId?: string | null }) =>
+      o.parentId !== undefined && o.parentId !== null,
+  )
   @IsUUID()
   parentId?: string | null;
 }

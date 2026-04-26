@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.shared.domain.exception;
+package com.ekapasha.shared.exception;
 
 public class ValidationException extends RuntimeException {
   private final String property;

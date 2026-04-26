@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.workspace.application.query.workspacemember;
 
-import com.ekapasha.auth_service.shared.application.query.QueryHandler;
+import com.ekapasha.shared.cqrs.QueryHandler;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;
 import lombok.RequiredArgsConstructor;
 

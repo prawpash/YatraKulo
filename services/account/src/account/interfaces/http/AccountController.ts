@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -17,6 +18,7 @@ import {
   ApiResponse,
   ApiHeader,
 } from '@nestjs/swagger';
+import { ApiStandardErrors } from '@app/shared/decorators/ApiStandardErrors.decorator';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetAccountsDto } from './dto/GetAccountsDto';
 import { CreateAccountDto } from './dto/CreateAccountDto';
@@ -67,15 +69,7 @@ export class AccountController {
     description: 'Returns paginated accounts',
     type: AccountPageResponseDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - missing or invalid JWT',
-  })
-  @ApiResponse({
-    status: 403,
-    description:
-      'Forbidden - user not member of workspace or insufficient permissions',
-  })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_READ)
   async getAccounts(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
@@ -113,15 +107,19 @@ export class AccountController {
     description: 'Returns the account',
     type: AccountResponseDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - missing or invalid JWT',
-  })
-  @ApiResponse({ status: 404, description: 'Account not found' })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_READ)
   async getAccountById(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () => {
+          return new BadRequestException('Parameter `id` is not a valid UUID');
+        },
+      }),
+    )
+    id: string,
   ): Promise<AccountResponseDto> {
     const result = await this.queryBus.execute<GetAccountByIdQuery, Account>(
       new GetAccountByIdQuery(workspaceId, id),
@@ -145,16 +143,7 @@ export class AccountController {
     description: 'Account created successfully',
     type: AccountResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request - validation error' })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - missing or invalid JWT',
-  })
-  @ApiResponse({
-    status: 403,
-    description:
-      'Forbidden - user not member of workspace or insufficient permissions',
-  })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_WRITE)
   async createAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
@@ -187,25 +176,23 @@ export class AccountController {
     schema: { format: 'uuid' },
   })
   @ApiResponse({ status: 200, description: 'Account updated successfully' })
-  @ApiResponse({ status: 400, description: 'Bad request - validation error' })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - missing or invalid JWT',
-  })
-  @ApiResponse({
-    status: 403,
-    description:
-      'Forbidden - user not member of workspace or insufficient permissions',
-  })
-  @ApiResponse({ status: 404, description: 'Account not found' })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_UPDATE)
   async updateAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () => {
+          return new BadRequestException('Parameter `id` is not a valid UUID');
+        },
+      }),
+    )
+    id: string,
     @CurrentUser() user: JwtPayload,
     @Body() dto: UpdateAccountDto,
   ): Promise<void> {
-    return this.commandBus.execute<UpdateAccountCommand, void>(
+    await this.commandBus.execute<UpdateAccountCommand, void>(
       new UpdateAccountCommand(
         workspaceId,
         id,
@@ -230,20 +217,19 @@ export class AccountController {
     schema: { format: 'uuid' },
   })
   @ApiResponse({ status: 200, description: 'Account deleted successfully' })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - missing or invalid JWT',
-  })
-  @ApiResponse({
-    status: 403,
-    description:
-      'Forbidden - user not member of workspace or insufficient permissions',
-  })
-  @ApiResponse({ status: 404, description: 'Account not found' })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_DELETE)
   async deleteAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () => {
+          return new BadRequestException('Parameter `id` is not a valid UUID');
+        },
+      }),
+    )
+    id: string,
     @CurrentUser() user: JwtPayload,
   ): Promise<void> {
     return this.commandBus.execute<DeleteAccountCommand, void>(

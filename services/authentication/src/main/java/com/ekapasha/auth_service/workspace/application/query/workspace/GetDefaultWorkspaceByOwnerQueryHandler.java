@@ -1,7 +1,7 @@
 package com.ekapasha.auth_service.workspace.application.query.workspace;
 
-import com.ekapasha.auth_service.shared.application.query.QueryHandler;
-import com.ekapasha.auth_service.shared.domain.exception.NotFoundException;
+import com.ekapasha.shared.cqrs.QueryHandler;
+import com.ekapasha.shared.exception.NotFoundException;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import lombok.RequiredArgsConstructor;

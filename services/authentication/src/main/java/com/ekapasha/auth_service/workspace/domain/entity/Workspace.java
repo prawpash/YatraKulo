@@ -1,6 +1,6 @@
 package com.ekapasha.auth_service.workspace.domain.entity;
 
-import com.ekapasha.Preconditions;
+import com.ekapasha.shared.validation.Preconditions;
 import lombok.*;
 
 import java.time.Instant;

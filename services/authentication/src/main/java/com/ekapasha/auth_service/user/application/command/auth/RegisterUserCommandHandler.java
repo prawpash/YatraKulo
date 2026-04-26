@@ -1,8 +1,8 @@
 package com.ekapasha.auth_service.user.application.command.auth;
 
-import com.ekapasha.auth_service.shared.application.command.CommandHandler;
-import com.ekapasha.auth_service.shared.domain.exception.DuplicateDataException;
-import com.ekapasha.auth_service.shared.domain.exception.ValidationException;
+import com.ekapasha.shared.cqrs.CommandHandler;
+import com.ekapasha.shared.exception.DuplicateDataException;
+import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;
