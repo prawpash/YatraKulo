@@ -9,6 +9,10 @@ importers:
   .: {}
 
   libs/ts-shared:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.20.0
