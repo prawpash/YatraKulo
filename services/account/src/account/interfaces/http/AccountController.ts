@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -121,7 +122,15 @@ export class AccountController {
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_READ)
   async getAccountById(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () => {
+          return new BadRequestException('Parameter `id` is not a valid UUID');
+        },
+      }),
+    )
+    id: string,
   ): Promise<AccountResponseDto> {
     const result = await this.queryBus.execute<GetAccountByIdQuery, Account>(
       new GetAccountByIdQuery(workspaceId, id),
@@ -201,11 +210,19 @@ export class AccountController {
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_UPDATE)
   async updateAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () => {
+          return new BadRequestException('Parameter `id` is not a valid UUID');
+        },
+      }),
+    )
+    id: string,
     @CurrentUser() user: JwtPayload,
     @Body() dto: UpdateAccountDto,
   ): Promise<void> {
-    return this.commandBus.execute<UpdateAccountCommand, void>(
+    await this.commandBus.execute<UpdateAccountCommand, void>(
       new UpdateAccountCommand(
         workspaceId,
         id,
@@ -243,7 +260,15 @@ export class AccountController {
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_DELETE)
   async deleteAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () => {
+          return new BadRequestException('Parameter `id` is not a valid UUID');
+        },
+      }),
+    )
+    id: string,
     @CurrentUser() user: JwtPayload,
   ): Promise<void> {
     return this.commandBus.execute<DeleteAccountCommand, void>(
