@@ -45,7 +45,7 @@ import {
 @ApiTags('accounts')
 @ApiBearerAuth()
 @Controller('accounts')
-// @UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class AccountController {
   constructor(
     private readonly commandBus: CommandBus,
