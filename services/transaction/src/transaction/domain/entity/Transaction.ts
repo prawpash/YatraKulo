@@ -1,4 +1,6 @@
 import { DomainRuleViolationException } from '@yk/shared';
+import { TransactionRecordedEvent } from '../events/TransactionRecordedEvent';
+import { IDomainEvent } from '../events/IDomainEvent';
 
 export class Transaction {
   private readonly _id: string;
@@ -16,6 +18,8 @@ export class Transaction {
   private readonly _createdBy: string | null;
   private _updatedBy: string | null;
   private _deletedBy: string | null;
+
+  private _domainEvents: IDomainEvent[] = [];
 
   private constructor(builder: TransactionBuilder) {
     if (!builder.id) {
@@ -62,7 +66,25 @@ export class Transaction {
     this._deletedBy = builder.deletedBy ?? null;
   }
 
-  static create(builder: TransactionBuilder): Transaction {
+  static create(builder: TransactionBuilder, eventId: string, occurredAt: Date): Transaction {
+    const transaction = new Transaction(builder);
+    transaction.apply(
+      new TransactionRecordedEvent(
+        eventId,
+        occurredAt,
+        transaction.id,
+        transaction.workspaceId,
+        transaction.amount,
+        transaction.fromAccountId,
+        transaction.toAccountId,
+        transaction.note,
+        transaction.idempotencyKey,
+      ),
+    );
+    return transaction;
+  }
+
+  static reconstitute(builder: TransactionBuilder): Transaction {
     return new Transaction(builder);
   }
 
@@ -116,6 +138,18 @@ export class Transaction {
 
   get deletedBy(): string | null {
     return this._deletedBy;
+  }
+
+  get uncommittedEvents(): IDomainEvent[] {
+    return [...this._domainEvents];
+  }
+
+  protected apply(event: IDomainEvent): void {
+    this._domainEvents.push(event);
+  }
+
+  clearEvents(): void {
+    this._domainEvents = [];
   }
 
   update(params: {
@@ -249,7 +283,11 @@ export class TransactionBuilder {
     return this;
   }
 
-  build(): Transaction {
-    return Transaction.create(this);
+  build(eventId: string, occurredAt: Date): Transaction {
+    return Transaction.create(this, eventId, occurredAt);
+  }
+
+  reconstitute(): Transaction {
+    return Transaction.reconstitute(this);
   }
 }

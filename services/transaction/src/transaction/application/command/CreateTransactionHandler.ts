@@ -44,7 +44,7 @@ export class CreateTransactionHandler implements ICommandHandler<CreateTransacti
       .withUpdatedAt(now)
       .withCreatedBy(command.createdBy)
       .withUpdatedBy(command.createdBy)
-      .build();
+      .build(randomUUID(), now);
 
     return this.transactionWriteRepository.save(transaction);
   }

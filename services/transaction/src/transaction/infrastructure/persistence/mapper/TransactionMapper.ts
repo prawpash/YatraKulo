@@ -21,7 +21,7 @@ export class TransactionMapper {
       .withCreatedBy(row.created_by)
       .withUpdatedBy(row.updated_by)
       .withDeletedBy(row.deleted_by)
-      .build();
+      .reconstitute();
   }
 
   static toPersistence(transaction: Transaction) {
