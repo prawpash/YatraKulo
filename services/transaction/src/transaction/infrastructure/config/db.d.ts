@@ -10,6 +10,18 @@ export type Generated<T> =
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>;
 
+export type Json = JsonValue;
+
+export type JsonArray = JsonValue[];
+
+export type JsonObject = {
+  [x: string]: JsonValue | undefined;
+};
+
+export type JsonPrimitive = boolean | number | string | null;
+
+export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
+
 export type Numeric = ColumnType<string, number | string, number | string>;
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
@@ -27,10 +39,21 @@ export interface FlywaySchemaHistory {
   version: string | null;
 }
 
+export interface Outbox {
+  aggregate_id: string;
+  aggregate_type: string;
+  created_at: Generated<Timestamp | null>;
+  event_type: string;
+  id: Generated<string>;
+  payload: Json;
+  published_at: Timestamp | null;
+  status: Generated<string>;
+}
+
 export interface TransactionPersistence {
   amount: Numeric;
   created_at: Generated<Timestamp | null>;
-  created_by: string | null;
+  created_by: string;
   deleted_at: Timestamp | null;
   deleted_by: string | null;
   from_account_id: string;
@@ -39,11 +62,12 @@ export interface TransactionPersistence {
   note: string | null;
   to_account_id: string;
   updated_at: Generated<Timestamp | null>;
-  updated_by: string | null;
+  updated_by: string;
   workspace_id: string;
 }
 
 export interface DB {
   flyway_schema_history: FlywaySchemaHistory;
+  outbox: Outbox;
   transaction: Transaction;
 }
