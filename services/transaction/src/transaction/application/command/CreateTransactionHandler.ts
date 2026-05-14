@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { randomUUID } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 import { TransactionBuilder } from '@app/transaction/domain/entity/Transaction';
 import type { TransactionReadRepository } from '@app/transaction/domain/repository/TransactionReadRepository';
 import type { TransactionWriteRepository } from '@app/transaction/domain/repository/TransactionWriteRepository';
@@ -33,7 +33,7 @@ export class CreateTransactionHandler implements ICommandHandler<CreateTransacti
     const now = new Date();
 
     const transaction = new TransactionBuilder()
-      .withId(randomUUID())
+      .withId(uuidv4())
       .withWorkspaceId(command.workspaceId)
       .withAmount(command.amount)
       .withNote(command.note)
@@ -44,7 +44,7 @@ export class CreateTransactionHandler implements ICommandHandler<CreateTransacti
       .withUpdatedAt(now)
       .withCreatedBy(command.createdBy)
       .withUpdatedBy(command.createdBy)
-      .build(randomUUID(), now);
+      .build(uuidv4(), now);
 
     return this.transactionWriteRepository.save(transaction);
   }
