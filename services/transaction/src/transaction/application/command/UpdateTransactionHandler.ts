@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { v4 as uuidv4 } from 'uuid';
 import type { TransactionReadRepository } from '@app/transaction/domain/repository/TransactionReadRepository';
 import type { TransactionWriteRepository } from '@app/transaction/domain/repository/TransactionWriteRepository';
 import {
@@ -25,18 +26,23 @@ export class UpdateTransactionHandler implements ICommandHandler<UpdateTransacti
         command.workspaceId,
       );
 
-    if (!transaction) {
+    if (!transaction || transaction.createdBy !== command.updatedBy) {
       throw new NotFoundException(
         `Transaction with ID ${command.id} not found in workspace ${command.workspaceId}`,
       );
     }
 
-    transaction.update({
-      amount: command.amount,
-      note: command.note,
-      updatedAt: new Date(),
-      updatedBy: command.updatedBy,
-    });
+    const now = new Date();
+    transaction.update(
+      {
+        amount: command.amount,
+        note: command.note,
+        updatedAt: now,
+        updatedBy: command.updatedBy,
+      },
+      uuidv4(),
+      now,
+    );
 
     await this.transactionWriteRepository.save(transaction);
   }

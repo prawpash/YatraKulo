@@ -1,5 +1,7 @@
 import { DomainRuleViolationException } from '@yk/shared';
 import { TransactionRecordedEvent } from '../events/TransactionRecordedEvent';
+import { TransactionUpdatedEvent } from '../events/TransactionUpdatedEvent';
+import { TransactionDeletedEvent } from '../events/TransactionDeletedEvent';
 import { IDomainEvent } from '../events/IDomainEvent';
 
 export class Transaction {
@@ -160,12 +162,16 @@ export class Transaction {
     this._domainEvents = [];
   }
 
-  update(params: {
-    amount?: number;
-    note?: string | null;
-    updatedAt: Date;
-    updatedBy: string;
-  }): void {
+  update(
+    params: {
+      amount?: number;
+      note?: string | null;
+      updatedAt: Date;
+      updatedBy: string;
+    },
+    eventId: string,
+    occurredAt: Date,
+  ): void {
     if (this._deletedAt !== null) {
       throw new DomainRuleViolationException('Transaction is already deleted');
     }
@@ -179,6 +185,20 @@ export class Transaction {
 
     this._updatedAt = params.updatedAt;
     this._updatedBy = params.updatedBy;
+
+    this.apply(
+      new TransactionUpdatedEvent(
+        eventId,
+        occurredAt,
+        this.id,
+        this.workspaceId,
+        this.amount,
+        this.fromAccountId,
+        this.toAccountId,
+        this.note,
+        this.idempotencyKey,
+      ),
+    );
   }
 
   delete(deletedAt: Date, deletedBy: string): void {
