@@ -69,5 +69,5 @@ export interface TransactionPersistence {
 export interface DB {
   flyway_schema_history: FlywaySchemaHistory;
   outbox: Outbox;
-  transaction: Transaction;
+  transaction: TransactionPersistence;
 }
