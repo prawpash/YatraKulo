@@ -15,8 +15,8 @@ export class Transaction {
   private _updatedAt: Date;
   private _deletedAt: Date | null;
 
-  private readonly _createdBy: string | null;
-  private _updatedBy: string | null;
+  private readonly _createdBy: string;
+  private _updatedBy: string;
   private _deletedBy: string | null;
 
   private _domainEvents: IDomainEvent[] = [];
@@ -49,6 +49,14 @@ export class Transaction {
       throw new DomainRuleViolationException('workspaceId is required');
     }
 
+    if (!builder.createdBy) {
+      throw new DomainRuleViolationException('createdBy is required');
+    }
+
+    if (!builder.updatedBy) {
+      throw new DomainRuleViolationException('updatedBy is required');
+    }
+
     this._id = builder.id;
     this._amount = builder.amount;
     this._note = builder.note ?? null;
@@ -61,8 +69,8 @@ export class Transaction {
     this._updatedAt = builder.updatedAt;
     this._deletedAt = builder.deletedAt ?? null;
 
-    this._createdBy = builder.createdBy ?? null;
-    this._updatedBy = builder.updatedBy ?? null;
+    this._createdBy = builder.createdBy;
+    this._updatedBy = builder.updatedBy;
     this._deletedBy = builder.deletedBy ?? null;
   }
 
@@ -128,11 +136,11 @@ export class Transaction {
     return this._deletedAt;
   }
 
-  get createdBy(): string | null {
+  get createdBy(): string {
     return this._createdBy;
   }
 
-  get updatedBy(): string | null {
+  get updatedBy(): string {
     return this._updatedBy;
   }
 
