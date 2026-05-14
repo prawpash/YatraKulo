@@ -201,7 +201,12 @@ export class Transaction {
     );
   }
 
-  delete(deletedAt: Date, deletedBy: string): void {
+  delete(
+    deletedAt: Date,
+    deletedBy: string,
+    eventId: string,
+    occurredAt: Date,
+  ): void {
     if (this._deletedAt !== null) {
       throw new DomainRuleViolationException('Transaction is already deleted');
     }
@@ -210,6 +215,10 @@ export class Transaction {
     this._deletedBy = deletedBy;
     this._updatedAt = deletedAt;
     this._updatedBy = deletedBy;
+
+    this.apply(
+      new TransactionDeletedEvent(eventId, occurredAt, this.id, this.workspaceId),
+    );
   }
 
   toPlainObject(): Record<string, unknown> {

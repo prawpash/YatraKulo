@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   Param,
@@ -39,6 +40,7 @@ import { GetTransactionsQuery } from '@app/transaction/application/query/GetTran
 import { GetTransactionByIdQuery } from '@app/transaction/application/query/GetTransactionByIdQuery';
 import { CreateTransactionCommand } from '@app/transaction/application/command/CreateTransactionCommand';
 import { UpdateTransactionCommand } from '@app/transaction/application/command/UpdateTransactionCommand';
+import { DeleteTransactionCommand } from '@app/transaction/application/command/DeleteTransactionCommand';
 
 @ApiTags('transactions')
 @ApiBearerAuth()
@@ -195,6 +197,33 @@ export class TransactionController {
         dto.amount,
         dto.note,
       ),
+    );
+  }
+
+  @Delete('/:id')
+  @ApiOperation({ summary: 'Delete transaction' })
+  @ApiHeader({
+    name: 'X-Workspace-Id',
+    required: true,
+    description: 'Workspace UUID',
+    schema: { format: 'uuid' },
+  })
+  @ApiResponse({ status: 200, description: 'Transaction deleted successfully' })
+  @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_DELETE)
+  async deleteTransaction(
+    @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        exceptionFactory: () =>
+          new BadRequestException('Parameter `id` is not a valid UUID'),
+      }),
+    )
+    id: string,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<void> {
+    await this.commandBus.execute<DeleteTransactionCommand, void>(
+      new DeleteTransactionCommand(workspaceId, id, user.sub),
     );
   }
 }
