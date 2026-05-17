@@ -14,13 +14,14 @@ export class OutboxCleanupService {
     @Inject(DATABASE_CONNECTION)
     private readonly db: Kysely<DB>,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleCron() {
-    const retentionDays = Number(
-      this.configService.get<number>('OUTBOX_RETENTION_DAYS', 7),
-    );
+    const retentionDays = this.configService.get<number>(
+      'outboxRetentionDays',
+    )!;
+
     const thresholdDate = new Date();
     thresholdDate.setDate(thresholdDate.getDate() - retentionDays);
 

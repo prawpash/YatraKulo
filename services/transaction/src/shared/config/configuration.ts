@@ -4,6 +4,7 @@ export interface APPConfig {
   appUrl: string;
   appEnv: string;
   port: number;
+  outboxRetentionDays: number;
 }
 
 export interface DatabaseConfig {
@@ -19,6 +20,11 @@ export default () => ({
   appEnv: process.env.NODE_ENV ?? 'development',
   appUrl: process.env.APP_URL ?? 'http://localhost:3000',
   port: parseNumber(process.env.PORT, 3000, 'APP_PORT'),
+  outboxRetentionDays: parseNumber(
+    process.env.OUTBOX_RETENTION_DAYS,
+    7,
+    'OUTBOX_RETENTION_DAYS',
+  ),
   auth: {
     issuer: process.env.AUTH_ISSUER ?? 'http://localhost:5000',
     service_url: process.env.AUTH_SERVICE_URL ?? 'http://localhost:5000',
