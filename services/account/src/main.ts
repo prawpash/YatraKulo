@@ -4,7 +4,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {
   ConsoleLogger,
-  Logger,
   ValidationPipe,
   ValidationError,
   BadRequestException,
@@ -14,13 +13,13 @@ import { APPConfig } from './shared/config/configuration';
 import { GlobalExceptionFilter } from './GlobalExceptionFilter';
 
 async function bootstrap() {
-  const logger = new Logger();
+  const logger = new ConsoleLogger({
+    json: process.env.NODE_ENV == 'production',
+    colors: process.env.NODE_ENV !== 'production',
+  });
 
   const app = await NestFactory.create(AppModule, {
-    logger: new ConsoleLogger({
-      json: process.env.NODE_ENV == 'production',
-      colors: process.env.NODE_ENV !== 'production',
-    }),
+    logger,
   });
 
   const configService = app.get(ConfigService<APPConfig>);
