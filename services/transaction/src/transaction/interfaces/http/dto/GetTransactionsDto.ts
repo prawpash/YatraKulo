@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsUUID, Min } from 'class-validator';
+import { IsOptional, IsUUID, Max, Min } from 'class-validator';
 
 export class GetTransactionsDto {
   @IsOptional()
@@ -10,6 +10,7 @@ export class GetTransactionsDto {
   @IsOptional()
   @Type(() => Number)
   @Min(1)
+  @Max(100)
   size = 10;
 
   @IsOptional()
