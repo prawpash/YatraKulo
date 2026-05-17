@@ -76,7 +76,11 @@ export class Transaction {
     this._deletedBy = builder.deletedBy ?? null;
   }
 
-  static create(builder: TransactionBuilder, eventId: string, occurredAt: Date): Transaction {
+  static create(
+    builder: TransactionBuilder,
+    eventId: string,
+    occurredAt: Date,
+  ): Transaction {
     const transaction = new Transaction(builder);
     transaction.apply(
       new TransactionRecordedEvent(
@@ -177,8 +181,12 @@ export class Transaction {
     }
 
     if (params.amount !== undefined) {
+      if (params.amount < 0) {
+        throw new DomainRuleViolationException('amount cannot be negative');
+      }
       this._amount = params.amount;
     }
+
     if (params.note !== undefined) {
       this._note = params.note;
     }
@@ -217,7 +225,12 @@ export class Transaction {
     this._updatedBy = deletedBy;
 
     this.apply(
-      new TransactionDeletedEvent(eventId, occurredAt, this.id, this.workspaceId),
+      new TransactionDeletedEvent(
+        eventId,
+        occurredAt,
+        this.id,
+        this.workspaceId,
+      ),
     );
   }
 
@@ -305,12 +318,12 @@ export class TransactionBuilder {
     return this;
   }
 
-  withCreatedBy(createdBy: string | null): TransactionBuilder {
+  withCreatedBy(createdBy: string): TransactionBuilder {
     this.createdBy = createdBy;
     return this;
   }
 
-  withUpdatedBy(updatedBy: string | null): TransactionBuilder {
+  withUpdatedBy(updatedBy: string): TransactionBuilder {
     this.updatedBy = updatedBy;
     return this;
   }
