@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS transaction (
   note TEXT,
   from_account_id UUID NOT NULL,
   to_account_id UUID NOT NULL,
-  idempotency_key VARCHAR(255) UNIQUE NOT NULL,
+  idempotency_key VARCHAR(255) NOT NULL,
   workspace_id UUID NOT NULL,
 
   created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
@@ -17,5 +17,6 @@ CREATE TABLE IF NOT EXISTS transaction (
   deleted_at timestamptz,
   deleted_by UUID,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE (workspace_id, idempotency_key)
 );
