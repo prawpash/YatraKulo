@@ -24,5 +24,9 @@ export function createDomainPageRequest(
     throw new Error("size must be a positive integer");
   }
 
+  if (size > 100) {
+    throw new Error("size must be less than or equal to 100");
+  }
+
   return Object.freeze({ page, size });
 }
