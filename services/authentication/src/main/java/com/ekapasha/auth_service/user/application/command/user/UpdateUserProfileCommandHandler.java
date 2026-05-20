@@ -44,7 +44,7 @@ public class UpdateUserProfileCommandHandler implements CommandHandler<UpdateUse
       // Check if username is already taken
       this.userReadRepository
           .findByUsername(command.username())
-          .filter(item -> item.getId() != command.id())
+          .filter(item -> !item.getId().equals(command.id()))
           .ifPresent(
               item -> {
                 throw new DuplicateDataException("Username already taken.");
@@ -58,7 +58,7 @@ public class UpdateUserProfileCommandHandler implements CommandHandler<UpdateUse
       // Check if email is already taken
       this.userReadRepository
           .findByEmail(command.email())
-          .filter(item -> item.getId() != command.id())
+          .filter(item -> !item.getId().equals(command.id()))
           .ifPresent(
               item -> {
                 throw new DuplicateDataException("Email already taken.");
