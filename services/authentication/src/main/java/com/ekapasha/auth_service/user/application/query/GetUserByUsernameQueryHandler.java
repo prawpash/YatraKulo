@@ -7,13 +7,13 @@ import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class GetUserByUsernameQueryHandler implements QueryHandler<GetUserByEmailQuery, User> {
+public class GetUserByUsernameQueryHandler implements QueryHandler<GetUserByUsernameQuery, User> {
   private final UserReadRepository userReadRepository;
 
   @Override
-  public User handler(GetUserByEmailQuery query) {
+  public User handler(GetUserByUsernameQuery query) {
     return this.userReadRepository
-        .findByUsername(query.email())
+        .findByUsername(query.username())
         .orElseThrow(() -> new NotFoundException("User not found"));
   }
 }
