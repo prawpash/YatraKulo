@@ -17,10 +17,12 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -44,6 +46,38 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleDuplicateDataException(DuplicateDataException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(new ErrorResponse(409, ex.getMessage(), request.getRequestURI()));
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException ex) {
+    this.logger.warn(
+        LogEvent.builder("HTTP message not readable: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("uri", request.getRequestURI())
+            .error(ex)
+            .build());
+
+    // Check if the error is due to a format issue, e.g., an invalid UUID or boolean structure
+    if (ex.getCause() instanceof InvalidFormatException ife) {
+      this.logger.debug(ife.getTargetType().toString());
+      Class<?> targetType = ife.getTargetType();
+      String fieldName = ife.getPath().isEmpty() ? "field" : ife.getPath().getFirst().getPropertyName();
+
+      if (targetType.equals(UUID.class)) {
+        var detail = new ErrorDetail(fieldName, "Invalid UUID format");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+      } else if (targetType.equals(boolean.class) || targetType.equals(Boolean.class)) {
+        var detail = new ErrorDetail(fieldName, "Invalid boolean format. Must be 'true' or 'false'");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+      }
+    }
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse(400, "Malformed JSON request body", request.getRequestURI()));
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
