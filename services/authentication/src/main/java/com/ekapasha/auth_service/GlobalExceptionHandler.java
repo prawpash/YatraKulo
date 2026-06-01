@@ -7,8 +7,14 @@ import com.ekapasha.shared.exception.UnauthorizedAccessException;
 import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.shared.response.ErrorDetail;
 import com.ekapasha.shared.response.ErrorResponse;
+import com.ekapasha.shared.logging.AppLogger;
+import com.ekapasha.shared.logging.LogEvent;
+import com.ekapasha.auth_service.logging.AuthLogEvent;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   private final HttpServletRequest request;
+  private final AppLogger logger = new AppLogger(GlobalExceptionHandler.class);
 
   public GlobalExceptionHandler(HttpServletRequest request) {
     this.request = request;
@@ -42,6 +49,13 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+    this.logger.warn(
+        LogEvent.builder("Validation failed: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("uri", request.getRequestURI())
+            .error(ex)
+            .build());
+
     var detail = new ErrorDetail(ex.getProperty(), ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(
@@ -59,6 +73,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DomainRuleViolationException.class)
   public ResponseEntity<ErrorResponse> handleDomainRuleViolationException(
       DomainRuleViolationException ex) {
+    this.logger.warn(
+        LogEvent.builder("Domain rule violation: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("uri", request.getRequestURI())
+            .error(ex)
+            .build());
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse(400, ex.getMessage(), request.getRequestURI()));
   }
@@ -67,6 +88,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationPipeException(
       MethodArgumentNotValidException ex) {
+    this.logger.warn(
+        LogEvent.builder("Method argument validation failed: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("uri", request.getRequestURI())
+            .error(ex)
+            .build());
+
     var details =
         ex.getBindingResult().getFieldErrors().stream()
             .map(
@@ -82,6 +110,13 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+    this.logger.error(
+        LogEvent.builder("Unhandled exception occurred: " + ex.getMessage())
+            .eventName(AuthLogEvent.UNHANDLED_EXCEPTION)
+            .metadata("uri", request.getRequestURI())
+            .error(ex)
+            .build());
+
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorResponse(500, "Internal server error", request.getRequestURI()));
   }
