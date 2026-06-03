@@ -59,8 +59,8 @@ public class UpdateRolePermissionsCommandHandler
       this.logger.info(
           LogEvent.builder("Role permissions updated successfully for role: " + role.getName())
               .eventName(AuthLogEvent.ROLE_PERMISSIONS_UPDATED)
-              .metadata("roleId", role.getId().toString())
-              .metadata("name", role.getName())
+              .metadata("role.id", role.getId().toString())
+              .metadata("role.name", role.getName())
               .metadata("assignedCount", command.assign().size())
               .metadata("revokedCount", command.revoke().size())
               .build());
@@ -70,14 +70,14 @@ public class UpdateRolePermissionsCommandHandler
         this.logger.warn(
             LogEvent.builder("Role permissions update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
-                .metadata("roleId", roleId)
+                .metadata("role.id", roleId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Role permissions update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
-                .metadata("roleId", roleId)
+                .metadata("role.id", roleId)
                 .error(e)
                 .build());
       }

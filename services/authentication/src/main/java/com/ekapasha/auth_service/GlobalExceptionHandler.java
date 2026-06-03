@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     this.logger.warn(
         LogEvent.builder("HTTP message not readable: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
-            .metadata("uri", request.getRequestURI())
+            .metadata("url.path", request.getRequestURI())
             .error(ex)
             .build());
 
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
     this.logger.warn(
         LogEvent.builder("Validation failed: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
-            .metadata("uri", request.getRequestURI())
+            .metadata("url.path", request.getRequestURI())
             .error(ex)
             .build());
 
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
     this.logger.warn(
         LogEvent.builder("Domain rule violation: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
-            .metadata("uri", request.getRequestURI())
+            .metadata("url.path", request.getRequestURI())
             .error(ex)
             .build());
 
@@ -125,7 +125,7 @@ public class GlobalExceptionHandler {
     this.logger.warn(
         LogEvent.builder("Method argument validation failed: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
-            .metadata("uri", request.getRequestURI())
+            .metadata("url.path", request.getRequestURI())
             .error(ex)
             .build());
 
@@ -147,7 +147,7 @@ public class GlobalExceptionHandler {
     this.logger.error(
         LogEvent.builder("Unhandled exception occurred: " + ex.getMessage())
             .eventName(AuthLogEvent.UNHANDLED_EXCEPTION)
-            .metadata("uri", request.getRequestURI())
+            .metadata("url.path", request.getRequestURI())
             .error(ex)
             .build());
 

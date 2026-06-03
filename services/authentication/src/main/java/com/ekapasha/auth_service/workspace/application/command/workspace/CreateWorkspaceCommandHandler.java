@@ -56,9 +56,9 @@ public class CreateWorkspaceCommandHandler
       this.logger.info(
           LogEvent.builder("Workspace created successfully: " + savedWorkspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_CREATED)
-              .metadata("workspaceId", savedWorkspace.getId().toString())
-              .metadata("name", savedWorkspace.getName())
-              .metadata("ownerId", savedWorkspace.getOwnerId().toString())
+              .metadata("workspace.id", savedWorkspace.getId().toString())
+              .metadata("workspace.name", savedWorkspace.getName())
+              .metadata("user.id", savedWorkspace.getOwnerId().toString())
               .build());
 
       return savedWorkspace;
@@ -68,16 +68,16 @@ public class CreateWorkspaceCommandHandler
         this.logger.warn(
             LogEvent.builder("Workspace creation failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("name", command.name())
-                .metadata("ownerId", ownerId)
+                .metadata("workspace.name", command.name())
+                .metadata("user.id", ownerId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Workspace creation failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("name", command.name())
-                .metadata("ownerId", ownerId)
+                .metadata("workspace.name", command.name())
+                .metadata("user.id", ownerId)
                 .error(e)
                 .build());
       }

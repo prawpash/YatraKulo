@@ -66,10 +66,10 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
       this.logger.info(
           LogEvent.builder("Role created successfully: " + savedRole.getName())
               .eventName(AuthLogEvent.ROLE_CREATED)
-              .metadata("roleId", savedRole.getId().toString())
-              .metadata("name", savedRole.getName())
+              .metadata("role.id", savedRole.getId().toString())
+              .metadata("role.name", savedRole.getName())
               .metadata(
-                  "workspaceId", savedRole.getWorkspaceId().map(UUID::toString).orElse("null"))
+                  "workspace.id", savedRole.getWorkspaceId().map(UUID::toString).orElse("null"))
               .build());
 
       return savedRole;
@@ -82,16 +82,16 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
         this.logger.warn(
             LogEvent.builder("Role creation failed: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
-                .metadata("name", command.name())
-                .metadata("workspaceId", workspaceId)
+                .metadata("role.name", command.name())
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Role creation failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
-                .metadata("name", command.name())
-                .metadata("workspaceId", workspaceId)
+                .metadata("role.name", command.name())
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       }

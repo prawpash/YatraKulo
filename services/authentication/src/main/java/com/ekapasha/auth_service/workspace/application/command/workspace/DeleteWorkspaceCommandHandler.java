@@ -42,8 +42,8 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
       this.logger.info(
           LogEvent.builder("Workspace deleted successfully: " + workspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_DELETED)
-              .metadata("workspaceId", workspace.getId().toString())
-              .metadata("name", workspace.getName())
+              .metadata("workspace.id", workspace.getId().toString())
+              .metadata("workspace.name", workspace.getName())
               .build());
     } catch (Exception e) {
       String workspaceId = command.id() != null ? command.id().toString() : "null";
@@ -51,14 +51,14 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
         this.logger.warn(
             LogEvent.builder("Workspace deletion failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Workspace deletion failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       }

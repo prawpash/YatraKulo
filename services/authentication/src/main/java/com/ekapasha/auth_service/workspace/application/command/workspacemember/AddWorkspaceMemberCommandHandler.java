@@ -46,9 +46,9 @@ public class AddWorkspaceMemberCommandHandler
       this.logger.info(
           LogEvent.builder("Workspace member added successfully: " + command.userId())
               .eventName(AuthLogEvent.WORKSPACE_MEMBER_ADDED)
-              .metadata("workspaceId", command.workspaceId().toString())
-              .metadata("userId", command.userId().toString())
-              .metadata("roleId", command.roleId().toString())
+              .metadata("workspace.id", command.workspaceId().toString())
+              .metadata("user.id", command.userId().toString())
+              .metadata("role.id", command.roleId().toString())
               .build());
     } catch (Exception e) {
       String workspaceId =
@@ -58,16 +58,16 @@ public class AddWorkspaceMemberCommandHandler
         this.logger.warn(
             LogEvent.builder("Adding workspace member failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
-                .metadata("userId", userId)
+                .metadata("workspace.id", workspaceId)
+                .metadata("user.id", userId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Adding workspace member failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
-                .metadata("userId", userId)
+                .metadata("workspace.id", workspaceId)
+                .metadata("user.id", userId)
                 .error(e)
                 .build());
       }

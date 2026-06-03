@@ -68,8 +68,8 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
       this.logger.info(
           LogEvent.builder("Role updated successfully: " + role.getName())
               .eventName(AuthLogEvent.ROLE_UPDATED)
-              .metadata("roleId", role.getId().toString())
-              .metadata("name", role.getName())
+              .metadata("role.id", role.getId().toString())
+              .metadata("role.name", role.getName())
               .build());
     } catch (Exception e) {
       String roleId = command.id() != null ? command.id().toString() : "null";
@@ -77,14 +77,14 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
         this.logger.warn(
             LogEvent.builder("Role update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
-                .metadata("roleId", roleId)
+                .metadata("role.id", roleId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Role update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
-                .metadata("roleId", roleId)
+                .metadata("role.id", roleId)
                 .error(e)
                 .build());
       }

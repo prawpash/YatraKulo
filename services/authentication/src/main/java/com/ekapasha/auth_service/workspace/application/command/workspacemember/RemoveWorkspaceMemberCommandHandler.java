@@ -44,8 +44,8 @@ public class RemoveWorkspaceMemberCommandHandler
       this.logger.info(
           LogEvent.builder("Workspace member removed successfully: " + command.userId())
               .eventName(AuthLogEvent.WORKSPACE_MEMBER_REMOVED)
-              .metadata("workspaceId", command.workspaceId().toString())
-              .metadata("userId", command.userId().toString())
+              .metadata("workspace.id", command.workspaceId().toString())
+              .metadata("user.id", command.userId().toString())
               .build());
     } catch (Exception e) {
       String workspaceId =
@@ -55,8 +55,8 @@ public class RemoveWorkspaceMemberCommandHandler
         this.logger.warn(
             LogEvent.builder("Removing workspace member failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
-                .metadata("userId", userId)
+                .metadata("workspace.id", workspaceId)
+                .metadata("user.id", userId)
                 .error(e)
                 .build());
       } else {
@@ -64,8 +64,8 @@ public class RemoveWorkspaceMemberCommandHandler
             LogEvent.builder(
                     "Removing workspace member failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
-                .metadata("userId", userId)
+                .metadata("workspace.id", workspaceId)
+                .metadata("user.id", userId)
                 .error(e)
                 .build());
       }

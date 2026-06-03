@@ -49,8 +49,8 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
       this.logger.info(
           LogEvent.builder("Workspace updated successfully: " + workspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_UPDATED)
-              .metadata("workspaceId", workspace.getId().toString())
-              .metadata("name", workspace.getName())
+              .metadata("workspace.id", workspace.getId().toString())
+              .metadata("workspace.name", workspace.getName())
               .build());
     } catch (Exception e) {
       String workspaceId = command.id() != null ? command.id()
@@ -59,14 +59,14 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
         this.logger.warn(
             LogEvent.builder("Workspace update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("Workspace update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       }

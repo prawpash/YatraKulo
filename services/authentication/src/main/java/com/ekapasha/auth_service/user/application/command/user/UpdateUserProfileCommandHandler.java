@@ -84,7 +84,7 @@ public class UpdateUserProfileCommandHandler
       this.logger.info(
           LogEvent.builder("User profile updated successfully: " + user.getId())
               .eventName(AuthLogEvent.USER_PROFILE_UPDATED)
-              .metadata("userId", user.getId().toString())
+              .metadata("user.id", user.getId().toString())
               .build());
 
       return user;
@@ -95,14 +95,14 @@ public class UpdateUserProfileCommandHandler
         this.logger.warn(
             LogEvent.builder("User profile update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_PROFILE_UPDATE_FAILED)
-                .metadata("userId", userId)
+                .metadata("user.id", userId)
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("User profile update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_PROFILE_UPDATE_FAILED)
-                .metadata("userId", userId)
+                .metadata("user.id", userId)
                 .error(e)
                 .build());
       }

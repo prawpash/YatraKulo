@@ -19,12 +19,12 @@
             </rollingPolicy>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <fieldNames>
-                    <timestamp>timestamp</timestamp>
+                    <timestamp>@timestamp</timestamp>
                     <message>message</message>
-                    <logger>logger</logger>
-                    <thread>thread</thread>
-                    <level>level</level>
-                    <stackTrace>stack_trace</stackTrace>
+                    <logger>log.logger</logger>
+                    <thread>process.thread.name</thread>
+                    <level>log.level</level>
+                    <stackTrace>error.stack_trace</stackTrace>
                 </fieldNames>
                 <includeMdc>true</includeMdc>
                 <includeContext>false</includeContext>
@@ -41,12 +41,12 @@
         <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <fieldNames>
-                    <timestamp>timestamp</timestamp>
+                    <timestamp>@timestamp</timestamp>
                     <message>message</message>
-                    <logger>logger</logger>
-                    <thread>thread</thread>
-                    <level>level</level>
-                    <stackTrace>stack_trace</stackTrace>
+                    <logger>log.logger</logger>
+                    <thread>process.thread.name</thread>
+                    <level>log.level</level>
+                    <stackTrace>error.stack_trace</stackTrace>
                 </fieldNames>
                 <includeMdc>true</includeMdc>
                 <includeContext>false</includeContext>

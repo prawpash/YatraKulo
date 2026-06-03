@@ -24,9 +24,9 @@ public class LoggingContextFilter extends OncePerRequestFilter {
         String workspaceId = request.getHeader("X-Workspace-Id");
         
         try {
-            MDC.put("traceId", traceId);
+            MDC.put("trace.id", traceId);
             if (workspaceId != null && !workspaceId.isBlank()) {
-                MDC.put("workspaceId", workspaceId);
+                MDC.put("workspace.id", workspaceId);
             }
             
             response.setHeader("X-Trace-Id", traceId);

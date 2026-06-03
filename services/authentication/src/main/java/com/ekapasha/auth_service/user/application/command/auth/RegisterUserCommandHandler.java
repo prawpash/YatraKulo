@@ -76,9 +76,9 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
       this.logger.info(
           LogEvent.builder("User registered successfully: " + user.getUsername())
               .eventName(AuthLogEvent.USER_REGISTERED_SUCCESS)
-              .metadata("userId", user.getId().toString())
-              .metadata("username", user.getUsername())
-              .metadata("email", user.getEmail())
+              .metadata("user.id", user.getId().toString())
+              .metadata("user.name", user.getUsername())
+              .metadata("user.email", user.getEmail())
               .build());
 
       return user;
@@ -87,16 +87,16 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
         this.logger.warn(
             LogEvent.builder("User registration failed: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_REGISTER_FAILED)
-                .metadata("username", command.username())
-                .metadata("email", command.email())
+                .metadata("user.name", command.username())
+                .metadata("user.email", command.email())
                 .error(e)
                 .build());
       } else {
         this.logger.error(
             LogEvent.builder("User registration failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_REGISTER_FAILED)
-                .metadata("username", command.username())
-                .metadata("email", command.email())
+                .metadata("user.name", command.username())
+                .metadata("user.email", command.email())
                 .error(e)
                 .build());
       }

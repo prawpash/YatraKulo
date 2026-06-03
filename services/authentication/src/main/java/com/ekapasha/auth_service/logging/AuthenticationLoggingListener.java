@@ -21,7 +21,7 @@ public class AuthenticationLoggingListener {
       this.logger.info(
           LogEvent.builder("User logged in successfully: " + auth.getName())
               .eventName(AuthLogEvent.USER_LOGIN_SUCCESS)
-              .metadata("username", auth.getName())
+              .metadata("user.name", auth.getName())
               .build());
     } else {
       this.logger.info(
@@ -42,7 +42,7 @@ public class AuthenticationLoggingListener {
       this.logger.warn(
           LogEvent.builder("User login failed: " + auth.getName())
               .eventName(AuthLogEvent.USER_LOGIN_FAILED)
-              .metadata("username", auth.getName())
+              .metadata("user.name", auth.getName())
               .error(event.getException())
               .build());
     } else {

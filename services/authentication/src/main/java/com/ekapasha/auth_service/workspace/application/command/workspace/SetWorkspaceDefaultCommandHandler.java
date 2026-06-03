@@ -57,8 +57,8 @@ public class SetWorkspaceDefaultCommandHandler
       this.logger.info(
           LogEvent.builder("Workspace set as default successfully: " + workspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_DEFAULT_SET)
-              .metadata("workspaceId", workspace.getId().toString())
-              .metadata("name", workspace.getName())
+              .metadata("workspace.id", workspace.getId().toString())
+              .metadata("workspace.name", workspace.getName())
               .build());
     } catch (Exception e) {
       String workspaceId = command.id() != null ? command.id().toString() : "null";
@@ -66,7 +66,7 @@ public class SetWorkspaceDefaultCommandHandler
         this.logger.warn(
             LogEvent.builder("Setting workspace as default failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
@@ -74,7 +74,7 @@ public class SetWorkspaceDefaultCommandHandler
             LogEvent.builder(
                     "Setting workspace as default failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
-                .metadata("workspaceId", workspaceId)
+                .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       }
