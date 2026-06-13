@@ -5,6 +5,15 @@ logging:
   level:
     org.springframework.security: trace
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+
 app:
   rsa:
     keyId: ${RSA_KEY_ID}

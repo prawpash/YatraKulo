@@ -10,6 +10,7 @@ import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;
 import com.ekapasha.auth_service.user.domain.service.PasswordService;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
   private final UserWriteRepository userWriteRepository;
   private final PasswordService passwordService;
   private final UserReadRepository userReadRepository;
+  private final MeterRegistry meterRegistry;
   private final AppLogger logger = new AppLogger(RegisterUserCommandHandler.class);
 
   @Override
@@ -72,6 +74,8 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
               .build();
 
       this.userWriteRepository.save(user);
+
+      this.meterRegistry.counter("auth.user.registration.count").increment();
 
       this.logger.info(
           LogEvent.builder("User registered successfully: " + user.getUsername())

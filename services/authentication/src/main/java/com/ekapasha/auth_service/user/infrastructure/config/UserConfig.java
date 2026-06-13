@@ -7,6 +7,7 @@ import com.ekapasha.auth_service.user.domain.service.PasswordService;
 import com.ekapasha.auth_service.user.infrastructure.persistence.repository.JPAUserRepository;
 import com.ekapasha.auth_service.user.infrastructure.persistence.repository.UserReadRepositoryImpl;
 import com.ekapasha.auth_service.user.infrastructure.persistence.repository.UserWriteRepositoryImpl;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,11 +29,13 @@ public class UserConfig {
   public RegisterUserCommandHandler registerUserCommandHandler(
       UserWriteRepository userWriteRepository,
       PasswordService passwordService,
-      UserReadRepository userReadRepository
+      UserReadRepository userReadRepository,
+      MeterRegistry meterRegistry
   ) {
     return new RegisterUserCommandHandler(
         userWriteRepository,
         passwordService,
-        userReadRepository);
+        userReadRepository,
+        meterRegistry);
   }
 }
