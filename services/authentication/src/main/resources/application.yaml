@@ -13,6 +13,20 @@ management:
   endpoint:
     prometheus:
       enabled: true
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  opentelemetry:
+    resource-attributes:
+      service.name: ${spring.application.name}
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+  tracing:
+    sampling:
+      probability: 1.0
 
 app:
   rsa:
@@ -61,7 +75,6 @@ spring:
     mode: HTML
     encoding: UTF-8
     cache: false
-
 
 scalar:
   hideDarkModeToggle: true
