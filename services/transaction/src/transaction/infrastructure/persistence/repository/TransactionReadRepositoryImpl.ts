@@ -15,7 +15,7 @@ export class TransactionReadRepositoryImpl implements TransactionReadRepository 
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: Kysely<DB>,
-  ) { }
+  ) {}
 
   async findById(id: string): Promise<Transaction | null> {
     const result = await this.db
@@ -76,6 +76,7 @@ export class TransactionReadRepositoryImpl implements TransactionReadRepository 
   }
 
   private async getPaginatedResult(
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     query: SelectQueryBuilder<DB, 'transaction', {}>,
     pageRequest: DomainPageRequest,
   ): Promise<DomainPage<Transaction>> {

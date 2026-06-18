@@ -12,7 +12,7 @@ export class TransactionWriteRepositoryImpl implements TransactionWriteRepositor
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: Kysely<DB>,
-  ) { }
+  ) {}
 
   async save(transaction: Transaction): Promise<Transaction> {
     const persistence = TransactionMapper.toPersistence(transaction);

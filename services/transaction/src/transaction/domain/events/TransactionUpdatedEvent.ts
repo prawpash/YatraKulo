@@ -19,4 +19,3 @@ export class TransactionUpdatedEvent implements IDomainEvent {
     return 'TransactionUpdated';
   }
 }
-
