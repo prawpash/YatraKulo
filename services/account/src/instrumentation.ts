@@ -48,7 +48,9 @@ const sdk = new NodeSDK({
 });
 
 sdk.start();
-console.log(`[OpenTelemetry] SDK initialized successfully. Prometheus metrics server listening on port ${metricsPort}`);
+console.log(
+  `[OpenTelemetry] SDK initialized successfully. Prometheus metrics server listening on port ${metricsPort}`,
+);
 
 // Gracefully shut down the SDK on process exit
 process.on('SIGTERM', () => {
