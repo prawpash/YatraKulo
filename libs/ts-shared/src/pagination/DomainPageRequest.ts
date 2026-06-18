@@ -17,15 +17,15 @@ export function createDomainPageRequest(
   size: number,
 ): DomainPageRequest {
   if (!Number.isInteger(page) || page < 0) {
-    throw new Error("page must be a non-negative integer");
+    throw new Error('page must be a non-negative integer');
   }
 
   if (!Number.isInteger(size) || size <= 0) {
-    throw new Error("size must be a positive integer");
+    throw new Error('size must be a positive integer');
   }
 
   if (size > 100) {
-    throw new Error("size must be less than or equal to 100");
+    throw new Error('size must be less than or equal to 100');
   }
 
   return Object.freeze({ page, size });
