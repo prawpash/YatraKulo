@@ -58,6 +58,12 @@ describe('TransactionController (Integration)', () => {
     await TestcontainersSetup.stop();
   });
 
+  afterEach(async () => {
+    // Clean up tables to ensure test isolation
+    await db.deleteFrom('outbox').execute();
+    await db.deleteFrom('transaction').execute();
+  });
+
   describe('POST /transactions', () => {
     it('should create a new transaction and publish outbox event', async () => {
       const workspaceId = uuidv4();
@@ -94,7 +100,7 @@ describe('TransactionController (Integration)', () => {
         .where('status', '=', 'PENDING')
         .execute();
 
-      expect(pendingEventsBefore.length).toBeGreaterThanOrEqual(1);
+      expect(pendingEventsBefore.length).toBe(1);
 
       // Manually trigger the cron job logic
       await outboxRelayService.handleCron();
@@ -106,9 +112,7 @@ describe('TransactionController (Integration)', () => {
         .execute();
 
       // Expect the event to have been processed
-      expect(pendingEventsAfter.length).toBeLessThan(
-        pendingEventsBefore.length,
-      );
+      expect(pendingEventsAfter.length).toBe(0);
     });
 
     it('should return 400 if Idempotency-Key is missing', async () => {
@@ -123,6 +127,57 @@ describe('TransactionController (Integration)', () => {
         .post('/transactions')
         .set('X-Workspace-Id', workspaceId)
         .send(payload)
+        .expect(400);
+    });
+
+    it('should return the same transaction and not create a duplicate on idempotency key reuse', async () => {
+      const workspaceId = uuidv4();
+      const idempotencyKey = uuidv4();
+      const payload = {
+        amount: 200,
+        note: 'Idempotent Transaction',
+        fromAccountId: uuidv4(),
+        toAccountId: uuidv4(),
+      };
+
+      const firstResponse = await request(app.getHttpServer())
+        .post('/transactions')
+        .set('X-Workspace-Id', workspaceId)
+        .set('Idempotency-Key', idempotencyKey)
+        .send(payload)
+        .expect(201);
+
+      const secondResponse = await request(app.getHttpServer())
+        .post('/transactions')
+        .set('X-Workspace-Id', workspaceId)
+        .set('Idempotency-Key', idempotencyKey)
+        .send(payload);
+
+      // Status could be 200 or 201 depending on the exact implementation
+      expect([200, 201]).toContain(secondResponse.status);
+      expect(firstResponse.body.id).toBe(secondResponse.body.id);
+
+      // Verify no duplicate transactions or outbox events in the DB
+      const dbTransactions = await db.selectFrom('transaction').selectAll().execute();
+      expect(dbTransactions.length).toBe(1);
+
+      const dbOutbox = await db.selectFrom('outbox').selectAll().execute();
+      expect(dbOutbox.length).toBe(1);
+    });
+
+    it('should return 400 if required payload fields are missing', async () => {
+      const workspaceId = uuidv4();
+      const idempotencyKey = uuidv4();
+      const invalidPayload = {
+        amount: 50,
+        // missing fromAccountId and toAccountId
+      };
+
+      await request(app.getHttpServer())
+        .post('/transactions')
+        .set('X-Workspace-Id', workspaceId)
+        .set('Idempotency-Key', idempotencyKey)
+        .send(invalidPayload)
         .expect(400);
     });
   });
@@ -153,7 +208,7 @@ describe('TransactionController (Integration)', () => {
 
       expect(responseBody.content).toBeDefined();
       expect(Array.isArray(responseBody.content)).toBe(true);
-      expect(responseBody.content.length).toBeGreaterThanOrEqual(1);
+      expect(responseBody.content.length).toBe(1);
     });
   });
 
