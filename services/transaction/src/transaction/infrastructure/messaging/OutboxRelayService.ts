@@ -75,6 +75,9 @@ export class OutboxRelayService {
           }
           span.setStatus({ code: SpanStatusCode.OK });
         } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          this.logger.error(`Outbox relay operation failed: ${errorMessage}`);
           span.recordException(error as Error);
           span.setStatus({
             code: SpanStatusCode.ERROR,
