@@ -23,7 +23,7 @@ export class TransactionWriteRepositoryImpl implements TransactionWriteRepositor
         .insertInto('transaction')
         .values(persistence)
         .onConflict((oc) =>
-          oc.column('idempotency_key').doUpdateSet({
+          oc.columns(['workspace_id', 'idempotency_key']).doUpdateSet({
             amount: persistence.amount,
             note: persistence.note,
             from_account_id: persistence.from_account_id,
