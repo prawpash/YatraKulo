@@ -9,18 +9,20 @@ describe('TransactionReadRepositoryImpl', () => {
   let repository: TransactionReadRepositoryImpl;
   let db: jest.Mocked<Kysely<DB>>;
   let selectFromMock: jest.Mock;
+  let whereMock: jest.Mock;
   let executeTakeFirstMock: jest.Mock;
   let executeMock: jest.Mock;
 
   beforeEach(async () => {
     selectFromMock = jest.fn().mockReturnThis();
+    whereMock = jest.fn().mockReturnThis();
     executeTakeFirstMock = jest.fn();
     executeMock = jest.fn();
 
     db = {
       selectFrom: selectFromMock,
       selectAll: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
+      where: whereMock,
       executeTakeFirst: executeTakeFirstMock,
       execute: executeMock,
       orderBy: jest.fn().mockReturnThis(),
@@ -68,6 +70,8 @@ describe('TransactionReadRepositoryImpl', () => {
       expect(result).toBeDefined();
       expect(result?.id).toBe('tx-1');
       expect(selectFromMock).toHaveBeenCalledWith('transaction');
+      expect(whereMock).toHaveBeenCalledWith('id', '=', 'tx-1');
+      expect(whereMock).toHaveBeenCalledWith('deleted_at', 'is', null);
     });
 
     it('should return null if not found', async () => {
@@ -100,6 +104,10 @@ describe('TransactionReadRepositoryImpl', () => {
 
       expect(result).toBeDefined();
       expect(result?.id).toBe('tx-1');
+      expect(selectFromMock).toHaveBeenCalledWith('transaction');
+      expect(whereMock).toHaveBeenCalledWith('id', '=', 'tx-1');
+      expect(whereMock).toHaveBeenCalledWith('workspace_id', '=', 'ws-1');
+      expect(whereMock).toHaveBeenCalledWith('deleted_at', 'is', null);
     });
   });
 
@@ -129,6 +137,10 @@ describe('TransactionReadRepositoryImpl', () => {
 
       expect(result).toBeDefined();
       expect(result?.id).toBe('tx-1');
+      expect(selectFromMock).toHaveBeenCalledWith('transaction');
+      expect(whereMock).toHaveBeenCalledWith('idempotency_key', '=', 'idem-key');
+      expect(whereMock).toHaveBeenCalledWith('workspace_id', '=', 'ws-1');
+      expect(whereMock).toHaveBeenCalledWith('deleted_at', 'is', null);
     });
   });
 
@@ -145,6 +157,9 @@ describe('TransactionReadRepositoryImpl', () => {
 
       expect(result.content).toEqual([]);
       expect(result.totalElements).toBe(0);
+      expect(selectFromMock).toHaveBeenCalledWith('transaction');
+      expect(whereMock).toHaveBeenCalledWith('workspace_id', '=', 'ws-1');
+      expect(whereMock).toHaveBeenCalledWith('deleted_at', 'is', null);
     });
 
     it('should filter by fromAccountId and toAccountId', async () => {
@@ -159,8 +174,10 @@ describe('TransactionReadRepositoryImpl', () => {
         pageRequest,
       });
 
-      expect(db.where).toHaveBeenCalledWith('from_account_id', '=', 'acc-1');
-      expect(db.where).toHaveBeenCalledWith('to_account_id', '=', 'acc-2');
+      expect(whereMock).toHaveBeenCalledWith('from_account_id', '=', 'acc-1');
+      expect(whereMock).toHaveBeenCalledWith('to_account_id', '=', 'acc-2');
+      expect(whereMock).toHaveBeenCalledWith('workspace_id', '=', 'ws-1');
+      expect(whereMock).toHaveBeenCalledWith('deleted_at', 'is', null);
     });
   });
 });
