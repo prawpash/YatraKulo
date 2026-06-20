@@ -15,29 +15,34 @@ export class TestcontainersSetup {
   private static rmqContainer: StartedRabbitMQContainer;
 
   static async start(): Promise<void> {
-    this.pgContainer = await new PostgreSqlContainer('postgres:17.5-alpine3.22')
-      .withDatabase('postgres')
-      .withUsername('postgres')
-      .withPassword('postgres')
-      .start();
+    try {
+      this.pgContainer = await new PostgreSqlContainer('postgres:17.5-alpine3.22')
+        .withDatabase('postgres')
+        .withUsername('postgres')
+        .withPassword('postgres')
+        .start();
 
-    this.rmqContainer = await new RabbitMQContainer(
-      'rabbitmq:4.2.6-management-alpine',
-    )
-      .withExposedPorts(5672, 15672)
-      .start();
+      this.rmqContainer = await new RabbitMQContainer(
+        'rabbitmq:4.2.6-management-alpine',
+      )
+        .withExposedPorts(5672, 15672)
+        .start();
 
-    // Set environment variables for NestJS ConfigService
-    process.env.DB_HOST = this.pgContainer.getHost();
-    process.env.DB_PORT = this.pgContainer.getMappedPort(5432).toString();
-    process.env.DB_USER = this.pgContainer.getUsername();
-    process.env.DB_PASSWORD = this.pgContainer.getPassword();
-    process.env.DB_NAME = this.pgContainer.getDatabase();
+      // Set environment variables for NestJS ConfigService
+      process.env.DB_HOST = this.pgContainer.getHost();
+      process.env.DB_PORT = this.pgContainer.getMappedPort(5432).toString();
+      process.env.DB_USER = this.pgContainer.getUsername();
+      process.env.DB_PASSWORD = this.pgContainer.getPassword();
+      process.env.DB_NAME = this.pgContainer.getDatabase();
 
-    const amqpUrl = this.rmqContainer.getAmqpUrl();
-    process.env.RABBITMQ_URL = amqpUrl;
+      const amqpUrl = this.rmqContainer.getAmqpUrl();
+      process.env.RABBITMQ_URL = amqpUrl;
 
-    await this.runMigrations();
+      await this.runMigrations();
+    } catch (error) {
+      await this.stop();
+      throw error;
+    }
   }
 
   static async stop(): Promise<void> {
