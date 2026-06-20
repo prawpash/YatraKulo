@@ -76,8 +76,7 @@ export class TransactionReadRepositoryImpl implements TransactionReadRepository 
   }
 
   private async getPaginatedResult(
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    query: SelectQueryBuilder<DB, 'transaction', {}>,
+    query: SelectQueryBuilder<DB, 'transaction', object>,
     pageRequest: DomainPageRequest,
   ): Promise<DomainPage<Transaction>> {
     const { page, size } = pageRequest;
