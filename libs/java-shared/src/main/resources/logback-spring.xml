@@ -2,6 +2,8 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+    <springProperty scope="context" name="springAppName" source="spring.application.name" defaultValue="application"/>
+
     <springProfile name="!production &amp; !prod">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
@@ -10,9 +12,9 @@
         </appender>
 
         <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>logs/auth-service-json.log</file>
+            <file>logs/${springAppName}-json.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>logs/archived/auth-service-json-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <fileNamePattern>logs/archived/${springAppName}-json-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
                 <maxFileSize>10MB</maxFileSize>
                 <maxHistory>7</maxHistory>
                 <totalSizeCap>100MB</totalSizeCap>
