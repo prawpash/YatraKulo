@@ -56,7 +56,12 @@ console.log(
 process.on('SIGTERM', () => {
   sdk
     .shutdown()
-    .then(() => console.log('SDK shut down successfully'))
-    .catch((err) => console.log('Error shutting down SDK', err))
-    .finally(() => process.exit(0));
+    .then(() => {
+      console.log('SDK shut down successfully');
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.log('Error shutting down SDK', err);
+      process.exit(1);
+    });
 });
