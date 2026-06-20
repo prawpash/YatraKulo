@@ -1,4 +1,3 @@
-import './instrumentation';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { NestFactory } from '@nestjs/core';
