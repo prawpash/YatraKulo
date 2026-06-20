@@ -36,14 +36,13 @@ export class OutboxRelayService {
 
           if (pendingEvents.length === 0) {
             span.setStatus({ code: SpanStatusCode.OK });
-            span.end();
-            return;
           }
-
           this.logger.log(
             `Processing ${pendingEvents.length} pending outbox events`,
           );
           span.setAttribute('events.count', pendingEvents.length);
+
+          let hasError = false;
 
           for (const event of pendingEvents) {
             try {
@@ -59,6 +58,7 @@ export class OutboxRelayService {
                 .where('id', '=', event.id)
                 .execute();
             } catch (error) {
+              hasError = true;
               const errorMessage =
                 error instanceof Error ? error.message : String(error);
               this.logger.error(
@@ -73,7 +73,15 @@ export class OutboxRelayService {
                 .execute();
             }
           }
-          span.setStatus({ code: SpanStatusCode.OK });
+
+          if (hasError) {
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: 'One or more outbox events failed to publish',
+            });
+          } else {
+            span.setStatus({ code: SpanStatusCode.OK });
+          }
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
