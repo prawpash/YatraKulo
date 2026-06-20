@@ -14,4 +14,3 @@ export class TransactionDeletedEvent implements IDomainEvent {
     return 'TransactionDeleted';
   }
 }
-

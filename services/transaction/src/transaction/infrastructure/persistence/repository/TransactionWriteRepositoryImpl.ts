@@ -12,7 +12,7 @@ export class TransactionWriteRepositoryImpl implements TransactionWriteRepositor
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: Kysely<DB>,
-  ) { }
+  ) {}
 
   async save(transaction: Transaction): Promise<Transaction> {
     const persistence = TransactionMapper.toPersistence(transaction);
@@ -23,7 +23,7 @@ export class TransactionWriteRepositoryImpl implements TransactionWriteRepositor
         .insertInto('transaction')
         .values(persistence)
         .onConflict((oc) =>
-          oc.column('idempotency_key').doUpdateSet({
+          oc.columns(['workspace_id', 'idempotency_key']).doUpdateSet({
             amount: persistence.amount,
             note: persistence.note,
             from_account_id: persistence.from_account_id,

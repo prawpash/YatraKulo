@@ -11,9 +11,7 @@ import {
 import { DeleteTransactionCommand } from './DeleteTransactionCommand';
 
 @CommandHandler(DeleteTransactionCommand)
-export class DeleteTransactionHandler
-  implements ICommandHandler<DeleteTransactionCommand>
-{
+export class DeleteTransactionHandler implements ICommandHandler<DeleteTransactionCommand> {
   constructor(
     @Inject(TRANSACTION_READ_REPOSITORY)
     private readonly transactionReadRepository: TransactionReadRepository,
