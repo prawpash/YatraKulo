@@ -63,7 +63,10 @@ public class GlobalExceptionHandler {
     if (ex.getCause() instanceof InvalidFormatException ife) {
       this.logger.debug(ife.getTargetType().toString());
       Class<?> targetType = ife.getTargetType();
-      String fieldName = ife.getPath().isEmpty() ? "field" : ife.getPath().getFirst().getPropertyName();
+      String fieldName = ife.getPath().isEmpty() ? "field" : 
+          ife.getPath().stream()
+              .map(ref -> ref.getPropertyName())
+              .collect(java.util.stream.Collectors.joining("."));
 
       if (targetType.equals(UUID.class)) {
         var detail = new ErrorDetail(fieldName, "Invalid UUID format");
