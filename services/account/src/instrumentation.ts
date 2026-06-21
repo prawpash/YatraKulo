@@ -6,6 +6,7 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { getValidPort } from '@yk/shared';
 
 // Load .env variables before starting the SDK
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -14,9 +15,7 @@ const serviceName = process.env.OTEL_SERVICE_NAME || 'account-service';
 const tracesEndpoint =
   process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
   'http://localhost:4318/v1/traces';
-const metricsPort = process.env.PROMETHEUS_METRICS_PORT
-  ? parseInt(process.env.PROMETHEUS_METRICS_PORT, 10)
-  : 9464;
+const metricsPort = getValidPort(process.env.PROMETHEUS_METRICS_PORT, 9464);
 
 const traceExporter = new OTLPTraceExporter({
   url: tracesEndpoint,
