@@ -29,6 +29,7 @@ import com.ekapasha.auth_service.workspace.presentation.dto.UpdateWorkspaceMembe
 import com.ekapasha.auth_service.workspace.presentation.dto.UpdateWorkspaceRequestDto;
 import org.junit.jupiter.api.Test;
 
+import static com.ekapasha.auth_service.workspace.WorkspaceTestFixtures.MEMBER_ID;
 import static com.ekapasha.auth_service.workspace.WorkspaceTestFixtures.OWNER_ID;
 import static com.ekapasha.auth_service.workspace.WorkspaceTestFixtures.ROLE_ID;
 import static com.ekapasha.auth_service.workspace.WorkspaceTestFixtures.WORKSPACE_ID;
@@ -56,7 +57,7 @@ class WorkspaceModelTest {
         new ListWorkspacesByOwnerQuery(OWNER_ID, new com.ekapasha.shared.pagination.DomainPageRequest(1, 10), "search");
     CheckWorkspaceMemberExistsQuery checkMemberExistsQuery = new CheckWorkspaceMemberExistsQuery(WORKSPACE_ID, OWNER_ID);
     CountWorkspaceMembersQuery countWorkspaceMembersQuery = new CountWorkspaceMembersQuery(WORKSPACE_ID);
-    GetWorkspaceMemberByIdQuery getWorkspaceMemberByIdQuery = new GetWorkspaceMemberByIdQuery(WORKSPACE_ID);
+    GetWorkspaceMemberByIdQuery getWorkspaceMemberByIdQuery = new GetWorkspaceMemberByIdQuery(MEMBER_ID);
     GetWorkspaceMemberByWorkspaceAndUserQuery byWorkspaceAndUserQuery =
         new GetWorkspaceMemberByWorkspaceAndUserQuery(WORKSPACE_ID, OWNER_ID);
     ListUserWorkspaceMembershipsQuery membershipsQuery =
@@ -86,7 +87,7 @@ class WorkspaceModelTest {
     assertThat(listWorkspacesQuery.search()).isEqualTo("search");
     assertThat(checkMemberExistsQuery.workspaceId()).isEqualTo(WORKSPACE_ID);
     assertThat(countWorkspaceMembersQuery.workspaceId()).isEqualTo(WORKSPACE_ID);
-    assertThat(getWorkspaceMemberByIdQuery.id()).isEqualTo(WORKSPACE_ID);
+    assertThat(getWorkspaceMemberByIdQuery.id()).isEqualTo(MEMBER_ID);
     assertThat(byWorkspaceAndUserQuery.userId()).isEqualTo(OWNER_ID);
     assertThat(membershipsQuery.pageRequest().size()).isEqualTo(5);
     assertThat(membersByWorkspaceQuery.pageRequest().page()).isEqualTo(3);
