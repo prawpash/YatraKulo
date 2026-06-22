@@ -6,11 +6,14 @@ import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;
 import com.ekapasha.auth_service.user.domain.service.PasswordService;
 import com.ekapasha.shared.exception.DuplicateDataException;
 import com.ekapasha.shared.exception.ValidationException;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -19,6 +22,7 @@ import static com.ekapasha.auth_service.user.UserTestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,14 +32,17 @@ class RegisterUserCommandHandlerTest {
   @Mock private UserWriteRepository userWriteRepository;
   @Mock private PasswordService passwordService;
   @Mock private UserReadRepository userReadRepository;
+  @Mock private MeterRegistry meterRegistry;
   @InjectMocks private RegisterUserCommandHandler handler;
 
   @Test
   void shouldRegisterUserWhenDataIsValid() {
+    Counter counter = Mockito.mock(Counter.class);
     when(userReadRepository.findByEmail("jane@example.com")).thenReturn(Optional.empty());
     when(userReadRepository.findByUsername("jane")).thenReturn(Optional.empty());
     when(passwordService.hashPassword("password123")).thenReturn("hashed-password");
     when(userWriteRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(meterRegistry.counter(anyString())).thenReturn(counter);
 
     User result =
         handler.handler(

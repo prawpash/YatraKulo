@@ -7,6 +7,7 @@ import com.ekapasha.auth_service.user.domain.service.PasswordService;
 import com.ekapasha.auth_service.user.infrastructure.persistence.repository.JPAUserRepository;
 import com.ekapasha.auth_service.user.infrastructure.persistence.repository.UserReadRepositoryImpl;
 import com.ekapasha.auth_service.user.infrastructure.persistence.repository.UserWriteRepositoryImpl;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -19,11 +20,12 @@ class UserConfigTest {
     UserConfig config = new UserConfig();
     JPAUserRepository jpaUserRepository = Mockito.mock(JPAUserRepository.class);
     PasswordService passwordService = Mockito.mock(PasswordService.class);
+    MeterRegistry meterRegistry = Mockito.mock(MeterRegistry.class);
 
     UserWriteRepository writeRepository = config.userWriteRepository(jpaUserRepository);
     UserReadRepository readRepository = config.userReadRepository(jpaUserRepository);
     RegisterUserCommandHandler handler =
-        config.registerUserCommandHandler(writeRepository, passwordService, readRepository);
+        config.registerUserCommandHandler(writeRepository, passwordService, readRepository, meterRegistry);
 
     assertThat(writeRepository).isInstanceOf(UserWriteRepositoryImpl.class);
     assertThat(readRepository).isInstanceOf(UserReadRepositoryImpl.class);
