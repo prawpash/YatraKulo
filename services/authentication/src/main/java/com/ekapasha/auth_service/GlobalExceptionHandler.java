@@ -7,19 +7,28 @@ import com.ekapasha.shared.exception.UnauthorizedAccessException;
 import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.shared.response.ErrorDetail;
 import com.ekapasha.shared.response.ErrorResponse;
+import com.ekapasha.shared.logging.AppLogger;
+import com.ekapasha.shared.logging.LogEvent;
+import com.ekapasha.auth_service.logging.AuthLogEvent;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
   private final HttpServletRequest request;
+  private final AppLogger logger = new AppLogger(GlobalExceptionHandler.class);
 
   public GlobalExceptionHandler(HttpServletRequest request) {
     this.request = request;
@@ -40,8 +49,50 @@ public class GlobalExceptionHandler {
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException ex) {
+    this.logger.warn(
+        LogEvent.builder("HTTP message not readable: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("url.path", request.getRequestURI())
+            .error(ex)
+            .build());
+
+    // Check if the error is due to a format issue, e.g., an invalid UUID or boolean structure
+    if (ex.getCause() instanceof InvalidFormatException ife) {
+      this.logger.debug(ife.getTargetType().toString());
+      Class<?> targetType = ife.getTargetType();
+      String fieldName = ife.getPath().isEmpty() ? "field" : 
+          ife.getPath().stream()
+              .map(ref -> ref.getPropertyName())
+              .collect(java.util.stream.Collectors.joining("."));
+
+      if (targetType.equals(UUID.class)) {
+        var detail = new ErrorDetail(fieldName, "Invalid UUID format");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+      } else if (targetType.equals(boolean.class) || targetType.equals(Boolean.class)) {
+        var detail = new ErrorDetail(fieldName, "Invalid boolean format. Must be 'true' or 'false'");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+      }
+    }
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ErrorResponse(400, "Malformed JSON request body", request.getRequestURI()));
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+    this.logger.warn(
+        LogEvent.builder("Validation failed: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("url.path", request.getRequestURI())
+            .error(ex)
+            .build());
+
     var detail = new ErrorDetail(ex.getProperty(), ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(
@@ -59,6 +110,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DomainRuleViolationException.class)
   public ResponseEntity<ErrorResponse> handleDomainRuleViolationException(
       DomainRuleViolationException ex) {
+    this.logger.warn(
+        LogEvent.builder("Domain rule violation: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("url.path", request.getRequestURI())
+            .error(ex)
+            .build());
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse(400, ex.getMessage(), request.getRequestURI()));
   }
@@ -67,6 +125,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationPipeException(
       MethodArgumentNotValidException ex) {
+    this.logger.warn(
+        LogEvent.builder("Method argument validation failed: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("url.path", request.getRequestURI())
+            .error(ex)
+            .build());
+
     var details =
         ex.getBindingResult().getFieldErrors().stream()
             .map(
@@ -82,6 +147,13 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+    this.logger.error(
+        LogEvent.builder("Unhandled exception occurred: " + ex.getMessage())
+            .eventName(AuthLogEvent.UNHANDLED_EXCEPTION)
+            .metadata("url.path", request.getRequestURI())
+            .error(ex)
+            .build());
+
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorResponse(500, "Internal server error", request.getRequestURI()));
   }

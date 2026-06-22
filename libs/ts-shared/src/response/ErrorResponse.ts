@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const ErrorDetailSchema = z.object({
   field: z.string(),
@@ -38,13 +38,13 @@ export function createErrorResponse(
 
 function getErrorLabel(statusCode: number): string {
   const labels: Record<number, string> = {
-    400: "Bad Request",
-    401: "Unauthorized",
-    403: "Forbidden",
-    404: "Not Found",
-    409: "Conflict",
-    422: "Unprocessable Entity",
-    500: "Internal Server Error",
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    409: 'Conflict',
+    422: 'Unprocessable Entity',
+    500: 'Internal Server Error',
   };
-  return labels[statusCode] || "Error";
+  return labels[statusCode] || 'Error';
 }

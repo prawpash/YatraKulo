@@ -49,7 +49,7 @@ export function createDomainPage<T>(
   pageSize: number,
 ): DomainPage<T> {
   return Object.freeze({
-    content: Object.freeze(content) as readonly T[],
+    content: Object.freeze(content),
     totalElements,
     totalPages,
     currentPage,

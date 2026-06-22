@@ -14,7 +14,7 @@ export class OutboxCleanupService {
     @Inject(DATABASE_CONNECTION)
     private readonly db: Kysely<DB>,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleCron() {

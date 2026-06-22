@@ -16,6 +16,12 @@ repositories {
 }
 
 dependencies {
+    // Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    api("org.slf4j:slf4j-api:2.0.18")
+
+    // Source: https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
+
     // Use JUnit Jupiter for testing.
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")

@@ -1,3 +1,4 @@
+import { metrics } from '@opentelemetry/api';
 import { DatabaseConfig } from '@app/shared/config/configuration';
 import { Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -25,16 +26,36 @@ export const DatabaseConnection: Provider = {
       throw new Error('Incomplete database config');
     }
 
-    const dialect = new PostgresDialect({
-      pool: new Pool({
-        database: dbConfig.name,
-        host: dbConfig.host,
-        port: dbConfig.port,
-        max: dbConfig?.maxConnections ?? 10,
-        user: dbConfig.username,
-        password: dbConfig.password,
-      }),
+    const pool = new Pool({
+      database: dbConfig.name,
+      host: dbConfig.host,
+      port: dbConfig.port,
+      max: dbConfig?.maxConnections ?? 10,
+      user: dbConfig.username,
+      password: dbConfig.password,
     });
+
+    const meter = metrics.getMeter('pg-pool');
+
+    meter.createObservableGauge('pg.pool.connections', {
+      description: 'Total number of connections in the pool',
+    }).addCallback((result) => {
+      result.observe(pool.totalCount);
+    });
+
+    meter.createObservableGauge('pg.pool.idle', {
+      description: 'Number of idle connections in the pool',
+    }).addCallback((result) => {
+      result.observe(pool.idleCount);
+    });
+
+    meter.createObservableGauge('pg.pool.waiting', {
+      description: 'Number of queued requests waiting for a connection',
+    }).addCallback((result) => {
+      result.observe(pool.waitingCount);
+    });
+
+    const dialect = new PostgresDialect({ pool });
 
     return new Kysely<DB>({ dialect });
   },

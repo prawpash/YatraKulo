@@ -37,7 +37,12 @@ import { OutboxCleanupService } from './infrastructure/messaging/OutboxCleanupSe
         useFactory: (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
-            urls: [configService.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
+            urls: [
+              configService.get<string>(
+                'RABBITMQ_URL',
+                'amqp://localhost:5672',
+              ),
+            ],
             queue: 'transaction_queue',
             queueOptions: {
               durable: true,
