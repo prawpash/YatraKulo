@@ -82,7 +82,6 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
               .eventName(AuthLogEvent.USER_REGISTERED_SUCCESS)
               .metadata("user.id", user.getId().toString())
               .metadata("user.name", user.getUsername())
-              .metadata("user.email", user.getEmail())
               .build());
 
       return user;
@@ -92,7 +91,6 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
             LogEvent.builder("User registration failed: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_REGISTER_FAILED)
                 .metadata("user.name", command.username())
-                .metadata("user.email", command.email())
                 .error(e)
                 .build());
       } else {
@@ -100,7 +98,6 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
             LogEvent.builder("User registration failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_REGISTER_FAILED)
                 .metadata("user.name", command.username())
-                .metadata("user.email", command.email())
                 .error(e)
                 .build());
       }
