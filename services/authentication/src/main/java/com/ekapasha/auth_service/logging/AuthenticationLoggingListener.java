@@ -8,6 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,9 +20,8 @@ public class AuthenticationLoggingListener {
   @EventListener
   public void handleSuccess(AuthenticationSuccessEvent event) {
     Authentication auth = event.getAuthentication();
-    String className = auth.getClass().getName();
 
-    if (className.contains("UsernamePasswordAuthenticationToken")) {
+    if (auth instanceof UsernamePasswordAuthenticationToken) {
       this.meterRegistry.counter("auth.login.count", "status", "success").increment();
       this.logger.info(
           LogEvent.builder("User logged in successfully: " + auth.getName())
@@ -41,9 +41,8 @@ public class AuthenticationLoggingListener {
   @EventListener
   public void handleFailure(AbstractAuthenticationFailureEvent event) {
     Authentication auth = event.getAuthentication();
-    String className = auth.getClass().getName();
 
-    if (className.contains("UsernamePasswordAuthenticationToken")) {
+    if (auth instanceof UsernamePasswordAuthenticationToken) {
       this.meterRegistry.counter("auth.login.count", "status", "failed").increment();
       this.logger.warn(
           LogEvent.builder("User login failed: " + auth.getName())
