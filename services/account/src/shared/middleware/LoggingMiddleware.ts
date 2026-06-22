@@ -5,12 +5,22 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
+  private normalizeHeader(value: string | string[] | undefined): string | undefined {
+    if (!value) return undefined;
+    const str = Array.isArray(value) ? value[0] : value;
+    const trimmed = str.trim();
+    return trimmed && /^[^\r\n]+$/.test(trimmed) ? trimmed : undefined;
+  }
+
   use(req: Request, res: Response, next: NextFunction) {
     const activeSpan = trace.getActiveSpan();
+    
+    const traceIdHeader = this.normalizeHeader(req.headers['x-trace-id']);
+    const workspaceId = this.normalizeHeader(req.headers['x-workspace-id']);
+
     const traceId = activeSpan
       ? activeSpan.spanContext().traceId
-      : (req.headers['x-trace-id'] as string) || uuidv4();
-    const workspaceId = req.headers['x-workspace-id'] as string;
+      : traceIdHeader || uuidv4();
 
     res.setHeader('X-Trace-Id', traceId);
 
