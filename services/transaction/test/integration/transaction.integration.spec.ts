@@ -158,7 +158,10 @@ describe('TransactionController (Integration)', () => {
       expect(firstResponse.body.id).toBe(secondResponse.body.id);
 
       // Verify no duplicate transactions or outbox events in the DB
-      const dbTransactions = await db.selectFrom('transaction').selectAll().execute();
+      const dbTransactions = await db
+        .selectFrom('transaction')
+        .selectAll()
+        .execute();
       expect(dbTransactions.length).toBe(1);
 
       const dbOutbox = await db.selectFrom('outbox').selectAll().execute();

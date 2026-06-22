@@ -138,7 +138,11 @@ describe('TransactionReadRepositoryImpl', () => {
       expect(result).toBeDefined();
       expect(result?.id).toBe('tx-1');
       expect(selectFromMock).toHaveBeenCalledWith('transaction');
-      expect(whereMock).toHaveBeenCalledWith('idempotency_key', '=', 'idem-key');
+      expect(whereMock).toHaveBeenCalledWith(
+        'idempotency_key',
+        '=',
+        'idem-key',
+      );
       expect(whereMock).toHaveBeenCalledWith('workspace_id', '=', 'ws-1');
       expect(whereMock).toHaveBeenCalledWith('deleted_at', 'is', null);
     });

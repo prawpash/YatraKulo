@@ -4,6 +4,6 @@ export class ValidationException extends Error {
     public readonly field?: string,
   ) {
     super(message);
-    this.name = "ValidationException";
+    this.name = 'ValidationException';
   }
 }

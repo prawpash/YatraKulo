@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -47,6 +48,9 @@ dependencies {
 
     // Source: https://mvnrepository.com/artifact/org.springframework/spring-jcl
     implementation("org.springframework:spring-jcl:6.2.15")
+
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-opentelemetry
+    implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
 
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")

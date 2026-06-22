@@ -5,6 +5,33 @@ logging:
   level:
     org.springframework.security: trace
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  opentelemetry:
+    resource-attributes:
+      service.name: ${spring.application.name}
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+  tracing:
+    sampling:
+      probability: 1.0
+    baggage:
+      remote-fields: workspace.id
+      correlation:
+        fields: workspace.id
+
 app:
   rsa:
     keyId: ${RSA_KEY_ID}
@@ -52,7 +79,6 @@ spring:
     mode: HTML
     encoding: UTF-8
     cache: false
-
 
 scalar:
   hideDarkModeToggle: true

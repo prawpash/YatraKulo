@@ -16,7 +16,9 @@ export class TestcontainersSetup {
 
   static async start(): Promise<void> {
     try {
-      this.pgContainer = await new PostgreSqlContainer('postgres:17.5-alpine3.22')
+      this.pgContainer = await new PostgreSqlContainer(
+        'postgres:17.5-alpine3.22',
+      )
         .withDatabase('postgres')
         .withUsername('postgres')
         .withPassword('postgres')
