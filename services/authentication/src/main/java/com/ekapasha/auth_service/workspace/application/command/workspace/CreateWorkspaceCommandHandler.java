@@ -47,11 +47,12 @@ public class CreateWorkspaceCommandHandler
               .updatedAt(now)
               .build();
 
-      if (command.isDefault()) {
-        this.workspaceWriteRepository.setDefault(newWorkspace.getId(), command.ownerId());
-      }
-
       Workspace savedWorkspace = this.workspaceWriteRepository.save(newWorkspace);
+
+      if (command.isDefault()) {
+        this.workspaceWriteRepository.setDefault(savedWorkspace.getId(), command.ownerId());
+        savedWorkspace.markAsDefault(now);
+      }
 
       this.logger.info(
           LogEvent.builder("Workspace created successfully: " + savedWorkspace.getName())
