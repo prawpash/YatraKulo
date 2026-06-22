@@ -41,7 +41,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   private mapException(exception: unknown, request: Request): ErrorResponse {
     const path = request.url;
-    const traceId = request.headers['x-trace-id'] as string | undefined;
+    const rawTraceId = request.headers['x-trace-id'];
+    const traceId = Array.isArray(rawTraceId) ? rawTraceId[0] : rawTraceId;
 
     // // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     // this.logger.debug(Object.getPrototypeOf(exception).constructor);
