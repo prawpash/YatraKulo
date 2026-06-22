@@ -54,8 +54,12 @@ public class SetWorkspaceDefaultCommandHandler
       // Save the updated workspace
       this.workspaceWriteRepository.save(workspace);
 
+      String logMessage = command.isDefault()
+          ? "Workspace set as default successfully: " + workspace.getName()
+          : "Workspace unset as default successfully: " + workspace.getName();
+
       this.logger.info(
-          LogEvent.builder("Workspace set as default successfully: " + workspace.getName())
+          LogEvent.builder(logMessage)
               .eventName(AuthLogEvent.WORKSPACE_DEFAULT_SET)
               .metadata("workspace.id", workspace.getId().toString())
               .metadata("workspace.name", workspace.getName())
