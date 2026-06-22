@@ -1,6 +1,5 @@
 package com.ekapasha.auth_service.role.infrastructure.persistence.mapper;
 
-import com.ekapasha.auth_service.role.RoleTestFixtures;
 import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.infrastructure.persistence.entity.RoleEntity;
 import org.junit.jupiter.api.Test;

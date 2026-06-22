@@ -1,6 +1,5 @@
 package com.ekapasha.auth_service.role.presentation.controller;
 
-import com.ekapasha.auth_service.role.RoleTestFixtures;
 import com.ekapasha.auth_service.role.application.command.role.CreateRoleCommand;
 import com.ekapasha.auth_service.role.application.command.role.UpdateRoleCommand;
 import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermissionsCommand;
@@ -9,12 +8,10 @@ import com.ekapasha.auth_service.role.application.command.role.UpdateRoleCommand
 import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermissionsCommandHandler;
 import com.ekapasha.auth_service.role.application.query.role.GetRoleByIdQueryHandler;
 import com.ekapasha.auth_service.role.application.query.role.ListRolesQueryHandler;
-import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.presentation.dto.role.CreateRoleRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.ListRolesFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRolePermissionsRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRoleRequestDto;
-import com.ekapasha.shared.pagination.DomainPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -65,7 +62,7 @@ class RoleControllerTest {
     verify(createRoleCommandHandler).handler(captor.capture());
     assertThat(captor.getValue().workspaceId()).isEqualTo(WORKSPACE_ID);
     assertThat(captor.getValue().invokedBy()).isEqualTo(OWNER_ID);
-    assertThat(response.getHeaders().getLocation().toString()).isEqualTo("/roles/" + ROLE_ID);
+    assertThat(response.getHeaders().getLocation()).isNotNull().hasToString("/api/v1/roles/" + ROLE_ID);
     assertThat(response.getBody()).isEqualTo(activeWorkspaceRole());
   }
 

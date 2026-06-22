@@ -9,6 +9,7 @@ import com.ekapasha.shared.exception.DomainRuleViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +31,7 @@ class RolePermissionServiceTest {
   @Mock private RolePermissionReadRepository rolePermissionReadRepository;
   @Mock private RolePermissionWriteRepository rolePermissionWriteRepository;
   @InjectMocks private RolePermissionService service;
+  @Captor private ArgumentCaptor<List<RolePermission>> rolePermissionListCaptor;
 
   @Test
   void shouldGrantPermissionWhenMissing() {
@@ -85,9 +87,8 @@ class RolePermissionServiceTest {
 
     service.grantPermissions(role, requested, CREATED_AT);
 
-    ArgumentCaptor<List<RolePermission>> captor = ArgumentCaptor.forClass(List.class);
-    verify(rolePermissionWriteRepository).saveAll(captor.capture());
-    List<RolePermission> saved = captor.getValue();
+    verify(rolePermissionWriteRepository).saveAll(rolePermissionListCaptor.capture());
+    List<RolePermission> saved = rolePermissionListCaptor.getValue();
     assertThat(saved).extracting(RolePermission::getPermission)
         .containsExactlyInAnyOrder(Permission.WORKSPACE_DELETE, Permission.ACCOUNT_READ);
   }

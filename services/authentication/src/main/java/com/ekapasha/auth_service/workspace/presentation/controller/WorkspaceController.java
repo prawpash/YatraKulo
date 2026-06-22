@@ -63,7 +63,8 @@ public class WorkspaceController {
     Workspace workspace =
         createWorkspaceCommandHandler.handler(request.toCommand(ownerId, invokedBy));
 
-    return ResponseEntity.created(URI.create("/workspaces/" + workspace.getId())).body(workspace);
+    return ResponseEntity.created(URI.create("/api/v1/workspaces/" + workspace.getId()))
+        .body(workspace);
   }
 
   @Operation(
@@ -156,7 +157,8 @@ public class WorkspaceController {
 
     addWorkspaceMemberCommandHandler.handler(request.toCommand(id, invokedBy));
 
-    return ResponseEntity.created(URI.create("/workspaces/" + id + "/members/" + request.userId()))
+    return ResponseEntity.created(
+        URI.create("/api/v1/workspaces/" + id + "/members/" + request.userId()))
         .build();
   }
 

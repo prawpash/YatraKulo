@@ -23,7 +23,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -47,8 +46,7 @@ import java.util.List;
 public class SecurityConfig {
   @Bean
   @Order(1)
-  public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
-      throws Exception {
+  public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) {
 
     http.oauth2AuthorizationServer(
             (authorizationServer) -> {
@@ -69,7 +67,7 @@ public class SecurityConfig {
 
   @Bean
   @Order(2)
-  public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) {
     http.securityMatcher("/api/**")
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> corsConfigurationSource())
@@ -87,7 +85,7 @@ public class SecurityConfig {
 
   @Bean
   @Order(3)
-  public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) {
     http.authorizeHttpRequests(
             (authorize) ->
                 authorize
@@ -148,7 +146,7 @@ public class SecurityConfig {
       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
       return (RSAPublicKey) keyFactory.generatePublic(keySpec);
     } catch (Exception e) {
-      throw new RuntimeException("Failded to parse public key", e);
+      throw new RuntimeException("Failed to parse public key", e);
     }
   }
 
@@ -171,7 +169,7 @@ public class SecurityConfig {
       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
       return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
     } catch (Exception e) {
-      throw new RuntimeException("Failded to parse private key", e);
+      throw new RuntimeException("Failed to parse private key", e);
     }
   }
 

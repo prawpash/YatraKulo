@@ -1,6 +1,5 @@
 package com.ekapasha.auth_service.user.infrastructure.persistence.repository;
 
-import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.infrastructure.persistence.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

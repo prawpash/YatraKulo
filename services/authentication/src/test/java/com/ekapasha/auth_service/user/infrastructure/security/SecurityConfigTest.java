@@ -23,11 +23,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.List;
-import java.util.Set;
 
 import static com.ekapasha.auth_service.user.UserTestFixtures.user;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +37,8 @@ class SecurityConfigTest {
   void shouldConfigureCorsAndJwtCustomizer() {
     SecurityConfig config = new SecurityConfig();
     CorsConfigurationSource source = config.corsConfigurationSource();
-    CorsConfiguration configuration = source.getCorsConfiguration(new org.springframework.mock.web.MockHttpServletRequest());
+    CorsConfiguration configuration = java.util.Objects.requireNonNull(
+        source.getCorsConfiguration(new org.springframework.mock.web.MockHttpServletRequest()));
 
     assertThat(configuration.getAllowedOrigins()).contains("http://localhost:3000");
     assertThat(configuration.getAllowedMethods()).contains("GET", "POST", "PUT", "DELETE", "PATCH");

@@ -1,6 +1,5 @@
 package com.ekapasha.auth_service.workspace.application.query.workspacepermission;
 
-import com.ekapasha.auth_service.role.domain.entity.RolePermission;
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.domain.repository.RolePermissionReadRepository;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;

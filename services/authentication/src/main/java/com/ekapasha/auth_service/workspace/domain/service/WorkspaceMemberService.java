@@ -2,12 +2,9 @@ package com.ekapasha.auth_service.workspace.domain.service;
 
 import com.ekapasha.shared.exception.DomainRuleViolationException;
 import com.ekapasha.shared.exception.NotFoundException;
-import com.ekapasha.shared.exception.UnauthorizedAccessException;
-import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberReadRepository;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceMemberWriteRepository;
-import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;

@@ -14,7 +14,6 @@ import org.springframework.validation.BindingResult;
 
 import static com.ekapasha.auth_service.user.UserTestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;

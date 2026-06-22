@@ -4,7 +4,6 @@ import com.ekapasha.auth_service.role.domain.entity.Role;
 import com.ekapasha.auth_service.role.domain.enums.Permission;
 import com.ekapasha.auth_service.role.domain.repository.RoleReadRepository;
 import com.ekapasha.auth_service.role.domain.service.RolePermissionService;
-import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import com.ekapasha.shared.exception.NotFoundException;
 import com.ekapasha.shared.exception.UnauthorizedAccessException;

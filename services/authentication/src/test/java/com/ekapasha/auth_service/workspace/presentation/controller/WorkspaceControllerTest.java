@@ -18,10 +18,7 @@ import com.ekapasha.auth_service.workspace.application.query.workspace.*;
 import com.ekapasha.auth_service.workspace.application.query.workspacemember.*;
 import com.ekapasha.auth_service.workspace.application.query.workspacepermission.ListWorkspacePermissionsQuery;
 import com.ekapasha.auth_service.workspace.application.query.workspacepermission.ListWorkspacePermissionsQueryHandler;
-import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
-import com.ekapasha.auth_service.workspace.domain.entity.WorkspaceMember;
 import com.ekapasha.auth_service.workspace.presentation.dto.*;
-import com.ekapasha.shared.pagination.DomainPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -69,7 +66,9 @@ class WorkspaceControllerTest {
     ArgumentCaptor<CreateWorkspaceCommand> captor = ArgumentCaptor.forClass(CreateWorkspaceCommand.class);
     verify(createWorkspaceCommandHandler).handler(captor.capture());
     assertThat(captor.getValue().ownerId()).isEqualTo(OWNER_ID);
-    assertThat(response.getHeaders().getLocation().toString()).isEqualTo("/workspaces/" + WORKSPACE_ID);
+    assertThat(response.getHeaders().getLocation())
+        .isNotNull()
+        .hasToString("/api/v1/workspaces/" + WORKSPACE_ID);
   }
 
   @Test
@@ -148,7 +147,9 @@ class WorkspaceControllerTest {
     ArgumentCaptor<AddWorkspaceMemberCommand> captor = ArgumentCaptor.forClass(AddWorkspaceMemberCommand.class);
     verify(addWorkspaceMemberCommandHandler).handler(captor.capture());
     assertThat(captor.getValue().workspaceId()).isEqualTo(WORKSPACE_ID);
-    assertThat(response.getHeaders().getLocation().toString()).isEqualTo("/workspaces/" + WORKSPACE_ID + "/members/" + OTHER_USER_ID);
+    assertThat(response.getHeaders().getLocation())
+        .isNotNull()
+        .hasToString("/api/v1/workspaces/" + WORKSPACE_ID + "/members/" + OTHER_USER_ID);
   }
 
   @Test

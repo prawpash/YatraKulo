@@ -6,7 +6,6 @@ import com.ekapasha.shared.pagination.DomainPage;
 import com.ekapasha.shared.pagination.DomainPageRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -94,7 +93,7 @@ class RoleReadRepositoryImplTest {
         repository.getRoles(WORKSPACE_ID, true, " admin ", new DomainPageRequest(1, 10), true);
 
     assertThat(result.content()).hasSize(1);
-    assertThat(result.content().get(0).getName()).isEqualTo("Admin");
+    assertThat(result.content().getFirst().getName()).isEqualTo("Admin");
     assertThat(result.totalElements()).isEqualTo(11);
     assertThat(result.currentPage()).isEqualTo(1);
     assertThat(result.pageSize()).isEqualTo(10);
@@ -112,7 +111,7 @@ class RoleReadRepositoryImplTest {
         repository.getRoles(null, false, null, new DomainPageRequest(0, 20), false);
 
     assertThat(result.content()).hasSize(1);
-    assertThat(result.content().get(0).getWorkspaceId()).isEmpty();
+    assertThat(result.content().getFirst().getWorkspaceId()).isEmpty();
     assertThat(result.totalPages()).isEqualTo(1);
   }
 

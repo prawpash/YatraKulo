@@ -1,6 +1,5 @@
 package com.ekapasha.auth_service.workspace.domain.entity;
 
-import com.ekapasha.shared.exception.DomainRuleViolationException;
 import org.junit.jupiter.api.Test;
 
 import static com.ekapasha.auth_service.workspace.WorkspaceTestFixtures.*;
