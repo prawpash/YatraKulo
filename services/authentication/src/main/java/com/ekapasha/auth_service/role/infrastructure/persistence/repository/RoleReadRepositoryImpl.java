@@ -39,9 +39,10 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
       return 0;
     }
 
+    String trimmedSearchTerm = searchTerm.trim();
     return this.roleRepository.countByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-        searchTerm,
-        searchTerm
+        trimmedSearchTerm,
+        trimmedSearchTerm
     );
   }
 
@@ -65,7 +66,7 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
 
     return this.roleRepository.countByWorkspaceIdAndSearchTerm(
         workspaceId,
-        searchTerm
+        searchTerm.trim()
     );
   }
 
@@ -80,7 +81,7 @@ public class RoleReadRepositoryImpl implements RoleReadRepository {
       return 0;
     }
 
-    return this.roleRepository.countGlobalRolesBySearchTerm(searchTerm);
+    return this.roleRepository.countGlobalRolesBySearchTerm(searchTerm.trim());
   }
 
   @Override

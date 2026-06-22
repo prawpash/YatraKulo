@@ -51,7 +51,7 @@ class RoleReadRepositoryImplTest {
   @Test
   void shouldDelegateSearchCountWhenSearchIsProvided() {
     RoleReadRepositoryImpl repository = new RoleReadRepositoryImpl(jpaRoleRepository);
-    when(jpaRoleRepository.countByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(" admin ", " admin "))
+    when(jpaRoleRepository.countByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase("admin", "admin"))
         .thenReturn(3L);
 
     assertThat(repository.count(" admin ")).isEqualTo(3L);
@@ -66,7 +66,7 @@ class RoleReadRepositoryImplTest {
     assertThat(repository.countByWorkspaceId(WORKSPACE_ID)).isEqualTo(4L);
     assertThat(repository.countByWorkspaceId(WORKSPACE_ID, null)).isEqualTo(0L);
     assertThat(repository.countByWorkspaceId(WORKSPACE_ID, " ")).isEqualTo(0L);
-    assertThat(repository.countByWorkspaceId(WORKSPACE_ID, "admin")).isEqualTo(2L);
+    assertThat(repository.countByWorkspaceId(WORKSPACE_ID, " admin ")).isEqualTo(2L);
   }
 
   @Test
@@ -78,7 +78,7 @@ class RoleReadRepositoryImplTest {
     assertThat(repository.countGlobalRoles()).isEqualTo(5L);
     assertThat(repository.countGlobalRoles(null)).isEqualTo(0L);
     assertThat(repository.countGlobalRoles(" ")).isEqualTo(0L);
-    assertThat(repository.countGlobalRoles("global")).isEqualTo(1L);
+    assertThat(repository.countGlobalRoles(" global ")).isEqualTo(1L);
   }
 
   @Test
