@@ -8,10 +8,21 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.nio.file.Path;
 
 public abstract class PostgresTestSupport {
-  protected static final Path MIGRATIONS_PATH =
-      Path.of("..", "..", "infra", "db", "authentication", "migrations")
-          .toAbsolutePath()
-          .normalize();
+  protected static final Path MIGRATIONS_PATH = resolveMigrationsPath();
+
+  private static Path resolveMigrationsPath() {
+    Path userDir = Path.of(System.getProperty("user.dir"));
+    Path root = userDir;
+    while (root != null && !root.resolve("infra").toFile().exists()) {
+      root = root.getParent();
+    }
+    if (root == null) {
+      root = userDir;
+    }
+    return root.resolve(Path.of("infra", "db", "authentication", "migrations"))
+        .toAbsolutePath()
+        .normalize();
+  }
   protected static final TestRsaKeys RSA_KEYS = TestRsaKeys.generate();
 
   @SuppressWarnings("resource")
