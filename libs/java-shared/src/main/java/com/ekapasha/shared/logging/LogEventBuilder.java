@@ -32,6 +32,9 @@ public class LogEventBuilder {
     }
 
     public LogEventBuilder metadata(String key, Object value) {
+        if (key == null) {
+            throw new IllegalArgumentException("metadata key cannot be null");
+        }
         this.metadata.put(key, value);
         return this;
     }
