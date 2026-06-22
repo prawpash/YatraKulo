@@ -319,6 +319,36 @@ importers:
       '@nestjs/swagger':
         specifier: ^11.2.6
         version: 11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)
+      '@opentelemetry/api':
+        specifier: ^1.9.1
+        version: 1.9.1
+      '@opentelemetry/auto-instrumentations-node':
+        specifier: ^0.77.0
+        version: 0.77.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))
+      '@opentelemetry/context-async-hooks':
+        specifier: ^2.8.0
+        version: 2.8.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/exporter-prometheus':
+        specifier: ^0.219.0
+        version: 0.219.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/exporter-trace-otlp-http':
+        specifier: ^0.219.0
+        version: 0.219.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/instrumentation-pino':
+        specifier: ^0.65.0
+        version: 0.65.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/resources':
+        specifier: ^2.8.0
+        version: 2.8.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-metrics':
+        specifier: ^2.8.0
+        version: 2.8.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-node':
+        specifier: ^0.219.0
+        version: 0.219.0(@opentelemetry/api@1.9.1)
+      '@opentelemetry/semantic-conventions':
+        specifier: ^1.41.1
+        version: 1.41.1
       '@scalar/nestjs-api-reference':
         specifier: ^1.1.4
         version: 1.1.4
@@ -340,6 +370,9 @@ importers:
       class-validator:
         specifier: ^0.15.1
         version: 0.15.1
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       jwks-rsa:
         specifier: ^4.0.1
         version: 4.0.1
@@ -383,6 +416,12 @@ importers:
       '@nestjs/testing':
         specifier: ^11.0.1
         version: 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(@nestjs/microservices@11.1.19)(@nestjs/platform-express@11.1.17)
+      '@testcontainers/postgresql':
+        specifier: ^10.16.0
+        version: 10.28.0
+      '@testcontainers/rabbitmq':
+        specifier: ^10.16.0
+        version: 10.28.0
       '@types/amqplib':
         specifier: ^0.10.6
         version: 0.10.8
@@ -434,6 +473,9 @@ importers:
       supertest:
         specifier: ^7.0.0
         version: 7.2.2
+      testcontainers:
+        specifier: ^10.16.0
+        version: 10.28.0
       ts-jest:
         specifier: ^29.2.5
         version: 29.4.6(@babel/core@7.28.5)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.28.5))(jest-util@30.3.0)(jest@30.3.0(@types/node@22.19.1)(ts-node@10.9.2(@types/node@22.19.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -2501,6 +2543,9 @@ packages:
 
   '@testcontainers/postgresql@10.28.0':
     resolution: {integrity: sha512-NN25rruG5D4Q7pCNIJuHwB+G85OSeJ3xHZ2fWx0O6sPoPEfCYwvpj8mq99cyn68nxFkFYZeyrZJtSFO+FnydiA==}
+
+  '@testcontainers/rabbitmq@10.28.0':
+    resolution: {integrity: sha512-Gl8/gAYfRCsjuhTfAIT7/0e49ozMRe05RDFr2CFQWcZDgB4A7qx2QaUqEIhcQnHqRjfEQTWoV1PovnGNZU+dGQ==}
 
   '@tokenizer/inflate@0.4.1':
     resolution: {integrity: sha512-2mAv+8pkG6GIZiF1kNg1jAjh27IDxEPKwdGul3snfztFerfPGI1LjDezZp3i7BElXompqEtPmoPx6c2wgtWsOA==}
@@ -8138,6 +8183,15 @@ snapshots:
   '@standard-schema/spec@1.0.0': {}
 
   '@testcontainers/postgresql@10.28.0':
+    dependencies:
+      testcontainers: 10.28.0
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - react-native-b4a
+      - supports-color
+
+  '@testcontainers/rabbitmq@10.28.0':
     dependencies:
       testcontainers: 10.28.0
     transitivePeerDependencies:
