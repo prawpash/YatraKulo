@@ -60,7 +60,7 @@ public class RoleController {
     Role role =
         this.createRoleCommandHandler.handler(createRoleRequestDto.toCreateRoleCommand(userId));
 
-    return ResponseEntity.created(URI.create("/roles" + role.getId())).body(role);
+    return ResponseEntity.created(URI.create("/api/v1/roles/" + role.getId())).body(role);
   }
 
   @Operation(summary = "Get role by id", description = "Endpoint to get a role by id")
