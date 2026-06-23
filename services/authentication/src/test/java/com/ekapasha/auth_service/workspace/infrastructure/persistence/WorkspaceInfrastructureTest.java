@@ -74,6 +74,7 @@ class WorkspaceInfrastructureTest {
     assertThat(readRepository.existsByIdAndOwnerId(WORKSPACE_ID, OWNER_ID)).isTrue();
     assertThat(readRepository.count()).isEqualTo(7L);
 
+    when(workspaceRepository.save(any(WorkspaceEntity.class))).thenReturn(entity);
     Workspace saved = writeRepository.save(WorkspaceTestFixtures.workspace());
     assertThat(saved.getId()).isEqualTo(WORKSPACE_ID);
     writeRepository.deleteById(WORKSPACE_ID);
@@ -118,6 +119,7 @@ class WorkspaceInfrastructureTest {
     assertThat(readRepository.existsByWorkspaceIdAndUserId(WORKSPACE_ID, OTHER_USER_ID)).isTrue();
     assertThat(readRepository.countByWorkspaceId(WORKSPACE_ID)).isEqualTo(4L);
 
+    when(workspaceMemberRepository.save(any(WorkspaceMemberEntity.class))).thenReturn(entity);
     WorkspaceMember saved = writeRepository.save(WorkspaceTestFixtures.workspaceMember());
     assertThat(saved.getId()).isEqualTo(MEMBER_ID);
     writeRepository.deleteById(MEMBER_ID);
