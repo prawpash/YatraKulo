@@ -1,0 +1,15 @@
+server:
+  port: ${APP_PORT:5001}
+
+app:
+  auth:
+    service-url: ${AUTH_SERVICE_URL:http://localhost:5000}
+
+spring:
+  application:
+    name: ledger
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_SERVICE_URL:http://localhost:5000}
