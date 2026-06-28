@@ -21,8 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
@@ -66,7 +68,7 @@ public class GlobalExceptionHandler {
       Class<?> targetType = ife.getTargetType();
       String fieldName = ife.getPath().isEmpty() ? "field" : 
           ife.getPath().stream()
-              .map(ref -> ref.getPropertyName())
+              .map(JacksonException.Reference::getPropertyName)
               .collect(java.util.stream.Collectors.joining("."));
 
       if (targetType.equals(UUID.class)) {
@@ -143,6 +145,27 @@ public class GlobalExceptionHandler {
             .toList();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiErrorResponseDto.from(new ErrorResponse(400, "Validation failed", request.getRequestURI(), details)));
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ApiErrorResponseDto> handleMethodArgumentTypeMismatchException(
+      MethodArgumentTypeMismatchException ex) {
+    this.logger.warn(
+        LogEvent.builder("Method argument type mismatch: " + ex.getMessage())
+            .eventName(AuthLogEvent.VALIDATION_ERROR)
+            .metadata("url.path", request.getRequestURI())
+            .error(ex)
+            .build());
+
+    String message = "Invalid type for parameter '" + ex.getName() + "'";
+    if (ex.getRequiredType() != null && ex.getRequiredType().equals(UUID.class)) {
+      message = "Invalid UUID format for parameter '" + ex.getName() + "'";
+    }
+
+    var detail = new ErrorDetail(ex.getName(), message);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ApiErrorResponseDto.from(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail))));
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

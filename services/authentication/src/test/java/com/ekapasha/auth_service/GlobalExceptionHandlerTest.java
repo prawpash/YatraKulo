@@ -15,6 +15,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -84,6 +85,42 @@ class GlobalExceptionHandlerTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().toString()).contains("Validation failed", "name", "must not be blank", "email", "Invalid value");
+  }
+
+  @Test
+  void shouldHandleMethodArgumentTypeMismatchForUUID() throws Exception {
+    when(request.getRequestURI()).thenReturn("/api/test");
+    GlobalExceptionHandler handler = new GlobalExceptionHandler(request);
+
+    Method method = GlobalExceptionHandlerTest.class.getDeclaredMethod("dummyEndpoint", String.class);
+    MethodParameter parameter = new MethodParameter(method, 0);
+
+    MethodArgumentTypeMismatchException exception =
+        new MethodArgumentTypeMismatchException(
+            "invalid-uuid", java.util.UUID.class, "id", parameter, new IllegalArgumentException("Invalid UUID string"));
+
+    var response = handler.handleMethodArgumentTypeMismatchException(exception);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().toString()).contains("Validation failed", "id", "Invalid UUID format for parameter 'id'");
+  }
+
+  @Test
+  void shouldHandleMethodArgumentTypeMismatchForOtherTypes() throws Exception {
+    when(request.getRequestURI()).thenReturn("/api/test");
+    GlobalExceptionHandler handler = new GlobalExceptionHandler(request);
+
+    Method method = GlobalExceptionHandlerTest.class.getDeclaredMethod("dummyEndpoint", String.class);
+    MethodParameter parameter = new MethodParameter(method, 0);
+
+    MethodArgumentTypeMismatchException exception =
+        new MethodArgumentTypeMismatchException(
+            "invalid-int", Integer.class, "age", parameter, new NumberFormatException("For input string: \"invalid-int\""));
+
+    var response = handler.handleMethodArgumentTypeMismatchException(exception);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().toString()).contains("Validation failed", "age", "Invalid type for parameter 'age'");
   }
 
   @Test
