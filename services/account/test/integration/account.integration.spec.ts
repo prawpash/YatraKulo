@@ -17,6 +17,7 @@ import { GlobalExceptionFilter } from '../../src/GlobalExceptionFilter';
 
 describe('AccountController (Integration)', () => {
   let app: INestApplication;
+  const BASE_PATH = '/api/v1/accounts';
 
   beforeAll(async () => {
     // Start Testcontainers and apply migrations
@@ -34,6 +35,7 @@ describe('AccountController (Integration)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(
       new ValidationPipe({ transform: true, whitelist: true }),
     );
@@ -48,7 +50,7 @@ describe('AccountController (Integration)', () => {
     await TestcontainersSetup.stop();
   });
 
-  describe('POST /accounts', () => {
+  describe('POST /api/v1/accounts', () => {
     it('should create a new account', async () => {
       const workspaceId = uuidv4();
       const payload = {
@@ -58,7 +60,7 @@ describe('AccountController (Integration)', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .post('/accounts')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send(payload)
         .expect(201);
@@ -79,26 +81,26 @@ describe('AccountController (Integration)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/accounts')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send(payload)
         .expect(400);
     });
   });
 
-  describe('GET /accounts', () => {
+  describe('GET /api/v1/accounts', () => {
     it('should return paginated accounts for workspace', async () => {
       const workspaceId = uuidv4();
 
       // First create one
       await request(app.getHttpServer())
-        .post('/accounts')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send({ name: 'Account 1', type: 'ASSET' })
         .expect(201);
 
       const response = await request(app.getHttpServer())
-        .get('/accounts')
+        .get(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .expect(200);
 
@@ -116,13 +118,13 @@ describe('AccountController (Integration)', () => {
     });
   });
 
-  describe('GET /accounts/:id', () => {
+  describe('GET /api/v1/accounts/:id', () => {
     it('should return an account by id', async () => {
       const workspaceId = uuidv4();
 
       // 1. Create an account
       const createResponse = await request(app.getHttpServer())
-        .post('/accounts')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send({ name: 'Find Me', type: 'ASSET' })
         .expect(201);
@@ -131,7 +133,7 @@ describe('AccountController (Integration)', () => {
 
       // 2. Fetch it
       const response = await request(app.getHttpServer())
-        .get(`/accounts/${accountId}`)
+        .get(`${BASE_PATH}/${accountId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(200);
 
@@ -147,7 +149,7 @@ describe('AccountController (Integration)', () => {
       const nonExistentId = uuidv4();
 
       await request(app.getHttpServer())
-        .get(`/accounts/${nonExistentId}`)
+        .get(`${BASE_PATH}/${nonExistentId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(404);
     });
@@ -156,19 +158,19 @@ describe('AccountController (Integration)', () => {
       const workspaceId = uuidv4();
 
       await request(app.getHttpServer())
-        .get('/accounts/not-a-uuid')
+        .get(`${BASE_PATH}/not-a-uuid`)
         .set('X-Workspace-Id', workspaceId)
         .expect(400);
     });
   });
 
-  describe('PATCH /accounts/:id', () => {
+  describe('PATCH /api/v1/accounts/:id', () => {
     it('should update an existing account', async () => {
       const workspaceId = uuidv4();
 
       // 1. Create an account
       const createResponse = await request(app.getHttpServer())
-        .post('/accounts')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send({ name: 'Old Name', type: 'ASSET' })
         .expect(201);
@@ -182,14 +184,14 @@ describe('AccountController (Integration)', () => {
       };
 
       await request(app.getHttpServer())
-        .patch(`/accounts/${accountId}`)
+        .patch(`${BASE_PATH}/${accountId}`)
         .set('X-Workspace-Id', workspaceId)
         .send(updatePayload)
         .expect(200);
 
       // 3. Verify the update
       const getResponse = await request(app.getHttpServer())
-        .get(`/accounts/${accountId}`)
+        .get(`${BASE_PATH}/${accountId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(200);
 
@@ -201,13 +203,13 @@ describe('AccountController (Integration)', () => {
     });
   });
 
-  describe('DELETE /accounts/:id', () => {
+  describe('DELETE /api/v1/accounts/:id', () => {
     it('should delete an existing account', async () => {
       const workspaceId = uuidv4();
 
       // 1. Create an account
       const createResponse = await request(app.getHttpServer())
-        .post('/accounts')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send({ name: 'To Be Deleted', type: 'ASSET' })
         .expect(201);
@@ -216,13 +218,13 @@ describe('AccountController (Integration)', () => {
 
       // 2. Delete it
       await request(app.getHttpServer())
-        .delete(`/accounts/${accountId}`)
+        .delete(`${BASE_PATH}/${accountId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(200);
 
       // 3. Verify it's gone (returns 404)
       await request(app.getHttpServer())
-        .get(`/accounts/${accountId}`)
+        .get(`${BASE_PATH}/${accountId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(404);
     });

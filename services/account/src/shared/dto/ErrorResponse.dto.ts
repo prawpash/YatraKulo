@@ -27,7 +27,7 @@ export class ErrorResponseDto {
   @ApiProperty({ example: '2026-04-26T15:00:00.000Z', format: 'date-time' })
   timestamp!: string;
 
-  @ApiProperty({ example: '/accounts' })
+  @ApiProperty({ example: '/api/v1/accounts' })
   path!: string;
 
   @ApiPropertyOptional({ example: 'trace-123456' })
