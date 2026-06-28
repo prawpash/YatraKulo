@@ -19,6 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ApiStandardErrors } from '@app/shared/decorators/ApiStandardErrors.decorator';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DomainPage, createDomainPageRequest } from '@yk/shared';
 import { Transaction } from '@app/transaction/domain/entity/Transaction';
@@ -65,6 +66,7 @@ export class TransactionController {
     description: 'Returns paginated transactions',
     type: TransactionPageResponseDto,
   })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_READ)
   async getTransactions(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
@@ -99,6 +101,7 @@ export class TransactionController {
     description: 'Returns the transaction',
     type: TransactionResponseDto,
   })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_READ)
   async getTransactionById(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
@@ -137,6 +140,7 @@ export class TransactionController {
     description: 'Transaction created successfully',
     type: TransactionResponseDto,
   })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_WRITE)
   async createTransaction(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
@@ -175,6 +179,7 @@ export class TransactionController {
     schema: { format: 'uuid' },
   })
   @ApiResponse({ status: 200, description: 'Transaction updated successfully' })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_UPDATE)
   async updateTransaction(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
@@ -209,6 +214,7 @@ export class TransactionController {
     schema: { format: 'uuid' },
   })
   @ApiResponse({ status: 200, description: 'Transaction deleted successfully' })
+  @ApiStandardErrors()
   @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_DELETE)
   async deleteTransaction(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
