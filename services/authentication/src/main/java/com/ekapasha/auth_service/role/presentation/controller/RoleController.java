@@ -11,6 +11,8 @@ import com.ekapasha.auth_service.role.presentation.dto.role.CreateRoleRequestDto
 import com.ekapasha.auth_service.role.presentation.dto.role.ListRolesFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRoleRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRolePermissionsRequestDto;
+import com.ekapasha.auth_service.role.presentation.dto.role.RoleResponseDto;
+import com.ekapasha.auth_service.shared.presentation.dto.PageResponseDto;
 import com.ekapasha.shared.pagination.DomainPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,33 +44,33 @@ public class RoleController {
 
   @Operation(summary = "List roles", description = "Endpoint to get all roles by workspace")
   @GetMapping
-  public ResponseEntity<DomainPage<Role>> listRoles(
+  public ResponseEntity<PageResponseDto<RoleResponseDto>> listRoles(
       @ParameterObject @Valid ListRolesFilterDto listRolesFilterDto) {
     DomainPage<Role> roles =
         this.listRolesQueryHandler.handler(listRolesFilterDto.toListRolesQuery());
 
-    return ResponseEntity.ok(roles);
+    return ResponseEntity.ok(PageResponseDto.from(roles, RoleResponseDto::from));
   }
 
   @Operation(summary = "Create role", description = "Endpoint to create a role in a workspace")
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
-  public ResponseEntity<Role> createRole(
+  public ResponseEntity<RoleResponseDto> createRole(
       @Valid @RequestBody CreateRoleRequestDto createRoleRequestDto,
       @AuthenticationPrincipal Jwt jwt) {
     UUID userId = UUID.fromString(jwt.getSubject());
     Role role =
         this.createRoleCommandHandler.handler(createRoleRequestDto.toCreateRoleCommand(userId));
 
-    return ResponseEntity.created(URI.create("/api/v1/roles/" + role.getId())).body(role);
+    return ResponseEntity.created(URI.create("/api/v1/roles/" + role.getId())).body(RoleResponseDto.from(role));
   }
 
   @Operation(summary = "Get role by id", description = "Endpoint to get a role by id")
   @GetMapping("/{id}")
-  public ResponseEntity<Role> getRoleById(@PathVariable UUID id) {
+  public ResponseEntity<RoleResponseDto> getRoleById(@PathVariable UUID id) {
     Role role = this.getRoleByIdQueryHandler.handler(new GetRoleByIdQuery(id));
 
-    return ResponseEntity.ok(role);
+    return ResponseEntity.ok(RoleResponseDto.from(role));
   }
 
   @Operation(summary = "Update role", description = "Endpoint to update a role")

@@ -12,6 +12,7 @@ import com.ekapasha.auth_service.role.presentation.dto.role.CreateRoleRequestDto
 import com.ekapasha.auth_service.role.presentation.dto.role.ListRolesFilterDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRolePermissionsRequestDto;
 import com.ekapasha.auth_service.role.presentation.dto.role.UpdateRoleRequestDto;
+import com.ekapasha.auth_service.role.presentation.dto.role.RoleResponseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -47,7 +48,7 @@ class RoleControllerTest {
 
     assertThat(response.getBody()).isNotNull();
     assertThat(response.getBody().content()).singleElement()
-        .satisfies(role -> assertThat(role.getName()).isEqualTo("Admin"));
+        .satisfies(role -> assertThat(role.name()).isEqualTo("Admin"));
   }
 
   @Test
@@ -63,7 +64,7 @@ class RoleControllerTest {
     assertThat(captor.getValue().workspaceId()).isEqualTo(WORKSPACE_ID);
     assertThat(captor.getValue().invokedBy()).isEqualTo(OWNER_ID);
     assertThat(response.getHeaders().getLocation()).isNotNull().hasToString("/api/v1/roles/" + ROLE_ID);
-    assertThat(response.getBody()).isEqualTo(activeWorkspaceRole());
+    assertThat(response.getBody()).isEqualTo(RoleResponseDto.from(activeWorkspaceRole()));
   }
 
   @Test
@@ -72,7 +73,7 @@ class RoleControllerTest {
 
     var response = controller.getRoleById(ROLE_ID);
 
-    assertThat(response.getBody()).isEqualTo(activeWorkspaceRole());
+    assertThat(response.getBody()).isEqualTo(RoleResponseDto.from(activeWorkspaceRole()));
   }
 
   @Test

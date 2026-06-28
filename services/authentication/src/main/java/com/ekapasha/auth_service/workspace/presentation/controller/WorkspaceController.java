@@ -1,6 +1,7 @@
 package com.ekapasha.auth_service.workspace.presentation.controller;
 
 import com.ekapasha.shared.pagination.DomainPage;
+import com.ekapasha.auth_service.shared.presentation.dto.PageResponseDto;
 import com.ekapasha.auth_service.workspace.application.command.workspace.*;
 import com.ekapasha.auth_service.workspace.application.command.workspacemember.*;
 import com.ekapasha.auth_service.workspace.application.query.workspace.*;
@@ -55,7 +56,7 @@ public class WorkspaceController {
   @Operation(summary = "Create workspace", description = "Create a new workspace")
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
-  public ResponseEntity<Workspace> createWorkspace(
+  public ResponseEntity<WorkspaceResponseDto> createWorkspace(
       @Valid @RequestBody CreateWorkspaceRequestDto request, @AuthenticationPrincipal Jwt jwt) {
     UUID ownerId = UUID.fromString(jwt.getSubject());
     UUID invokedBy = UUID.fromString(jwt.getSubject());
@@ -64,14 +65,14 @@ public class WorkspaceController {
         createWorkspaceCommandHandler.handler(request.toCommand(ownerId, invokedBy));
 
     return ResponseEntity.created(URI.create("/api/v1/workspaces/" + workspace.getId()))
-        .body(workspace);
+        .body(WorkspaceResponseDto.from(workspace));
   }
 
   @Operation(
       summary = "List workspaces",
       description = "Get all workspaces for current user with pagination")
   @GetMapping
-  public ResponseEntity<DomainPage<Workspace>> listWorkspaces(
+  public ResponseEntity<PageResponseDto<WorkspaceResponseDto>> listWorkspaces(
       @ParameterObject @Valid ListWorkspacesFilterDto filter, @AuthenticationPrincipal Jwt jwt) {
     UUID ownerId = UUID.fromString(jwt.getSubject());
 
@@ -79,15 +80,15 @@ public class WorkspaceController {
         listWorkspacesByOwnerQueryHandler.handler(
             new ListWorkspacesByOwnerQuery(ownerId, filter.toPageRequest(), filter.search()));
 
-    return ResponseEntity.ok(workspaces);
+    return ResponseEntity.ok(PageResponseDto.from(workspaces, WorkspaceResponseDto::from));
   }
 
   @Operation(summary = "Get workspace", description = "Get workspace by ID")
   @GetMapping("/{id}")
-  public ResponseEntity<Workspace> getWorkspace(@PathVariable UUID id) {
+  public ResponseEntity<WorkspaceResponseDto> getWorkspace(@PathVariable UUID id) {
     Workspace workspace = getWorkspaceByIdQueryHandler.handler(new GetWorkspaceByIdQuery(id));
 
-    return ResponseEntity.ok(workspace);
+    return ResponseEntity.ok(WorkspaceResponseDto.from(workspace));
   }
 
   @Operation(summary = "Update workspace", description = "Update workspace details")
@@ -132,14 +133,14 @@ public class WorkspaceController {
 
   @Operation(summary = "Get default workspace", description = "Get user's default workspace")
   @GetMapping("/default")
-  public ResponseEntity<Workspace> getDefaultWorkspace(@AuthenticationPrincipal Jwt jwt) {
+  public ResponseEntity<WorkspaceResponseDto> getDefaultWorkspace(@AuthenticationPrincipal Jwt jwt) {
     UUID ownerId = UUID.fromString(jwt.getSubject());
 
     Workspace workspace =
         getDefaultWorkspaceByOwnerQueryHandler.handler(
             new GetDefaultWorkspaceByOwnerQuery(ownerId));
 
-    return ResponseEntity.ok(workspace);
+    return ResponseEntity.ok(WorkspaceResponseDto.from(workspace));
   }
 
   // ==========================================
@@ -166,26 +167,26 @@ public class WorkspaceController {
       summary = "List members",
       description = "Get all members of a workspace with pagination")
   @GetMapping("/{id}/members")
-  public ResponseEntity<DomainPage<WorkspaceMember>> listMembers(
+  public ResponseEntity<PageResponseDto<WorkspaceMemberResponseDto>> listMembers(
       @PathVariable UUID id, @ParameterObject @Valid ListWorkspaceMembersFilterDto filter) {
 
     DomainPage<WorkspaceMember> members =
         listWorkspaceMembersByWorkspaceQueryHandler.handler(
             new ListWorkspaceMembersByWorkspaceQuery(id, filter.toPageRequest(), filter.search()));
 
-    return ResponseEntity.ok(members);
+    return ResponseEntity.ok(PageResponseDto.from(members, WorkspaceMemberResponseDto::from));
   }
 
   @Operation(summary = "Get member", description = "Get a specific workspace member by user ID")
   @GetMapping("/{id}/members/{userId}")
-  public ResponseEntity<WorkspaceMember> getMember(
+  public ResponseEntity<WorkspaceMemberResponseDto> getMember(
       @PathVariable UUID id, @PathVariable UUID userId) {
 
     WorkspaceMember member =
         getWorkspaceMemberByWorkspaceAndUserQueryHandler.handler(
             new GetWorkspaceMemberByWorkspaceAndUserQuery(id, userId));
 
-    return ResponseEntity.ok(member);
+    return ResponseEntity.ok(WorkspaceMemberResponseDto.from(member));
   }
 
   @Operation(summary = "List permissions", description = "Get all permissions for a user in a workspace")

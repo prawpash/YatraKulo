@@ -7,6 +7,7 @@ import com.ekapasha.shared.exception.UnauthorizedAccessException;
 import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.shared.response.ErrorDetail;
 import com.ekapasha.shared.response.ErrorResponse;
+import com.ekapasha.auth_service.shared.presentation.dto.ApiErrorResponseDto;
 import com.ekapasha.shared.logging.AppLogger;
 import com.ekapasha.shared.logging.LogEvent;
 import com.ekapasha.auth_service.logging.AuthLogEvent;
@@ -36,21 +37,21 @@ public class GlobalExceptionHandler {
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
-  public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
+  public ResponseEntity<ApiErrorResponseDto> handleNotFoundException(NotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        .body(new ErrorResponse(404, ex.getMessage(), request.getRequestURI()));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(404, ex.getMessage(), request.getRequestURI())));
   }
 
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(DuplicateDataException.class)
-  public ResponseEntity<ErrorResponse> handleDuplicateDataException(DuplicateDataException ex) {
+  public ResponseEntity<ApiErrorResponseDto> handleDuplicateDataException(DuplicateDataException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT)
-        .body(new ErrorResponse(409, ex.getMessage(), request.getRequestURI()));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(409, ex.getMessage(), request.getRequestURI())));
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+  public ResponseEntity<ApiErrorResponseDto> handleHttpMessageNotReadableException(
       HttpMessageNotReadableException ex) {
     this.logger.warn(
         LogEvent.builder("HTTP message not readable: " + ex.getMessage())
@@ -71,21 +72,21 @@ public class GlobalExceptionHandler {
       if (targetType.equals(UUID.class)) {
         var detail = new ErrorDetail(fieldName, "Invalid UUID format");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+                             .body(ApiErrorResponseDto.from(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail))));
       } else if (targetType.equals(boolean.class) || targetType.equals(Boolean.class)) {
         var detail = new ErrorDetail(fieldName, "Invalid boolean format. Must be 'true' or 'false'");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+                             .body(ApiErrorResponseDto.from(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail))));
       }
     }
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse(400, "Malformed JSON request body", request.getRequestURI()));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(400, "Malformed JSON request body", request.getRequestURI())));
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ValidationException.class)
-  public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+  public ResponseEntity<ApiErrorResponseDto> handleValidationException(ValidationException ex) {
     this.logger.warn(
         LogEvent.builder("Validation failed: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
@@ -96,19 +97,19 @@ public class GlobalExceptionHandler {
     var detail = new ErrorDetail(ex.getProperty(), ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(
-            new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail)));
+            ApiErrorResponseDto.from(new ErrorResponse(400, "Validation failed", request.getRequestURI(), List.of(detail))));
   }
 
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ExceptionHandler(UnauthorizedAccessException.class)
-  public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedAccessException ex) {
+  public ResponseEntity<ApiErrorResponseDto> handleUnauthorizedException(UnauthorizedAccessException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        .body(new ErrorResponse(401, ex.getMessage(), request.getRequestURI()));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(401, ex.getMessage(), request.getRequestURI())));
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(DomainRuleViolationException.class)
-  public ResponseEntity<ErrorResponse> handleDomainRuleViolationException(
+  public ResponseEntity<ApiErrorResponseDto> handleDomainRuleViolationException(
       DomainRuleViolationException ex) {
     this.logger.warn(
         LogEvent.builder("Domain rule violation: " + ex.getMessage())
@@ -118,12 +119,12 @@ public class GlobalExceptionHandler {
             .build());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse(400, ex.getMessage(), request.getRequestURI()));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(400, ex.getMessage(), request.getRequestURI())));
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleValidationPipeException(
+  public ResponseEntity<ApiErrorResponseDto> handleValidationPipeException(
       MethodArgumentNotValidException ex) {
     this.logger.warn(
         LogEvent.builder("Method argument validation failed: " + ex.getMessage())
@@ -141,12 +142,12 @@ public class GlobalExceptionHandler {
                         fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "Invalid value"))
             .toList();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse(400, "Validation failed", request.getRequestURI(), details));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(400, "Validation failed", request.getRequestURI(), details)));
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+  public ResponseEntity<ApiErrorResponseDto> handleGenericException(Exception ex) {
     this.logger.error(
         LogEvent.builder("Unhandled exception occurred: " + ex.getMessage())
             .eventName(AuthLogEvent.UNHANDLED_EXCEPTION)
@@ -155,6 +156,7 @@ public class GlobalExceptionHandler {
             .build());
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new ErrorResponse(500, "Internal server error", request.getRequestURI()));
+        .body(ApiErrorResponseDto.from(new ErrorResponse(500, "Internal server error", request.getRequestURI())));
   }
 }
+

@@ -2,6 +2,7 @@ package com.ekapasha.auth_service.role.presentation.dto.role;
 
 import com.ekapasha.auth_service.role.application.command.role.UpdateRolePermissionsCommand;
 import com.ekapasha.auth_service.role.domain.enums.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +10,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public record UpdateRolePermissionsRequestDto(
+    @Schema(description = "Set of permission codes to assign to the role", example = "[\"WORKSPACE_WRITE\", \"ROLE_READ\"]")
     Set<String> assign,
+
+    @Schema(description = "Set of permission codes to revoke from the role", example = "[\"ROLE_WRITE\"]")
     Set<String> revoke
 ) {
   public UpdateRolePermissionsCommand toCommand(UUID roleId, UUID invokedBy) {

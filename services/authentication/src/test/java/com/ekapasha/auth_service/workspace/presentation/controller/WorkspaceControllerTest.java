@@ -79,7 +79,7 @@ class WorkspaceControllerTest {
     var response = controller.listWorkspaces(new ListWorkspacesFilterDto(0, 10, "search"), jwt);
 
     assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().content()).singleElement().satisfies(workspace -> assertThat(workspace.getName()).isEqualTo("Workspace"));
+    assertThat(response.getBody().content()).singleElement().satisfies(workspace -> assertThat(workspace.name()).isEqualTo("Workspace"));
   }
 
   @Test
@@ -88,7 +88,7 @@ class WorkspaceControllerTest {
 
     var response = controller.getWorkspace(WORKSPACE_ID);
 
-    assertThat(response.getBody()).isEqualTo(workspace());
+    assertThat(response.getBody()).isEqualTo(WorkspaceResponseDto.from(workspace()));
   }
 
   @Test
@@ -135,7 +135,7 @@ class WorkspaceControllerTest {
 
     var response = controller.getDefaultWorkspace(jwt);
 
-    assertThat(response.getBody()).isEqualTo(defaultWorkspace());
+    assertThat(response.getBody()).isEqualTo(WorkspaceResponseDto.from(defaultWorkspace()));
   }
 
   @Test
@@ -160,7 +160,7 @@ class WorkspaceControllerTest {
     var response = controller.listMembers(WORKSPACE_ID, new ListWorkspaceMembersFilterDto(0, 10, "jane"));
 
     assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().content()).singleElement().satisfies(member -> assertThat(member.getWorkspaceId()).isEqualTo(WORKSPACE_ID));
+    assertThat(response.getBody().content()).singleElement().satisfies(member -> assertThat(member.workspaceId()).isEqualTo(WORKSPACE_ID));
   }
 
   @Test
@@ -169,7 +169,7 @@ class WorkspaceControllerTest {
 
     var response = controller.getMember(WORKSPACE_ID, OTHER_USER_ID);
 
-    assertThat(response.getBody()).isEqualTo(workspaceMember());
+    assertThat(response.getBody()).isEqualTo(WorkspaceMemberResponseDto.from(workspaceMember()));
   }
 
   @Test
