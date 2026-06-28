@@ -20,6 +20,8 @@ async function bootstrap() {
   });
   app.useLogger(logger);
 
+  app.setGlobalPrefix('api/v1');
+
   const configService = app.get(ConfigService<APPConfig>);
 
   const openAPIconfig = new DocumentBuilder()

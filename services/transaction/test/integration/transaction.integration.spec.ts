@@ -23,6 +23,7 @@ describe('TransactionController (Integration)', () => {
   let app: INestApplication;
   let outboxRelayService: OutboxRelayService;
   let db: Kysely<DB>;
+  const BASE_PATH = '/api/v1/transactions';
 
   beforeAll(async () => {
     // Start Testcontainers and apply migrations
@@ -40,6 +41,7 @@ describe('TransactionController (Integration)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(
       new ValidationPipe({ transform: true, whitelist: true }),
     );
@@ -64,7 +66,7 @@ describe('TransactionController (Integration)', () => {
     await db.deleteFrom('transaction').execute();
   });
 
-  describe('POST /transactions', () => {
+  describe('POST /api/v1/transactions', () => {
     it('should create a new transaction and publish outbox event', async () => {
       const workspaceId = uuidv4();
       const idempotencyKey = uuidv4();
@@ -76,7 +78,7 @@ describe('TransactionController (Integration)', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .set('Idempotency-Key', idempotencyKey)
         .send(payload);
@@ -124,7 +126,7 @@ describe('TransactionController (Integration)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .send(payload)
         .expect(400);
@@ -141,14 +143,14 @@ describe('TransactionController (Integration)', () => {
       };
 
       const firstResponse = await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .set('Idempotency-Key', idempotencyKey)
         .send(payload)
         .expect(201);
 
       const secondResponse = await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .set('Idempotency-Key', idempotencyKey)
         .send(payload);
@@ -177,7 +179,7 @@ describe('TransactionController (Integration)', () => {
       };
 
       await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .set('Idempotency-Key', idempotencyKey)
         .send(invalidPayload)
@@ -185,13 +187,13 @@ describe('TransactionController (Integration)', () => {
     });
   });
 
-  describe('GET /transactions', () => {
+  describe('GET /api/v1/transactions', () => {
     it('should return paginated transactions for workspace', async () => {
       const workspaceId = uuidv4();
 
       // Create one transaction
       await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .set('Idempotency-Key', uuidv4())
         .send({
@@ -203,7 +205,7 @@ describe('TransactionController (Integration)', () => {
         .expect(201);
 
       const response = await request(app.getHttpServer())
-        .get('/transactions')
+        .get(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .expect(200);
 
@@ -215,12 +217,12 @@ describe('TransactionController (Integration)', () => {
     });
   });
 
-  describe('GET /transactions/:id', () => {
+  describe('GET /api/v1/transactions/:id', () => {
     it('should return a transaction by id', async () => {
       const workspaceId = uuidv4();
 
       const createResponse = await request(app.getHttpServer())
-        .post('/transactions')
+        .post(BASE_PATH)
         .set('X-Workspace-Id', workspaceId)
         .set('Idempotency-Key', uuidv4())
         .send({
@@ -234,7 +236,7 @@ describe('TransactionController (Integration)', () => {
       const transactionId = (createResponse.body as TransactionResponseDto).id;
 
       const response = await request(app.getHttpServer())
-        .get(`/transactions/${transactionId}`)
+        .get(`${BASE_PATH}/${transactionId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(200);
 
@@ -250,7 +252,7 @@ describe('TransactionController (Integration)', () => {
       const nonExistentId = uuidv4();
 
       await request(app.getHttpServer())
-        .get(`/transactions/${nonExistentId}`)
+        .get(`${BASE_PATH}/${nonExistentId}`)
         .set('X-Workspace-Id', workspaceId)
         .expect(404);
     });
