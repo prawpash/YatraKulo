@@ -14,5 +14,6 @@ rootProject.name = "YatraKulo"
 
 include(
   "services:authentication",
+  "services:ledger",
   "libs:java-shared",
 )
