@@ -2,12 +2,12 @@ package com.ekapasha.shared.logging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.logstash.logback.argument.StructuredArguments;
+import org.slf4j.MDC;
 
 import java.util.HashMap;
 import java.util.Map;
 
-// Framework-agnostic. Relies on SLF4J MDC which is populated externally.
+// Framework-agnostic. Relies on SLF4J MDC which is populated internally.
 public class AppLogger {
     private final Logger logger;
 
@@ -21,7 +21,7 @@ public class AppLogger {
 
     public void info(LogEvent event) {
         if (logger.isInfoEnabled()) {
-            logger.info(event.message(), StructuredArguments.entries(buildEntries(event)), event.error());
+            withMdc(event, () -> logger.info(event.message(), event.error()));
         }
     }
 
@@ -31,7 +31,7 @@ public class AppLogger {
 
     public void warn(LogEvent event) {
         if (logger.isWarnEnabled()) {
-            logger.warn(event.message(), StructuredArguments.entries(buildEntries(event)), event.error());
+            withMdc(event, () -> logger.warn(event.message(), event.error()));
         }
     }
 
@@ -41,7 +41,7 @@ public class AppLogger {
 
     public void debug(LogEvent event) {
         if (logger.isDebugEnabled()) {
-            logger.debug(event.message(), StructuredArguments.entries(buildEntries(event)), event.error());
+            withMdc(event, () -> logger.debug(event.message(), event.error()));
         }
     }
 
@@ -55,20 +55,30 @@ public class AppLogger {
 
     public void error(LogEvent event) {
         if (logger.isErrorEnabled()) {
-            logger.error(event.message(), StructuredArguments.entries(buildEntries(event)), event.error());
+            withMdc(event, () -> logger.error(event.message(), event.error()));
         }
     }
 
-    private Map<String, Object> buildEntries(LogEvent event) {
-        Map<String, Object> entries = new HashMap<>();
+    private void withMdc(LogEvent event, Runnable logAction) {
+        Map<String, String> mdcContext = buildMdcContext(event);
+        mdcContext.forEach(MDC::put);
+        try {
+            logAction.run();
+        } finally {
+            mdcContext.keySet().forEach(MDC::remove);
+        }
+    }
+
+    private Map<String, String> buildMdcContext(LogEvent event) {
+        Map<String, String> entries = new HashMap<>();
         if (event.eventName() != null) {
             entries.put("eventName", event.eventName().name());
         }
         if (event.durationMs() != null) {
-            entries.put("durationMs", event.durationMs());
+            entries.put("durationMs", String.valueOf(event.durationMs()));
         }
         if (event.metadata() != null) {
-            entries.putAll(event.metadata());
+            event.metadata().forEach((k, v) -> entries.put(k, String.valueOf(v)));
         }
         return entries;
     }
