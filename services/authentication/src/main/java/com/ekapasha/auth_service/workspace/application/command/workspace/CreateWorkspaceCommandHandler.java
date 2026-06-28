@@ -7,6 +7,7 @@ import com.ekapasha.shared.logging.LogEvent;
 import com.ekapasha.auth_service.logging.AuthLogEvent;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceWriteRepository;
+import com.ekapasha.auth_service.workspace.domain.service.WorkspaceMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,10 @@ import java.util.UUID;
 public class CreateWorkspaceCommandHandler
     implements CommandHandler<CreateWorkspaceCommand, Workspace> {
 
+  private static final UUID OWNER_ROLE_ID = UUID.fromString("ff12f1ea-2e1a-4c76-8ab4-4d83d88b119a");
+
   private final WorkspaceWriteRepository workspaceWriteRepository;
+  private final WorkspaceMemberService workspaceMemberService;
   private final AppLogger logger = new AppLogger(CreateWorkspaceCommandHandler.class);
 
   @Override
@@ -53,6 +57,15 @@ public class CreateWorkspaceCommandHandler
         this.workspaceWriteRepository.setDefault(savedWorkspace.getId(), command.ownerId());
         savedWorkspace.markAsDefault(now);
       }
+
+      // Add the creator as the Owner of the workspace
+      this.workspaceMemberService.addMember(
+          savedWorkspace.getId(),
+          command.ownerId(),
+          OWNER_ROLE_ID,
+          now,
+          null
+      );
 
       this.logger.info(
           LogEvent.builder("Workspace created successfully: " + savedWorkspace.getName())

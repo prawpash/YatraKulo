@@ -84,8 +84,9 @@ public class WorkspaceConfig {
 
   @Bean
   public CreateWorkspaceCommandHandler createWorkspaceCommandHandler(
-      WorkspaceWriteRepository workspaceWriteRepository) {
-    return new CreateWorkspaceCommandHandler(workspaceWriteRepository);
+      WorkspaceWriteRepository workspaceWriteRepository,
+      WorkspaceMemberService workspaceMemberService) {
+    return new CreateWorkspaceCommandHandler(workspaceWriteRepository, workspaceMemberService);
   }
 
   @Bean

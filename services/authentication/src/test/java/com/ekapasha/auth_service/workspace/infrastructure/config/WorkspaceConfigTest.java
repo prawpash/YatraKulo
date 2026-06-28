@@ -57,7 +57,7 @@ class WorkspaceConfigTest {
     assertThat(workspaceMemberReadRepository).isInstanceOf(WorkspaceMemberReadRepositoryImpl.class);
     assertThat(workspaceMemberService).isNotNull();
 
-    assertThat(config.createWorkspaceCommandHandler(workspaceWriteRepository))
+    assertThat(config.createWorkspaceCommandHandler(workspaceWriteRepository, workspaceMemberService))
         .isInstanceOf(CreateWorkspaceCommandHandler.class);
     assertThat(config.updateWorkspaceCommandHandler(workspaceWriteRepository, workspaceReadRepository))
         .isInstanceOf(UpdateWorkspaceCommandHandler.class);

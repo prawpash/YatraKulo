@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.ekapasha.auth_service.workspace.domain.service.WorkspaceMemberService;
+
 import static com.ekapasha.auth_service.workspace.WorkspaceTestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.when;
 class CreateWorkspaceCommandHandlerTest {
 
   @Mock private WorkspaceWriteRepository workspaceWriteRepository;
+  @Mock private WorkspaceMemberService workspaceMemberService;
   @InjectMocks private CreateWorkspaceCommandHandler handler;
 
   @Test
@@ -39,6 +42,15 @@ class CreateWorkspaceCommandHandlerTest {
     assertThat(saved.getDescription()).contains("Description");
     assertThat(saved.getOwnerId()).isEqualTo(OWNER_ID);
     assertThat(saved.isDefault()).isFalse();
+
+    verify(workspaceMemberService)
+        .addMember(
+            org.mockito.ArgumentMatchers.eq(saved.getId()),
+            org.mockito.ArgumentMatchers.eq(OWNER_ID),
+            org.mockito.ArgumentMatchers.eq(java.util.UUID.fromString("ff12f1ea-2e1a-4c76-8ab4-4d83d88b119a")),
+            org.mockito.ArgumentMatchers.any(java.time.Instant.class),
+            org.mockito.ArgumentMatchers.isNull()
+        );
   }
 
   @Test
@@ -50,6 +62,14 @@ class CreateWorkspaceCommandHandlerTest {
 
     verify(workspaceWriteRepository).setDefault(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.eq(OWNER_ID));
     verify(workspaceWriteRepository).save(any());
+    verify(workspaceMemberService)
+        .addMember(
+            org.mockito.ArgumentMatchers.any(),
+            org.mockito.ArgumentMatchers.eq(OWNER_ID),
+            org.mockito.ArgumentMatchers.eq(java.util.UUID.fromString("ff12f1ea-2e1a-4c76-8ab4-4d83d88b119a")),
+            org.mockito.ArgumentMatchers.any(java.time.Instant.class),
+            org.mockito.ArgumentMatchers.isNull()
+        );
   }
 
   @Test
