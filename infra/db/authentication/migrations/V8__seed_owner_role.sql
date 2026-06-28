@@ -2,10 +2,10 @@
 -- Creates a global 'Owner' role (workspace_id = NULL) and assigns all existing permissions
 
 -- Step 1: Create Owner role if it doesn't exist
-INSERT INTO role (name, description, workspace_id)
-SELECT 'Owner', 'Workspace owner with all permissions', NULL
+INSERT INTO role (id, name, description, workspace_id)
+SELECT 'ff12f1ea-2e1a-4c76-8ab4-4d83d88b119a', 'Owner', 'Workspace owner with all permissions', NULL
 WHERE NOT EXISTS (
-  SELECT 1 FROM role WHERE name = 'Owner' AND workspace_id IS NULL
+  SELECT 1 FROM role WHERE id = 'ff12f1ea-2e1a-4c76-8ab4-4d83d88b119a'
 );
 
 -- Step 2: Assign all permissions to the Owner role
