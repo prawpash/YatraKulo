@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.user.infrastructure.config;
+package com.ekapasha.auth_service.shared.security;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -15,7 +15,7 @@ import java.time.Instant;
 public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCommand> {
   private final RoleWriteRepository roleWriteRepository;
   private final RoleReadRepository roleReadRepository;
-  private final AppLogger logger = new AppLogger(UpdateRoleCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(UpdateRoleCommandHandler.class);
 
   public UpdateRoleCommandHandler(
       RoleWriteRepository roleWriteRepository, RoleReadRepository roleReadRepository) {
@@ -65,7 +65,7 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
       // Save the updated role
       this.roleWriteRepository.save(role);
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Role updated successfully: " + role.getName())
               .eventName(AuthLogEvent.ROLE_UPDATED)
               .metadata("role.id", role.getId().toString())
@@ -74,14 +74,14 @@ public class UpdateRoleCommandHandler implements VoidCommandHandler<UpdateRoleCo
     } catch (Exception e) {
       String roleId = command.id() != null ? command.id().toString() : "null";
       if (e instanceof NotFoundException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Role update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
                 .metadata("role.id", roleId)
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Role update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
                 .metadata("role.id", roleId)

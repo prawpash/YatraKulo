@@ -23,7 +23,7 @@ public class UpdateRolePermissionsCommandHandler
   private final RoleReadRepository roleReadRepository;
   private final WorkspaceReadRepository workspaceReadRepository;
   private final RolePermissionService rolePermissionService;
-  private final AppLogger logger = new AppLogger(UpdateRolePermissionsCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(UpdateRolePermissionsCommandHandler.class);
 
   @Override
   @Transactional
@@ -56,7 +56,7 @@ public class UpdateRolePermissionsCommandHandler
         rolePermissionService.revokePermissions(role, command.revoke());
       }
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Role permissions updated successfully for role: " + role.getName())
               .eventName(AuthLogEvent.ROLE_PERMISSIONS_UPDATED)
               .metadata("role.id", role.getId().toString())
@@ -67,14 +67,14 @@ public class UpdateRolePermissionsCommandHandler
     } catch (Exception e) {
       String roleId = command.roleId() != null ? command.roleId().toString() : "null";
       if (e instanceof NotFoundException || e instanceof UnauthorizedAccessException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Role permissions update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
                 .metadata("role.id", roleId)
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Role permissions update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
                 .metadata("role.id", roleId)

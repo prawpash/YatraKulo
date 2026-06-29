@@ -23,7 +23,7 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
   private final PasswordService passwordService;
   private final UserReadRepository userReadRepository;
   private final MeterRegistry meterRegistry;
-  private final AppLogger logger = new AppLogger(RegisterUserCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(RegisterUserCommandHandler.class);
 
   @Override
   @Transactional
@@ -77,7 +77,7 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
 
       this.meterRegistry.counter("auth.user.registration.count").increment();
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("User registered successfully: " + user.getUsername())
               .eventName(AuthLogEvent.USER_REGISTERED_SUCCESS)
               .metadata("user.id", user.getId().toString())
@@ -87,14 +87,14 @@ public class RegisterUserCommandHandler implements CommandHandler<RegisterUserCo
       return user;
     } catch (Exception e) {
       if (e instanceof ValidationException || e instanceof DuplicateDataException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("User registration failed: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_REGISTER_FAILED)
                 .metadata("user.name", command.username())
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("User registration failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_REGISTER_FAILED)
                 .metadata("user.name", command.username())

@@ -18,7 +18,7 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
 
   private final WorkspaceWriteRepository workspaceWriteRepository;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(UpdateWorkspaceCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(UpdateWorkspaceCommandHandler.class);
 
   @Override
   @Transactional
@@ -46,7 +46,7 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
       // Save the updated workspace
       this.workspaceWriteRepository.save(workspace);
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Workspace updated successfully: " + workspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_UPDATED)
               .metadata("workspace.id", workspace.getId().toString())
@@ -56,14 +56,14 @@ public class UpdateWorkspaceCommandHandler implements VoidCommandHandler<UpdateW
       String workspaceId = command.id() != null ? command.id()
                                                    .toString() : "null";
       if (e instanceof NotFoundException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Workspace update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Workspace update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)

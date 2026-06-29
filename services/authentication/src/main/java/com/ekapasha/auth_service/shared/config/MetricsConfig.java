@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.config;
+package com.ekapasha.auth_service.shared.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;

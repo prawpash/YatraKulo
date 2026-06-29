@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.user.infrastructure.config;
+package com.ekapasha.auth_service.shared.security;
 
 import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;

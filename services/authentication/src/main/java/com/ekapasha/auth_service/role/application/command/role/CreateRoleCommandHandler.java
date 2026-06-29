@@ -20,7 +20,7 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
 
   private final RoleWriteRepository roleWriteRepository;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(CreateRoleCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(CreateRoleCommandHandler.class);
 
   public CreateRoleCommandHandler(
       RoleWriteRepository roleWriteRepository, WorkspaceReadRepository workspaceReadRepository) {
@@ -63,7 +63,7 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
 
       Role savedRole = this.roleWriteRepository.save(newRole);
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Role created successfully: " + savedRole.getName())
               .eventName(AuthLogEvent.ROLE_CREATED)
               .metadata("role.id", savedRole.getId().toString())
@@ -79,7 +79,7 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
       if (e instanceof NotFoundException
           || e instanceof UnauthorizedAccessException
           || e instanceof ValidationException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Role creation failed: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
                 .metadata("role.name", command.name())
@@ -87,7 +87,7 @@ public class CreateRoleCommandHandler implements CommandHandler<CreateRoleComman
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Role creation failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.ROLE_OPERATION_FAILED)
                 .metadata("role.name", command.name())

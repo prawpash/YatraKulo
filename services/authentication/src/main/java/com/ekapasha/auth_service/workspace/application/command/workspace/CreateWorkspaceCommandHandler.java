@@ -22,7 +22,7 @@ public class CreateWorkspaceCommandHandler
 
   private final WorkspaceWriteRepository workspaceWriteRepository;
   private final WorkspaceMemberService workspaceMemberService;
-  private final AppLogger logger = new AppLogger(CreateWorkspaceCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(CreateWorkspaceCommandHandler.class);
 
   @Override
   @Transactional
@@ -67,7 +67,7 @@ public class CreateWorkspaceCommandHandler
           null
       );
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Workspace created successfully: " + savedWorkspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_CREATED)
               .metadata("workspace.id", savedWorkspace.getId().toString())
@@ -79,7 +79,7 @@ public class CreateWorkspaceCommandHandler
     } catch (Exception e) {
       String ownerId = command.ownerId() != null ? command.ownerId().toString() : "null";
       if (e instanceof ValidationException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Workspace creation failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.name", command.name())
@@ -87,7 +87,7 @@ public class CreateWorkspaceCommandHandler
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Workspace creation failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.name", command.name())

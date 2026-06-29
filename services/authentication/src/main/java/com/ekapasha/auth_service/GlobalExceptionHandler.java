@@ -31,7 +31,7 @@ import tools.jackson.databind.exc.InvalidFormatException;
 public class GlobalExceptionHandler {
 
   private final HttpServletRequest request;
-  private final AppLogger logger = new AppLogger(GlobalExceptionHandler.class);
+  private static final AppLogger logger = new AppLogger(GlobalExceptionHandler.class);
 
   public GlobalExceptionHandler(HttpServletRequest request) {
     this.request = request;
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ApiErrorResponseDto> handleHttpMessageNotReadableException(
       HttpMessageNotReadableException ex) {
-    this.logger.warn(
+    logger.warn(
         LogEvent.builder("HTTP message not readable: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
             .metadata("url.path", request.getRequestURI())
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
 
     // Check if the error is due to a format issue, e.g., an invalid UUID or boolean structure
     if (ex.getCause() instanceof InvalidFormatException ife) {
-      this.logger.debug(ife.getTargetType().toString());
+      logger.debug(ife.getTargetType().toString());
       Class<?> targetType = ife.getTargetType();
       String fieldName = ife.getPath().isEmpty() ? "field" : 
           ife.getPath().stream()
@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<ApiErrorResponseDto> handleValidationException(ValidationException ex) {
-    this.logger.warn(
+    logger.warn(
         LogEvent.builder("Validation failed: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
             .metadata("url.path", request.getRequestURI())
@@ -113,7 +113,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DomainRuleViolationException.class)
   public ResponseEntity<ApiErrorResponseDto> handleDomainRuleViolationException(
       DomainRuleViolationException ex) {
-    this.logger.warn(
+    logger.warn(
         LogEvent.builder("Domain rule violation: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
             .metadata("url.path", request.getRequestURI())
@@ -128,7 +128,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiErrorResponseDto> handleValidationPipeException(
       MethodArgumentNotValidException ex) {
-    this.logger.warn(
+    logger.warn(
         LogEvent.builder("Method argument validation failed: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
             .metadata("url.path", request.getRequestURI())
@@ -151,7 +151,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ApiErrorResponseDto> handleMethodArgumentTypeMismatchException(
       MethodArgumentTypeMismatchException ex) {
-    this.logger.warn(
+    logger.warn(
         LogEvent.builder("Method argument type mismatch: " + ex.getMessage())
             .eventName(AuthLogEvent.VALIDATION_ERROR)
             .metadata("url.path", request.getRequestURI())
@@ -171,7 +171,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiErrorResponseDto> handleGenericException(Exception ex) {
-    this.logger.error(
+    logger.error(
         LogEvent.builder("Unhandled exception occurred: " + ex.getMessage())
             .eventName(AuthLogEvent.UNHANDLED_EXCEPTION)
             .metadata("url.path", request.getRequestURI())

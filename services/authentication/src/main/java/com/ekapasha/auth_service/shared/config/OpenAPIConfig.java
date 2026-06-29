@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.user.infrastructure.config;
+package com.ekapasha.auth_service.shared.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

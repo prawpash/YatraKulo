@@ -19,7 +19,7 @@ public class UpdateUserProfileCommandHandler
     implements CommandHandler<UpdateUserProfileCommand, User> {
   private final UserReadRepository userReadRepository;
   private final UserWriteRepository userWriteRepository;
-  private final AppLogger logger = new AppLogger(UpdateUserProfileCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(UpdateUserProfileCommandHandler.class);
 
   @Override
   @Transactional
@@ -81,7 +81,7 @@ public class UpdateUserProfileCommandHandler
 
       this.userWriteRepository.save(user);
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("User profile updated successfully: " + user.getId())
               .eventName(AuthLogEvent.USER_PROFILE_UPDATED)
               .metadata("user.id", user.getId().toString())
@@ -92,14 +92,14 @@ public class UpdateUserProfileCommandHandler
       String userId = command.id() != null ? command.id().toString() : "null";
 
       if (e instanceof NotFoundException || e instanceof DuplicateDataException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("User profile update failed: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_PROFILE_UPDATE_FAILED)
                 .metadata("user.id", userId)
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("User profile update failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.USER_PROFILE_UPDATE_FAILED)
                 .metadata("user.id", userId)

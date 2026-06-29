@@ -19,7 +19,7 @@ public class SetWorkspaceDefaultCommandHandler
 
   private final WorkspaceWriteRepository workspaceWriteRepository;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(SetWorkspaceDefaultCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(SetWorkspaceDefaultCommandHandler.class);
 
   @Override
   @Transactional
@@ -58,7 +58,7 @@ public class SetWorkspaceDefaultCommandHandler
           ? "Workspace set as default successfully: " + workspace.getName()
           : "Workspace unset as default successfully: " + workspace.getName();
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder(logMessage)
               .eventName(AuthLogEvent.WORKSPACE_DEFAULT_SET)
               .metadata("workspace.id", workspace.getId().toString())
@@ -67,14 +67,14 @@ public class SetWorkspaceDefaultCommandHandler
     } catch (Exception e) {
       String workspaceId = command.id() != null ? command.id().toString() : "null";
       if (e instanceof NotFoundException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Setting workspace as default failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder(
                     "Setting workspace as default failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)

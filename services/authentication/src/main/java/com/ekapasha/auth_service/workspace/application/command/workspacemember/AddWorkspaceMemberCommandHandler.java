@@ -20,7 +20,7 @@ public class AddWorkspaceMemberCommandHandler
 
   private final WorkspaceMemberService workspaceMemberService;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(AddWorkspaceMemberCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(AddWorkspaceMemberCommandHandler.class);
 
   @Override
   @Transactional
@@ -43,7 +43,7 @@ public class AddWorkspaceMemberCommandHandler
           Instant.now(),
           command.invokedBy());
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Workspace member added successfully: " + command.userId())
               .eventName(AuthLogEvent.WORKSPACE_MEMBER_ADDED)
               .metadata("workspace.id", command.workspaceId().toString())
@@ -55,7 +55,7 @@ public class AddWorkspaceMemberCommandHandler
           command.workspaceId() != null ? command.workspaceId().toString() : "null";
       String userId = command.userId() != null ? command.userId().toString() : "null";
       if (e instanceof NotFoundException || e instanceof UnauthorizedAccessException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Adding workspace member failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
@@ -63,7 +63,7 @@ public class AddWorkspaceMemberCommandHandler
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Adding workspace member failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)

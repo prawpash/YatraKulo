@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthenticationLoggingListener {
   private final MeterRegistry meterRegistry;
-  private final AppLogger logger = new AppLogger(AuthenticationLoggingListener.class);
+  private static final AppLogger logger = new AppLogger(AuthenticationLoggingListener.class);
 
   @EventListener
   public void handleSuccess(AuthenticationSuccessEvent event) {
@@ -23,13 +23,13 @@ public class AuthenticationLoggingListener {
 
     if (auth instanceof UsernamePasswordAuthenticationToken) {
       this.meterRegistry.counter("auth.login.count", "status", "success").increment();
-      this.logger.info(
+      logger.info(
           LogEvent.builder("User logged in successfully: " + auth.getName())
               .eventName(AuthLogEvent.USER_LOGIN_SUCCESS)
               .metadata("user.name", auth.getName())
               .build());
     } else {
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Token issued successfully for principal: " + auth.getName())
               .eventName(AuthLogEvent.TOKEN_GENERATION_SUCCESS)
               .metadata("principal", auth.getName())
@@ -44,14 +44,14 @@ public class AuthenticationLoggingListener {
 
     if (auth instanceof UsernamePasswordAuthenticationToken) {
       this.meterRegistry.counter("auth.login.count", "status", "failed").increment();
-      this.logger.warn(
+      logger.warn(
           LogEvent.builder("User login failed: " + auth.getName())
               .eventName(AuthLogEvent.USER_LOGIN_FAILED)
               .metadata("user.name", auth.getName())
               .error(event.getException())
               .build());
     } else {
-      this.logger.error(
+      logger.error(
           LogEvent.builder("Token generation/auth failed for principal: " + auth.getName())
               .eventName(AuthLogEvent.TOKEN_GENERATION_FAILED)
               .metadata("principal", auth.getName())

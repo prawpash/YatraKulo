@@ -18,7 +18,7 @@ public class RemoveWorkspaceMemberCommandHandler
 
   private final WorkspaceMemberService workspaceMemberService;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(RemoveWorkspaceMemberCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(RemoveWorkspaceMemberCommandHandler.class);
 
   @Override
   @Transactional
@@ -41,7 +41,7 @@ public class RemoveWorkspaceMemberCommandHandler
 
       workspaceMemberService.removeMember(command.workspaceId(), command.userId());
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Workspace member removed successfully: " + command.userId())
               .eventName(AuthLogEvent.WORKSPACE_MEMBER_REMOVED)
               .metadata("workspace.id", command.workspaceId().toString())
@@ -52,7 +52,7 @@ public class RemoveWorkspaceMemberCommandHandler
           command.workspaceId() != null ? command.workspaceId().toString() : "null";
       String userId = command.userId() != null ? command.userId().toString() : "null";
       if (e instanceof NotFoundException || e instanceof UnauthorizedAccessException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Removing workspace member failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
@@ -60,7 +60,7 @@ public class RemoveWorkspaceMemberCommandHandler
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder(
                     "Removing workspace member failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)

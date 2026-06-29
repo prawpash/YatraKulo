@@ -1,9 +1,9 @@
-package com.ekapasha.auth_service.user.infrastructure.security;
+package com.ekapasha.auth_service.shared.security;
 
 import com.ekapasha.auth_service.user.UserTestFixtures;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
-import com.ekapasha.auth_service.user.infrastructure.config.RsaProperties;
-import com.ekapasha.auth_service.user.infrastructure.config.SecurityConfig;
+
+import com.ekapasha.auth_service.shared.security.SecurityConfig;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;

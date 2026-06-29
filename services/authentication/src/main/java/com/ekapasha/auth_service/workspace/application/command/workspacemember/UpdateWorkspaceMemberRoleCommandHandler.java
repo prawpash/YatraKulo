@@ -20,7 +20,7 @@ public class UpdateWorkspaceMemberRoleCommandHandler implements VoidCommandHandl
 
   private final WorkspaceMemberService workspaceMemberService;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(UpdateWorkspaceMemberRoleCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(UpdateWorkspaceMemberRoleCommandHandler.class);
 
   @Override
   @Transactional
@@ -48,7 +48,7 @@ public class UpdateWorkspaceMemberRoleCommandHandler implements VoidCommandHandl
           command.invokedBy()
       );
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Workspace member role updated successfully: " + command.userId())
               .eventName(AuthLogEvent.WORKSPACE_MEMBER_ROLE_UPDATED)
               .metadata("workspace.id", command.workspaceId().toString())
@@ -62,7 +62,7 @@ public class UpdateWorkspaceMemberRoleCommandHandler implements VoidCommandHandl
       String userId = command.userId() != null ? command.userId()
                                                               .toString() : "null";
       if (e instanceof NotFoundException || e instanceof UnauthorizedAccessException || e instanceof DomainRuleViolationException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Updating workspace member role failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
@@ -71,7 +71,7 @@ public class UpdateWorkspaceMemberRoleCommandHandler implements VoidCommandHandl
                 .build()
         );
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Updating workspace member role failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_MEMBER_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)

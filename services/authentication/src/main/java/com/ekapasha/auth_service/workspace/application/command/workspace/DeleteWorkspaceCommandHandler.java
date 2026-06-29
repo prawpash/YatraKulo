@@ -17,7 +17,7 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
 
   private final WorkspaceWriteRepository workspaceWriteRepository;
   private final WorkspaceReadRepository workspaceReadRepository;
-  private final AppLogger logger = new AppLogger(DeleteWorkspaceCommandHandler.class);
+  private static final AppLogger logger = new AppLogger(DeleteWorkspaceCommandHandler.class);
 
   @Override
   @Transactional
@@ -39,7 +39,7 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
       // Delete the workspace
       this.workspaceWriteRepository.deleteById(command.id());
 
-      this.logger.info(
+      logger.info(
           LogEvent.builder("Workspace deleted successfully: " + workspace.getName())
               .eventName(AuthLogEvent.WORKSPACE_DELETED)
               .metadata("workspace.id", workspace.getId().toString())
@@ -48,14 +48,14 @@ public class DeleteWorkspaceCommandHandler implements VoidCommandHandler<DeleteW
     } catch (Exception e) {
       String workspaceId = command.id() != null ? command.id().toString() : "null";
       if (e instanceof NotFoundException || e instanceof DomainRuleViolationException) {
-        this.logger.warn(
+        logger.warn(
             LogEvent.builder("Workspace deletion failed: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
                 .error(e)
                 .build());
       } else {
-        this.logger.error(
+        logger.error(
             LogEvent.builder("Workspace deletion failed with system error: " + e.getMessage())
                 .eventName(AuthLogEvent.WORKSPACE_OPERATION_FAILED)
                 .metadata("workspace.id", workspaceId)
