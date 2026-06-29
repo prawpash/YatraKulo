@@ -144,7 +144,7 @@ export class AccountController {
     type: AccountResponseDto,
   })
   @ApiStandardErrors()
-  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_WRITE)
+  @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_CREATE)
   async createAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
     @CurrentUser() user: JwtPayload,

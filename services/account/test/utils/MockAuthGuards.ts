@@ -14,7 +14,7 @@ export class MockJwtAuthGuard implements CanActivate {
         sub: '00000000-0000-0000-0000-000000000000',
         permissions: [
           'ACCOUNT_READ',
-          'ACCOUNT_WRITE',
+          'ACCOUNT_CREATE',
           'ACCOUNT_UPDATE',
           'ACCOUNT_DELETE',
         ],
