@@ -10,7 +10,7 @@ import com.ekapasha.shared.response.ErrorResponse;
 import com.ekapasha.auth_service.shared.presentation.dto.ApiErrorResponseDto;
 import com.ekapasha.shared.logging.AppLogger;
 import com.ekapasha.shared.logging.LogEvent;
-import com.ekapasha.auth_service.logging.AuthLogEvent;
+import com.ekapasha.auth_service.shared.logging.AuthLogEvent;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;

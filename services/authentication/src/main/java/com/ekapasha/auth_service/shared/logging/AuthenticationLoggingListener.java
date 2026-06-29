@@ -1,4 +1,4 @@
-package com.ekapasha.auth_service.logging;
+package com.ekapasha.auth_service.shared.logging;
 
 import com.ekapasha.shared.logging.AppLogger;
 import com.ekapasha.shared.logging.LogEvent;

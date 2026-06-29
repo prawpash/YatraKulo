@@ -5,7 +5,7 @@ import com.ekapasha.shared.exception.DuplicateDataException;
 import com.ekapasha.shared.exception.ValidationException;
 import com.ekapasha.shared.logging.AppLogger;
 import com.ekapasha.shared.logging.LogEvent;
-import com.ekapasha.auth_service.logging.AuthLogEvent;
+import com.ekapasha.auth_service.shared.logging.AuthLogEvent;
 import com.ekapasha.auth_service.user.domain.entity.User;
 import com.ekapasha.auth_service.user.domain.repository.UserReadRepository;
 import com.ekapasha.auth_service.user.domain.repository.UserWriteRepository;

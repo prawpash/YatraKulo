@@ -7,7 +7,7 @@ import com.ekapasha.shared.cqrs.VoidCommandHandler;
 import com.ekapasha.shared.exception.NotFoundException;
 import com.ekapasha.shared.logging.AppLogger;
 import com.ekapasha.shared.logging.LogEvent;
-import com.ekapasha.auth_service.logging.AuthLogEvent;
+import com.ekapasha.auth_service.shared.logging.AuthLogEvent;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;

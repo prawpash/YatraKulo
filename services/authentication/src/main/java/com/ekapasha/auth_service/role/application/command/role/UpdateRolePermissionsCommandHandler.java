@@ -8,7 +8,7 @@ import com.ekapasha.shared.exception.NotFoundException;
 import com.ekapasha.shared.exception.UnauthorizedAccessException;
 import com.ekapasha.shared.logging.AppLogger;
 import com.ekapasha.shared.logging.LogEvent;
-import com.ekapasha.auth_service.logging.AuthLogEvent;
+import com.ekapasha.auth_service.shared.logging.AuthLogEvent;
 import com.ekapasha.auth_service.workspace.domain.entity.Workspace;
 import com.ekapasha.auth_service.workspace.domain.repository.WorkspaceReadRepository;
 import lombok.RequiredArgsConstructor;
