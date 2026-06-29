@@ -1,6 +1,6 @@
-package com.ekapasha.ledger.infrastructure.config;
+package com.ekapasha.ledger.shared.security;
 
-import com.ekapasha.ledger.infrastructure.security.WorkspacePermissionJwtConverter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

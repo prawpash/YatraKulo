@@ -1,9 +1,11 @@
-package com.ekapasha.ledger.infrastructure.security;
+package com.ekapasha.ledger.shared.security;
 
+import com.ekapasha.shared.logging.AppLogger;
+import com.ekapasha.shared.logging.LogEvent;
+import com.ekapasha.ledger.shared.logging.LedgerLogEvent;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
@@ -27,10 +29,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class WorkspacePermissionJwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+
+    private static final AppLogger logger = new AppLogger(WorkspacePermissionJwtConverter.class);
 
     @Value("${app.auth.service-url}")
     private String authServiceUrl;
@@ -46,7 +49,7 @@ public class WorkspacePermissionJwtConverter implements Converter<Jwt, AbstractA
     public AbstractAuthenticationToken convert(Jwt jwt) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
-            log.warn("No request context available");
+            logger.warn(LogEvent.builder("No request context available").eventName(LedgerLogEvent.MISSING_WORKSPACE_ID).build());
             return new JwtAuthenticationToken(jwt, List.of());
         }
         
@@ -56,7 +59,7 @@ public class WorkspacePermissionJwtConverter implements Converter<Jwt, AbstractA
         String userId = jwt.getSubject();
 
         if (workspaceId == null || workspaceId.isEmpty()) {
-            log.warn("Missing x-workspace-id header");
+            logger.warn(LogEvent.builder("Missing x-workspace-id header").eventName(LedgerLogEvent.MISSING_WORKSPACE_ID).build());
             return new JwtAuthenticationToken(jwt, List.of());
         }
 
@@ -67,12 +70,13 @@ public class WorkspacePermissionJwtConverter implements Converter<Jwt, AbstractA
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList()) : List.of();
 
+        logger.info(LogEvent.builder("JWT converted successfully").eventName(LedgerLogEvent.JWT_CONVERSION_SUCCESS).metadata("userId", userId).metadata("workspaceId", workspaceId).build());
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
     private List<String> fetchPermissions(String userId, String workspaceId, String authHeader) {
         try {
-            log.debug("Fetching permissions for user {} in workspace {}", userId, workspaceId);
+            logger.debug(LogEvent.builder("Fetching permissions for user " + userId + " in workspace " + workspaceId).metadata("userId", userId).metadata("workspaceId", workspaceId).build());
             String url = String.format("%s/api/v1/workspaces/%s/members/%s/permissions", authServiceUrl, workspaceId, userId);
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", authHeader);
@@ -84,7 +88,7 @@ public class WorkspacePermissionJwtConverter implements Converter<Jwt, AbstractA
 
             return response.getBody() != null ? response.getBody() : List.of();
         } catch (Exception e) {
-            log.error("Failed to fetch permissions for user {} in workspace {}", userId, workspaceId, e);
+            logger.error(LogEvent.builder("Failed to fetch permissions for user " + userId + " in workspace " + workspaceId).eventName(LedgerLogEvent.JWT_CONVERSION_FAILED).metadata("userId", userId).metadata("workspaceId", workspaceId).error(e).build());
             return List.of();
         }
     }
