@@ -4,9 +4,9 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Logger,
   BadRequestException,
 } from '@nestjs/common';
+import { AppLogger } from '@yk/shared';
 import { Request, Response } from 'express';
 import {
   NotFoundException,
@@ -21,7 +21,7 @@ import {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private readonly logger = new AppLogger(GlobalExceptionFilter.name);
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
