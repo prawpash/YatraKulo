@@ -1,7 +1,5 @@
-import { LogEventName } from './LogEventName';
-
-export interface LogEvent {
-  eventName?: LogEventName;
+export interface LogEvent<T extends string = string> {
+  eventName?: T;
   message: string;
   durationMs?: number;
   metadata?: Record<string, any>;

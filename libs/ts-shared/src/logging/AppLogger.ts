@@ -16,6 +16,7 @@ export class AppLogger {
         ? { target: 'pino-pretty', options: { colorize: true } }
         : undefined,
       base: { context },
+      serializers: { error: pino.stdSerializers.err },
     });
   }
 
@@ -51,22 +52,17 @@ export class AppLogger {
     }
 
     let logObj: Record<string, any>;
+    let msg: string;
+    
     if (typeof event === 'string') {
-      logObj = { message: event, context, trace, ...ctxValues };
+      logObj = { context, trace, ...ctxValues };
+      msg = event;
     } else {
-      logObj = { ...event, context, trace, ...ctxValues };
-      if (event.eventName) {
-        logObj.eventName = event.eventName.getName();
-      }
-      if (event.error instanceof Error) {
-        logObj.error = {
-          ...event.error,
-          message: event.error.message,
-          stack: event.error.stack,
-        };
-      }
+      const { message, ...rest } = event;
+      logObj = { ...rest, context, trace, ...ctxValues };
+      msg = message;
     }
 
-    this.logger[level](logObj, logObj.message);
+    this.logger[level](logObj, msg);
   }
 }
