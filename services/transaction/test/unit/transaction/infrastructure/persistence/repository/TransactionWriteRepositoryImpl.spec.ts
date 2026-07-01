@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionWriteRepositoryImpl } from '@app/transaction/infrastructure/persistence/repository/TransactionWriteRepositoryImpl';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
 import { TransactionBuilder } from '@app/transaction/domain/entity/Transaction';
 import { Kysely } from 'kysely';
-import { DB } from '@app/transaction/infrastructure/config/db';
+import { DB } from '@app/shared/config/db';
 
 describe('TransactionWriteRepositoryImpl', () => {
   let repository: TransactionWriteRepositoryImpl;

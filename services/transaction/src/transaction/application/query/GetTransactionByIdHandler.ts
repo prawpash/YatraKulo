@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Transaction } from '@app/transaction/domain/entity/Transaction';
 import type { TransactionReadRepository } from '@app/transaction/domain/repository/TransactionReadRepository';
-import { TRANSACTION_READ_REPOSITORY } from '@app/transaction/infrastructure/config/InjectionToken';
+import { TRANSACTION_READ_REPOSITORY } from '@app/shared/config/InjectionToken';
 import { GetTransactionByIdQuery } from './GetTransactionByIdQuery';
 import { NotFoundException } from '@yk/shared';
 

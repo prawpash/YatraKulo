@@ -4,7 +4,7 @@ import { DeleteTransactionCommand } from '@app/transaction/application/command/D
 import {
   TRANSACTION_READ_REPOSITORY,
   TRANSACTION_WRITE_REPOSITORY,
-} from '@app/transaction/infrastructure/config/InjectionToken';
+} from '@app/shared/config/InjectionToken';
 import { TransactionReadRepository } from '@app/transaction/domain/repository/TransactionReadRepository';
 import { TransactionWriteRepository } from '@app/transaction/domain/repository/TransactionWriteRepository';
 import {

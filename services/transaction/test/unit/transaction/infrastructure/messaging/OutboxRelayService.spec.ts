@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OutboxRelayService } from '@app/transaction/infrastructure/messaging/OutboxRelayService';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
+import { OutboxRelayService } from '@app/shared/messaging/OutboxRelayService';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
 import { ClientProxy } from '@nestjs/microservices';
 import { Kysely } from 'kysely';
-import { DB } from '@app/transaction/infrastructure/config/db';
-import { OutboxStatus } from '@app/transaction/infrastructure/messaging/OutboxStatus';
+import { DB } from '@app/shared/config/db';
+import { OutboxStatus } from '@app/shared/messaging/OutboxStatus';
 import { of, throwError } from 'rxjs';
 
 describe('OutboxRelayService', () => {

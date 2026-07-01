@@ -5,8 +5,8 @@ import {
   GetTransactionsParams,
   TransactionReadRepository,
 } from '@app/transaction/domain/repository/TransactionReadRepository';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
-import { DB } from '@app/transaction/infrastructure/config/db';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
+import { DB } from '@app/shared/config/db';
 import { TransactionMapper } from '@app/transaction/infrastructure/persistence/mapper/TransactionMapper';
 import { DomainPage, DomainPageRequest, createDomainPage } from '@yk/shared';
 

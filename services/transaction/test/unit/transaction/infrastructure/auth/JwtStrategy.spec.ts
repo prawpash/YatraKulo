@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtStrategy } from '@app/transaction/infrastructure/auth/JwtStrategy';
+import { JwtStrategy } from '@app/shared/auth/JwtStrategy';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { PermissionsCache } from '@app/transaction/infrastructure/auth/PermissionsCache';
+import { PermissionsCache } from '@app/shared/auth/PermissionsCache';
 import { of, throwError } from 'rxjs';
 import { UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtPayload } from '@app/transaction/infrastructure/auth/JwtStrategy';
+import { JwtPayload } from '@app/shared/auth/JwtStrategy';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;

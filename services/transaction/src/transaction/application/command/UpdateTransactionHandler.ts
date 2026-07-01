@@ -6,7 +6,7 @@ import type { TransactionWriteRepository } from '@app/transaction/domain/reposit
 import {
   TRANSACTION_READ_REPOSITORY,
   TRANSACTION_WRITE_REPOSITORY,
-} from '@app/transaction/infrastructure/config/InjectionToken';
+} from '@app/shared/config/InjectionToken';
 import { UpdateTransactionCommand } from './UpdateTransactionCommand';
 import { NotFoundException } from '@yk/shared';
 

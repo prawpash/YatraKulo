@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PermissionsGuard } from '@app/transaction/infrastructure/auth/PermissionsGuard';
+import { PermissionsGuard } from '@app/shared/auth/PermissionsGuard';
 import { Reflector } from '@nestjs/core';
 import { ForbiddenException, ExecutionContext } from '@nestjs/common';
 

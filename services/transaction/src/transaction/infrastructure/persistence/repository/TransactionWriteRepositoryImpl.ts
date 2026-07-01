@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Kysely } from 'kysely';
 import { Transaction } from '@app/transaction/domain/entity/Transaction';
 import { TransactionWriteRepository } from '@app/transaction/domain/repository/TransactionWriteRepository';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
-import { DB, Json } from '@app/transaction/infrastructure/config/db';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
+import { DB, Json } from '@app/shared/config/db';
 import { TransactionMapper } from '@app/transaction/infrastructure/persistence/mapper/TransactionMapper';
 import { IDomainEvent } from '@app/transaction/domain/events/IDomainEvent';
 

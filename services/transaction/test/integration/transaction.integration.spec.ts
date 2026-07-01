@@ -3,21 +3,21 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { TestcontainersSetup } from '../utils/TestcontainersSetup';
-import { JwtAuthGuard } from '../../src/transaction/infrastructure/auth/JwtAuthGuard';
-import { PermissionsGuard } from '../../src/transaction/infrastructure/auth/PermissionsGuard';
+import { JwtAuthGuard } from '@app/shared/auth/JwtAuthGuard';
+import { PermissionsGuard } from '@app/shared/auth/PermissionsGuard';
 import {
   MockJwtAuthGuard,
   MockPermissionsGuard,
 } from '../utils/MockAuthGuards';
 import { v4 as uuidv4 } from 'uuid';
-import { JwtStrategy } from '@app/transaction/infrastructure/auth/JwtStrategy';
+import { JwtStrategy } from '@app/shared/auth/JwtStrategy';
 import { TransactionPageResponseDto } from '@app/transaction/interfaces/http/dto/TransactionPageResponseDto';
 import { TransactionResponseDto } from '@app/transaction/interfaces/http/dto/TransactionResponseDto';
 import { GlobalExceptionFilter } from '../../src/GlobalExceptionFilter';
-import { OutboxRelayService } from '@app/transaction/infrastructure/messaging/OutboxRelayService';
+import { OutboxRelayService } from '@app/shared/messaging/OutboxRelayService';
 import { Kysely } from 'kysely';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
-import { DB } from '@app/transaction/infrastructure/config/db';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
+import { DB } from '@app/shared/config/db';
 
 describe('TransactionController (Integration)', () => {
   let app: INestApplication;

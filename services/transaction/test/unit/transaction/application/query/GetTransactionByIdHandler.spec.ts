@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetTransactionByIdHandler } from '@app/transaction/application/query/GetTransactionByIdHandler';
 import { GetTransactionByIdQuery } from '@app/transaction/application/query/GetTransactionByIdQuery';
-import { TRANSACTION_READ_REPOSITORY } from '@app/transaction/infrastructure/config/InjectionToken';
+import { TRANSACTION_READ_REPOSITORY } from '@app/shared/config/InjectionToken';
 import { TransactionReadRepository } from '@app/transaction/domain/repository/TransactionReadRepository';
 import { TransactionBuilder } from '@app/transaction/domain/entity/Transaction';
 import { NotFoundException } from '@yk/shared';

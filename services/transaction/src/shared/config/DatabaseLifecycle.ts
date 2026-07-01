@@ -1,16 +1,16 @@
 import {
   Inject,
   Injectable,
-  Logger,
   OnApplicationShutdown,
 } from '@nestjs/common';
+import { AppLogger } from '@yk/shared';
 import { DATABASE_CONNECTION } from './InjectionToken';
 import { Kysely } from 'kysely';
 import { DB } from './db';
 
 @Injectable()
 export class DatabaseLifecycle implements OnApplicationShutdown {
-  private readonly logger = new Logger(DatabaseLifecycle.name);
+  private readonly logger = new AppLogger(DatabaseLifecycle.name);
 
   constructor(
     @Inject(DATABASE_CONNECTION)

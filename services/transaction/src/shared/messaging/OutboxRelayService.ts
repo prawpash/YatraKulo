@@ -1,16 +1,17 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { AppLogger } from '@yk/shared';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ClientProxy } from '@nestjs/microservices';
 import { Kysely } from 'kysely';
 import { lastValueFrom } from 'rxjs';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
-import { DB } from '@app/transaction/infrastructure/config/db';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
+import { DB } from '@app/shared/config/db';
 import { OutboxStatus } from './OutboxStatus';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
 @Injectable()
 export class OutboxRelayService {
-  private readonly logger = new Logger(OutboxRelayService.name);
+  private readonly logger = new AppLogger(OutboxRelayService.name);
 
   constructor(
     @Inject(DATABASE_CONNECTION)

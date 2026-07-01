@@ -3,7 +3,7 @@ import {
   TransactionBuilder,
 } from '@app/transaction/domain/entity/Transaction';
 import { Selectable } from 'kysely';
-import { TransactionPersistence } from '@app/transaction/infrastructure/config/db';
+import { TransactionPersistence } from '@app/shared/config/db';
 
 export class TransactionMapper {
   static toDomain(row: Selectable<TransactionPersistence>): Transaction {

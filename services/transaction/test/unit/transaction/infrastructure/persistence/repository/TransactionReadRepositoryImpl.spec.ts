@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionReadRepositoryImpl } from '@app/transaction/infrastructure/persistence/repository/TransactionReadRepositoryImpl';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
 import { createDomainPageRequest } from '@yk/shared';
 import { Kysely } from 'kysely';
-import { DB } from '@app/transaction/infrastructure/config/db';
+import { DB } from '@app/shared/config/db';
 
 describe('TransactionReadRepositoryImpl', () => {
   let repository: TransactionReadRepositoryImpl;

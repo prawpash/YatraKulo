@@ -7,7 +7,7 @@ import type { TransactionWriteRepository } from '@app/transaction/domain/reposit
 import {
   TRANSACTION_READ_REPOSITORY,
   TRANSACTION_WRITE_REPOSITORY,
-} from '@app/transaction/infrastructure/config/InjectionToken';
+} from '@app/shared/config/InjectionToken';
 import { CreateTransactionCommand } from './CreateTransactionCommand';
 
 @CommandHandler(CreateTransactionCommand)

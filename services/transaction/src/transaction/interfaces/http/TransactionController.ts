@@ -23,13 +23,13 @@ import { ApiStandardErrors } from '@app/shared/decorators/ApiStandardErrors.deco
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DomainPage, createDomainPageRequest } from '@yk/shared';
 import { Transaction } from '@app/transaction/domain/entity/Transaction';
-import type { JwtPayload } from '@app/transaction/infrastructure/auth/JwtStrategy';
-import { JwtAuthGuard } from '@app/transaction/infrastructure/auth/JwtAuthGuard';
-import { PermissionsGuard } from '@app/transaction/infrastructure/auth/PermissionsGuard';
+import type { AuthUser } from '@app/shared/auth/AuthUser';
+import { GatewayAuthGuard } from '@app/shared/auth/GatewayAuthGuard';
+import { PermissionsGuard } from '@app/shared/auth/PermissionsGuard';
 import {
   PERMISSIONS_CODE,
   RequirePermissions,
-} from '@app/transaction/infrastructure/auth/RequirePermissions';
+} from '@app/shared/auth/RequirePermissions';
 import { CurrentUser } from './decorators/CurrentUser.decorator';
 import { XWorkspaceId } from './decorators/XWorkspaceId.decorator';
 import { GetTransactionsDto } from './dto/GetTransactionsDto';
@@ -46,7 +46,7 @@ import { DeleteTransactionCommand } from '@app/transaction/application/command/D
 @ApiTags('transactions')
 @ApiBearerAuth()
 @Controller('transactions')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(GatewayAuthGuard, PermissionsGuard)
 export class TransactionController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -144,7 +144,7 @@ export class TransactionController {
   @RequirePermissions(PERMISSIONS_CODE.TRANSACTION_WRITE)
   async createTransaction(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: AuthUser,
     @Headers('idempotency-key') idempotencyKey: string,
     @Body() dto: CreateTransactionDto,
   ): Promise<TransactionResponseDto> {
@@ -191,7 +191,7 @@ export class TransactionController {
       }),
     )
     id: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: AuthUser,
     @Body() dto: UpdateTransactionDto,
   ): Promise<void> {
     await this.commandBus.execute<UpdateTransactionCommand, void>(
@@ -226,7 +226,7 @@ export class TransactionController {
       }),
     )
     id: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: AuthUser,
   ): Promise<void> {
     await this.commandBus.execute<DeleteTransactionCommand, void>(
       new DeleteTransactionCommand(workspaceId, id, user.sub),

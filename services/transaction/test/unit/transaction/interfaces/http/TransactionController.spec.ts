@@ -9,7 +9,7 @@ import { GetTransactionByIdQuery } from '@app/transaction/application/query/GetT
 import { GetTransactionsQuery } from '@app/transaction/application/query/GetTransactionsQuery';
 import { TransactionBuilder } from '@app/transaction/domain/entity/Transaction';
 import { createDomainPage, createDomainPageRequest } from '@yk/shared';
-import type { JwtPayload } from '@app/transaction/infrastructure/auth/JwtStrategy';
+import type { JwtPayload } from '@app/shared/auth/JwtStrategy';
 
 describe('TransactionController', () => {
   let controller: TransactionController;

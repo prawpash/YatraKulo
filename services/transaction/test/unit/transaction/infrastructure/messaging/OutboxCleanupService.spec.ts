@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OutboxCleanupService } from '@app/transaction/infrastructure/messaging/OutboxCleanupService';
-import { DATABASE_CONNECTION } from '@app/transaction/infrastructure/config/InjectionToken';
+import { OutboxCleanupService } from '@app/shared/messaging/OutboxCleanupService';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
 import { ConfigService } from '@nestjs/config';
 import { Kysely } from 'kysely';
-import { DB } from '@app/transaction/infrastructure/config/db';
-import { OutboxStatus } from '@app/transaction/infrastructure/messaging/OutboxStatus';
+import { DB } from '@app/shared/config/db';
+import { OutboxStatus } from '@app/shared/messaging/OutboxStatus';
 
 describe('OutboxCleanupService', () => {
   let service: OutboxCleanupService;

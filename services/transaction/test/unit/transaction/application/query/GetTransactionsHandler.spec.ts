@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetTransactionsHandler } from '@app/transaction/application/query/GetTransactionsHandler';
 import { GetTransactionsQuery } from '@app/transaction/application/query/GetTransactionsQuery';
-import { TRANSACTION_READ_REPOSITORY } from '@app/transaction/infrastructure/config/InjectionToken';
+import { TRANSACTION_READ_REPOSITORY } from '@app/shared/config/InjectionToken';
 import { TransactionReadRepository } from '@app/transaction/domain/repository/TransactionReadRepository';
 import { createDomainPage, createDomainPageRequest } from '@yk/shared';
 

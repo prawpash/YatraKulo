@@ -1,7 +1,7 @@
 import { TransactionMapper } from '@app/transaction/infrastructure/persistence/mapper/TransactionMapper';
 import { TransactionBuilder } from '@app/transaction/domain/entity/Transaction';
 import { Selectable } from 'kysely';
-import { TransactionPersistence } from '@app/transaction/infrastructure/config/db';
+import { TransactionPersistence } from '@app/shared/config/db';
 
 describe('TransactionMapper', () => {
   const mockDate = new Date('2026-06-16T22:00:00.000Z');
