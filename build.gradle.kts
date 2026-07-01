@@ -17,13 +17,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.flywaydb:flyway-database-postgresql:11.20.1")
+        classpath("org.flywaydb:flyway-database-postgresql:12.9.0")
     }
 }
 
 plugins {
     java
-    id("org.flywaydb.flyway") version "11.20.1"
+    id("org.flywaydb.flyway") version "12.9.0"
 }
 
 java {
@@ -47,14 +47,14 @@ flyway {
 fun getProperty(propertyName: String, envVarName: String, defaultValue: String): String {
 
     // Check system property first (-DpropName=value)
-    val systemProperty = System.getProperty(propertyName)
+    val systemProperty = providers.systemProperty(propertyName).orNull
 
     if(!systemProperty.isNullOrEmpty()) {
         return systemProperty
     }
 
     // Check environment variable
-    val envValue = System.getenv(envVarName)
+    val envValue = providers.environmentVariable(envVarName).orNull
 
     if(!envValue.isNullOrEmpty()) {
         return envValue
@@ -68,6 +68,7 @@ fun <T : AbstractFlywayTask> registerAuthenticationFlywayTask(
     name: String,
     type: KClass<T>
 ): TaskProvider<T> = tasks.register(name, type) {
+    notCompatibleWithConfigurationCache("Flyway plugin does not support configuration cache")
     val dbUrl = getProperty("flyway.url", "FLYWAY_AUTHENTICATION_DB_URL", "jdbc:postgresql://localhost:5432/yatrakulo_authentication")
     val dbUser = getProperty("flyway.user", "FLYWAY_AUTHENTICATION_DB_USER", "postgres")
     val dbPassword = getProperty("flyway.password", "FLYWAY_AUTHENTICATION_DB_PASSWORD", "toor")
@@ -89,6 +90,7 @@ fun <T : AbstractFlywayTask> registerAccountFlywayTask(
     name: String,
     type: KClass<T>
 ): TaskProvider<T> = tasks.register(name, type) {
+    notCompatibleWithConfigurationCache("Flyway plugin does not support configuration cache")
     val dbUrl = getProperty("flyway.url", "FLYWAY_ACCOUNT_DB_URL", "jdbc:postgresql://localhost:5432/yatrakulo_account")
     val dbUser = getProperty("flyway.user", "FLYWAY_ACCOUNT_DB_USER", "postgres")
     val dbPassword = getProperty("flyway.password", "FLYWAY_ACCOUNT_DB_PASSWORD", "toor")
@@ -110,6 +112,7 @@ fun <T : AbstractFlywayTask> registerTransactionFlywayTask(
     name: String,
     type: KClass<T>
 ): TaskProvider<T> = tasks.register(name, type) {
+    notCompatibleWithConfigurationCache("Flyway plugin does not support configuration cache")
     val dbUrl = getProperty("flyway.url", "FLYWAY_TRANSACTION_DB_URL", "jdbc:postgresql://localhost:5432/yatrakulo_transaction")
     val dbUser = getProperty("flyway.user", "FLYWAY_TRANSACTION_DB_USER", "postgres")
     val dbPassword = getProperty("flyway.password", "FLYWAY_TRANSACTION_DB_PASSWORD", "toor")
