@@ -22,6 +22,8 @@ async function bootstrap() {
     logger,
   });
 
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
   app.setGlobalPrefix('api/v1');
 
   const configService = app.get(ConfigService<APPConfig>);

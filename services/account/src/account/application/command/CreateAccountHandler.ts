@@ -6,7 +6,7 @@ import type { AccountReadRepository } from '@app/account/domain/repository/Accou
 import {
   ACCOUNT_WRITE_REPOSITORY,
   ACCOUNT_READ_REPOSITORY,
-} from '@app/account/infrastructure/config/InjectionToken';
+} from '@app/shared/config/InjectionToken';
 import { AccountBuilder } from '@app/account/domain/entity/Account';
 import { v4 as uuidv4 } from 'uuid';
 import { NotFoundException } from '@yk/shared';

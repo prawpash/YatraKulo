@@ -17,18 +17,14 @@ import { GetAccountByIdHandler } from './application/query/GetAccountByIdHandler
 import { AccountWriteRepositoryImpl } from './infrastructure/persistence/repository/AccountWriteRepositoryImpl';
 import { AccountReadRepositoryImpl } from './infrastructure/persistence/repository/AccountReadRepositoryImpl';
 
-// Infrastructure modules
-import { AuthModule } from './infrastructure/auth/AuthModule';
-import { DatabaseModule } from './infrastructure/config/DatabaseModule';
-
 // Injection tokens
 import {
   ACCOUNT_WRITE_REPOSITORY,
   ACCOUNT_READ_REPOSITORY,
-} from './infrastructure/config/InjectionToken';
+} from '@app/shared/config/InjectionToken';
 
 @Module({
-  imports: [CqrsModule, AuthModule, DatabaseModule],
+  imports: [CqrsModule],
   controllers: [AccountController],
   providers: [
     // Command handlers
@@ -44,6 +40,5 @@ import {
     { provide: ACCOUNT_WRITE_REPOSITORY, useClass: AccountWriteRepositoryImpl },
     { provide: ACCOUNT_READ_REPOSITORY, useClass: AccountReadRepositoryImpl },
   ],
-  exports: [AuthModule],
 })
 export class AccountModule {}

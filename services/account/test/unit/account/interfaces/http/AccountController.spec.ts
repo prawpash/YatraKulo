@@ -7,7 +7,7 @@ import { createDomainPage } from '@yk/shared';
 import { GetAccountsDto } from '@app/account/interfaces/http/dto/GetAccountsDto';
 import { CreateAccountDto } from '@app/account/interfaces/http/dto/CreateAccountDto';
 import { UpdateAccountDto } from '@app/account/interfaces/http/dto/UpdateAccountDto';
-import { JwtPayload } from '@app/account/infrastructure/auth/JwtStrategy';
+import { JwtPayload } from '@app/shared/auth/JwtStrategy';
 
 describe('AccountController', () => {
   let controller: AccountController;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetAccountsHandler } from '@app/account/application/query/GetAccountsHandler';
 import { GetAccountsQuery } from '@app/account/application/query/GetAccountsQuery';
-import { ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
+import { ACCOUNT_READ_REPOSITORY } from '@app/shared/config/InjectionToken';
 import { createDomainPageRequest, createDomainPage } from '@yk/shared';
 import { Account } from '@app/account/domain/entity/Account';
 import { AccountReadRepository } from '@app/account/domain/repository/AccountReadRepository';

@@ -5,7 +5,7 @@ import { AccountType } from '@app/account/domain/enums/AccountType';
 import {
   ACCOUNT_WRITE_REPOSITORY,
   ACCOUNT_READ_REPOSITORY,
-} from '@app/account/infrastructure/config/InjectionToken';
+} from '@app/shared/config/InjectionToken';
 import { NotFoundException } from '@yk/shared';
 import { AccountBuilder } from '@app/account/domain/entity/Account';
 import { AccountWriteRepository } from '@app/account/domain/repository/AccountWriteRepository';

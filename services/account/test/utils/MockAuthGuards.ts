@@ -1,4 +1,4 @@
-import { JwtPayload } from '@app/account/infrastructure/auth/JwtStrategy';
+import { JwtPayload } from '@app/shared/auth/JwtStrategy';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 @Injectable()

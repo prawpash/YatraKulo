@@ -1,7 +1,7 @@
 import { Account, AccountBuilder } from '@app/account/domain/entity/Account';
 import { AccountType } from '@app/account/domain/enums/AccountType';
 import { Selectable } from 'kysely';
-import { AccountPersistence } from '@app/account/infrastructure/config/db';
+import { AccountPersistence } from '@app/shared/config/db';
 import { DomainRuleViolationException } from '@yk/shared';
 
 export class AccountMapper {

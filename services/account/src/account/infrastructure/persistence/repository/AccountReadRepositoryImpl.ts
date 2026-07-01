@@ -6,8 +6,8 @@ import {
   GetAccountsParams,
 } from '@app/account/domain/repository/AccountReadRepository';
 import { DomainPage, DomainPageRequest, createDomainPage } from '@yk/shared';
-import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
-import { DB } from '@app/account/infrastructure/config/db';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
+import { DB } from '@app/shared/config/db';
 import { AccountMapper } from '@app/account/infrastructure/persistence/mapper/AccountMapper';
 
 @Injectable()

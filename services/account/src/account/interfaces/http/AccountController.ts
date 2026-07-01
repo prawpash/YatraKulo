@@ -34,18 +34,18 @@ import { UpdateAccountCommand } from '@app/account/application/command/UpdateAcc
 import { DeleteAccountCommand } from '@app/account/application/command/DeleteAccountCommand';
 import { Account } from '@app/account/domain/entity/Account';
 import { DomainPage, createDomainPageRequest } from '@yk/shared';
-import type { JwtPayload } from '@app/account/infrastructure/auth/JwtStrategy';
-import { JwtAuthGuard } from '@app/account/infrastructure/auth/JwtAuthGuard';
-import { PermissionsGuard } from '@app/account/infrastructure/auth/PermissionsGuard';
+import type { AuthUser } from '@app/shared/auth/AuthUser';
+import { GatewayAuthGuard } from '@app/shared/auth/GatewayAuthGuard';
+import { PermissionsGuard } from '@app/shared/auth/PermissionsGuard';
 import {
   PERMISSIONS_CODE,
   RequirePermissions,
-} from '@app/account/infrastructure/auth/RequirePermissions';
+} from '@app/shared/auth/RequirePermissions';
 
 @ApiTags('accounts')
 @ApiBearerAuth()
 @Controller('accounts')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(GatewayAuthGuard, PermissionsGuard)
 export class AccountController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -147,7 +147,7 @@ export class AccountController {
   @RequirePermissions(PERMISSIONS_CODE.ACCOUNT_CREATE)
   async createAccount(
     @XWorkspaceId(ParseUUIDPipe) workspaceId: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: AuthUser,
     @Body() dto: CreateAccountDto,
   ): Promise<AccountResponseDto> {
     const result = await this.commandBus.execute<CreateAccountCommand, Account>(
@@ -189,7 +189,7 @@ export class AccountController {
       }),
     )
     id: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: AuthUser,
     @Body() dto: UpdateAccountDto,
   ): Promise<void> {
     await this.commandBus.execute<UpdateAccountCommand, void>(
@@ -230,7 +230,7 @@ export class AccountController {
       }),
     )
     id: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: AuthUser,
   ): Promise<void> {
     return this.commandBus.execute<DeleteAccountCommand, void>(
       new DeleteAccountCommand(workspaceId, id, user.sub),

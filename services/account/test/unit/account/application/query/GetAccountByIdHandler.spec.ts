@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GetAccountByIdHandler } from '@app/account/application/query/GetAccountByIdHandler';
 import { GetAccountByIdQuery } from '@app/account/application/query/GetAccountByIdQuery';
 import { AccountType } from '@app/account/domain/enums/AccountType';
-import { ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
+import { ACCOUNT_READ_REPOSITORY } from '@app/shared/config/InjectionToken';
 import { NotFoundException } from '@yk/shared';
 import { AccountBuilder } from '@app/account/domain/entity/Account';
 import { AccountReadRepository } from '@app/account/domain/repository/AccountReadRepository';

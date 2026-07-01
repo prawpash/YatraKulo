@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AccountWriteRepositoryImpl } from '@app/account/infrastructure/persistence/repository/AccountWriteRepositoryImpl';
-import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
 import { AccountBuilder } from '@app/account/domain/entity/Account';
 import { AccountType } from '@app/account/domain/enums/AccountType';
 import { Kysely } from 'kysely';
-import { DB } from '@app/account/infrastructure/config/db';
+import { DB } from '@app/shared/config/db';
 
 describe('AccountWriteRepositoryImpl', () => {
   let repository: AccountWriteRepositoryImpl;

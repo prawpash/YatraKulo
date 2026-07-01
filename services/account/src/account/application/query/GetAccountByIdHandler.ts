@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetAccountByIdQuery } from './GetAccountByIdQuery';
 import type { AccountReadRepository } from '@app/account/domain/repository/AccountReadRepository';
-import { ACCOUNT_READ_REPOSITORY } from '@app/account/infrastructure/config/InjectionToken';
+import { ACCOUNT_READ_REPOSITORY } from '@app/shared/config/InjectionToken';
 import { Account } from '@app/account/domain/entity/Account';
 import { NotFoundException } from '@yk/shared';
 

@@ -1,4 +1,4 @@
-import { PermissionsCache } from '@app/account/infrastructure/auth/PermissionsCache';
+import { PermissionsCache } from '@app/shared/auth/PermissionsCache';
 
 describe('PermissionsCache', () => {
   let cache: PermissionsCache;

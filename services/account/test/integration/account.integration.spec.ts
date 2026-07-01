@@ -3,14 +3,14 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { TestcontainersSetup } from '../utils/TestcontainersSetup';
-import { JwtAuthGuard } from '../../src/account/infrastructure/auth/JwtAuthGuard';
-import { PermissionsGuard } from '../../src/account/infrastructure/auth/PermissionsGuard';
+import { JwtAuthGuard } from '@app/shared/auth/JwtAuthGuard';
+import { PermissionsGuard } from '@app/shared/auth/PermissionsGuard';
 import {
   MockJwtAuthGuard,
   MockPermissionsGuard,
 } from '../utils/MockAuthGuards';
 import { v4 as uuidv4 } from 'uuid';
-import { JwtStrategy } from '@app/account/infrastructure/auth/JwtStrategy';
+import { JwtStrategy } from '@app/shared/auth/JwtStrategy';
 import { AccountPageResponseDto } from '@app/account/interfaces/http/dto/AccountPageResponseDto';
 import { AccountResponseDto } from '@app/account/interfaces/http/dto/AccountResponseDto';
 import { GlobalExceptionFilter } from '../../src/GlobalExceptionFilter';

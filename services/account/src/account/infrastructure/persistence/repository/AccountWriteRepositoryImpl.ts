@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Kysely } from 'kysely';
 import { Account } from '@app/account/domain/entity/Account';
 import { AccountWriteRepository } from '@app/account/domain/repository/AccountWriteRepository';
-import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
-import { DB } from '@app/account/infrastructure/config/db';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
+import { DB } from '@app/shared/config/db';
 import { AccountMapper } from '@app/account/infrastructure/persistence/mapper/AccountMapper';
 
 @Injectable()

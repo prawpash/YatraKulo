@@ -1,4 +1,4 @@
-import { JwtAuthGuard } from '@app/account/infrastructure/auth/JwtAuthGuard';
+import { JwtAuthGuard } from '@app/shared/auth/JwtAuthGuard';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('JwtAuthGuard', () => {

@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AccountReadRepositoryImpl } from '@app/account/infrastructure/persistence/repository/AccountReadRepositoryImpl';
-import { DATABASE_CONNECTION } from '@app/account/infrastructure/config/InjectionToken';
+import { DATABASE_CONNECTION } from '@app/shared/config/InjectionToken';
 import { createDomainPageRequest } from '@yk/shared';
 import { Kysely } from 'kysely';
-import { DB } from '@app/account/infrastructure/config/db';
+import { DB } from '@app/shared/config/db';
 
 describe('AccountReadRepositoryImpl', () => {
   let repository: AccountReadRepositoryImpl;
