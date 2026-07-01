@@ -1,0 +1,77 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: authentication-service
+    url: http://host.docker.internal:5000
+    routes:
+      - name: authentication-route
+        paths:
+          - /
+        strip_path: true
+        preserve_host: true
+        protocols:
+          - http
+          - https
+
+  - name: authentication-service-protected
+    url: http://host.docker.internal:5000/api/v1
+    routes:
+      - name: authentication-protected-route
+        paths:
+          - /api/auth
+        strip_path: true
+        preserve_host: true
+        protocols:
+          - http
+          - https
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify:
+            - exp
+          key_claim_name: kid
+          secret_is_base64: false
+      - name: pre-function
+        config:
+          access:
+            - "require('redis-permission-resolver').resolve()"
+
+  - name: account-service
+    url: http://host.docker.internal:3000/api/v1
+    routes:
+      - name: account-route
+        paths:
+          - /api/account
+        strip_path: true
+        protocols:
+          - http
+          - https
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify:
+            - exp
+          key_claim_name: kid
+          secret_is_base64: false
+      - name: pre-function
+        config:
+          access:
+            - "require('redis-permission-resolver').resolve()"
+
+  # - name: transaction-service
+  #   url: http://host.docker.internal:3001
+  #   routes:
+  #     - name: transaction-route
+  #       paths:
+  #         - /api/transaction
+  #       strip_path: true
+  #
+  # - name: ledger-service
+  #   url: http://host.docker.internal:5001
+  #   routes:
+  #     - name: ledger-route
+  #       paths:
+  #         - /api/ledger
+  #       strip_path: true
+
